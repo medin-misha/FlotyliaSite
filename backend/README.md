@@ -3,7 +3,7 @@
 Создай файл app/.env с переменными окружения:
 
 ```bash
-postgres_url = "postgres+asyncpg://asd:asd@pasdcom:23415/defaultdb
+postgres_url = "postgresql+asyncpg://asd:asd@pasdcom:23415/defaultdb"
 ```
 
 Для запуска приложения необходимо выполнить команду:
