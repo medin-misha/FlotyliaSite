@@ -8,3 +8,4 @@ class Settings(BaseSettings):
     )
     postgres_url: str
     
+settings = Settings()
