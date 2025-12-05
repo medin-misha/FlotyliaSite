@@ -11,4 +11,5 @@ dependencies = [
     "fastapi[uvicorn]>=0.123.5",
     "pydantic[email]>=2.12.5",
     "sqlalchemy[async]>=2.0.44",
+    "uvicorn>=0.38.0",
 ]
