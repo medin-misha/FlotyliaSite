@@ -1,0 +1,11 @@
+from fastapi import APIRouter
+
+main_router = APIRouter()
+
+from .v1.users.views import router as users_router
+from .v1.contract import router as contract_router
+from .v1.transport import router as transport_router
+
+main_router.include_router(users_router)
+main_router.include_router(contract_router)
+main_router.include_router(transport_router)
