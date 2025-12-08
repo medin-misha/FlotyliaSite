@@ -15,6 +15,9 @@ class ContractBase(BaseModel):
 class ContractCreate(ContractBase):
     pass
 
+    class Config:
+        from_attributes = True
+
 class ContractUpdate(BaseModel):
     contract_url: Optional[str] = None
     transport_id: Optional[int] = None

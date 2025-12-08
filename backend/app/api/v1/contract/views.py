@@ -9,22 +9,22 @@ from services.crud import CRUD
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 
-@router.post("/", response_model=ContractReturn)
+@router.post("/", response_model=ContractReturn, status_code=status.HTTP_201_CREATED)
 async def create_contract(data: ContractCreate, session: SessionDep):
     return await CRUD.create(data=data, model=Contract, session=session)
 
-@router.get("/", response_model=list[ContractReturn])
+@router.get("/", response_model=list[ContractReturn], status_code=status.HTTP_200_OK)
 async def list_contracts(session: SessionDep):
     return await CRUD.get(model=Contract, session=session)
 
-@router.get("/{id}", response_model=ContractReturn)
+@router.get("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
 async def get_contract(id: int, session: SessionDep):
     return await CRUD.get(model=Contract, session=session, id=id)
 
-@router.patch("/{id}", response_model=ContractReturn)
+@router.patch("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
 async def update_contract(id: int, data: ContractCreate, session: SessionDep):
     return await CRUD.patch(new_data=data, model=Contract, session=session, id=id)
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=str, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_contract(id: int, session: SessionDep):
     return await CRUD.delete(model=Contract, session=session, id=id)

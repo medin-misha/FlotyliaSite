@@ -14,6 +14,9 @@ class TransportBase(BaseModel):
 class TransportCreate(TransportBase):
     pass
 
+    class Config:
+        from_attributes = True
+
 class TransportUpdate(BaseModel):
     type: Optional[str] = None
     manufacturer: Optional[str] = None

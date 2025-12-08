@@ -17,6 +17,9 @@ class UserCreate(UserBase):
     """Schema for creating a new user"""
     pass
 
+    class Config:
+        from_attributes = True
+
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None

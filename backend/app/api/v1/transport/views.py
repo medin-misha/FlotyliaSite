@@ -9,22 +9,22 @@ from services.crud import CRUD
 router = APIRouter(prefix="/transports", tags=["transports"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 
-@router.post("/", response_model=TransportReturn)
+@router.post("/", response_model=TransportReturn, status_code=status.HTTP_201_CREATED)
 async def create_transport(data: TransportCreate, session: SessionDep):
     return await CRUD.create(data=data, model=Transport, session=session)
 
-@router.get("/", response_model=list[TransportReturn])
+@router.get("/", response_model=list[TransportReturn], status_code=status.HTTP_200_OK)
 async def list_transports(session: SessionDep):
     return await CRUD.get(model=Transport, session=session)
 
-@router.get("/{id}", response_model=TransportReturn)
+@router.get("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
 async def get_transport(id: int, session: SessionDep):
     return await CRUD.get(model=Transport, session=session, id=id)
 
-@router.patch("/{id}", response_model=TransportReturn)
+@router.patch("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
 async def update_transport(id: int, data: TransportCreate, session: SessionDep):
     return await CRUD.patch(new_data=data, model=Transport, session=session, id=id)
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=str, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_transport(id: int, session: SessionDep):
     return await CRUD.delete(model=Transport, session=session, id=id)

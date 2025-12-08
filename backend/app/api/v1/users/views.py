@@ -10,22 +10,22 @@ from contracts.user.schemas import UserCreate
 router = APIRouter(prefix="/users", tags=["users"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user_view(user: UserCreate, session: SessionDep):
     return await CRUD.create(data=user, model=User, session=session)
 
-@router.get("/")
+@router.get("/", status_code=status.HTTP_200_OK)
 async def get_users_view(session: SessionDep):
     return await CRUD.get(model=User, session=session)
 
-@router.get("/{id}")
+@router.get("/{id}", status_code=status.HTTP_200_OK)
 async def get_user_view(session: SessionDep, id: int):
     return await CRUD.get(model=User, session=session, id=id)
 
-@router.patch("/{id}")
+@router.patch("/{id}", status_code=status.HTTP_200_OK)
 async def patch_user_view(session: SessionDep, id: int, user: UserCreate):
     return await CRUD.patch(new_data=user, model=User, session=session, id=id)
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=str, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_view(session: SessionDep, id: int):
     return await CRUD.delete(model=User, session=session, id=id)
