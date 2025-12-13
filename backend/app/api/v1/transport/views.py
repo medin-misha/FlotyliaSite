@@ -1,30 +1,40 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Transport
 from core.database import database
 from contracts.transport import TransportCreate, TransportReturn
 from services.crud import CRUD
+from core.auth import utils as auth_utils
+from contracts.admin.schemas import AdminReturn
 
 router = APIRouter(prefix="/transports", tags=["transports"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
+AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
+
 
 @router.post("/", response_model=TransportReturn, status_code=status.HTTP_201_CREATED)
-async def create_transport(data: TransportCreate, session: SessionDep):
+async def create_transport(data: TransportCreate, session: SessionDep, admin: AdminDep):
     return await CRUD.create(data=data, model=Transport, session=session)
 
+
 @router.get("/", response_model=list[TransportReturn], status_code=status.HTTP_200_OK)
-async def list_transports(session: SessionDep):
+async def list_transports(session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Transport, session=session)
 
+
 @router.get("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
-async def get_transport(id: int, session: SessionDep):
+async def get_transport(id: int, session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Transport, session=session, id=id)
 
+
 @router.patch("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
-async def update_transport(id: int, data: TransportCreate, session: SessionDep):
+async def update_transport(
+    id: int, data: TransportCreate, session: SessionDep, admin: AdminDep
+):
     return await CRUD.patch(new_data=data, model=Transport, session=session, id=id)
 
-@router.delete("/{id}", response_model=str, status_code=status.HTTP_204_NO_CONTENT)
-async def delete_transport(id: int, session: SessionDep):
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_transport(id: int, session: SessionDep, admin: AdminDep):
     return await CRUD.delete(model=Transport, session=session, id=id)
