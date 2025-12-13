@@ -32,3 +32,25 @@ class AdminReturn(BaseAdmin):
 
     class Config:
         from_attributes = True
+
+
+class AdminAuth(BaseAdmin):
+    username: str
+    password: bytes
+
+    class Config:
+        from_attributes = True
+
+
+class JWToken(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class RawJWTPayload(BaseModel):
+    sub: str  # Admin.username
+
+
+class JWTPayload(RawJWTPayload):
+    exp: int | float  # время жизни токена
+    iat: int | float  # время создания токена
