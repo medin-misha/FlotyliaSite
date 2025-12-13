@@ -16,7 +16,7 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 @router.post("/", response_model=AdminReturn, status_code=status.HTTP_201_CREATED)
 async def create_admin_view(
-    data: AdminCreateForm, session: SessionDep, admin: AdminDep
+    data: AdminCreateForm, session: SessionDep
 ):
     return await create_admin(data=data, session=session)
 
