@@ -1,0 +1,5 @@
+services:
+  web:
+    image: myapp-image
+    ports:
+      - "8080:8000"   # host:container
