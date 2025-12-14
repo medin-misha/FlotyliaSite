@@ -11,3 +11,4 @@
 - Асинхронная SQLAlchemy
 
 Модели базы данных описанны в файле Architecture.canvas (открывать obsidian-ом)
+Вся информация по бэкенду в папке backend/README.md.

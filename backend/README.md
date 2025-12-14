@@ -25,6 +25,14 @@ cd ..
 
 ## ▶️ Запуск приложения
 
+Не забудь мигрировать базу данных
+
+```bash
+alembic upgrade head
+```
+
+И запуск
+
 ```bash
 uvicorn app.main:app --reload
 ```
