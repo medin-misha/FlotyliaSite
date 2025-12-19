@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel
 from pathlib import Path
+from redis.asyncio import Redis
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -10,13 +11,37 @@ class AuthJWT(BaseModel):
     public_key_path: Path = BASE_DIR / "certs/jwt-public.pem"
     algorithm: str = "RS256"
 
+class RedisDB(BaseModel):
+    cache: int = 0
+
+class CacheNameSpaces(BaseModel):
+    users: str = "users"
+    contracts: str = "contracts"
+    transports: str = "transports"
+
+class CacheConfig(BaseModel):
+    prefix: str = "cache"
+    namespaces: CacheNameSpaces = CacheNameSpaces()
+
+class RedisConfig(BaseModel):
+    url: str = "redis://lochost:6379"
+    db: RedisDB = RedisDB()
+
+    @property
+    def connection_string(self) -> str:
+        return f"{self.url}/{self.db.cache}"
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_file=".env", # файл который читаем
+        env_file_encoding="utf-8", # кодировка файла
+        extra="ignore", # игнорируем лишние переменные
+        env_nested_delimiter="__", # Если видишь двойное подчеркивание в имени переменной в .env, считай это вложенностью
+        case_sensitive=False, # нечувствительность к регистру
     )
     postgres_url: str
     auth_jwt: AuthJWT = AuthJWT()
-
+    cache_config: CacheConfig = CacheConfig()
+    redis_config: RedisConfig = RedisConfig()
 
 settings = Settings()

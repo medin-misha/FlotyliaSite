@@ -7,6 +7,9 @@ from contracts.contract import ContractCreate, ContractReturn
 from services.crud import CRUD
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
+from fastapi_cache.decorator import cache
+from core.cache import cache_key_builder
+from config import settings
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
@@ -19,11 +22,13 @@ async def create_contract(data: ContractCreate, session: SessionDep, admin: Admi
 
 
 @router.get("/", response_model=list[ContractReturn], status_code=status.HTTP_200_OK)
+@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.contracts)
 async def list_contracts(session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Contract, session=session)
 
 
 @router.get("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
+@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.contracts)
 async def get_contract(id: int, session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Contract, session=session, id=id)
 

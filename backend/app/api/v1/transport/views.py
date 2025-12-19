@@ -7,6 +7,9 @@ from contracts.transport import TransportCreate, TransportReturn
 from services.crud import CRUD
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
+from fastapi_cache.decorator import cache
+from core.cache import cache_key_builder
+from config import settings
 
 router = APIRouter(prefix="/transports", tags=["transports"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
@@ -19,11 +22,13 @@ async def create_transport(data: TransportCreate, session: SessionDep, admin: Ad
 
 
 @router.get("/", response_model=list[TransportReturn], status_code=status.HTTP_200_OK)
+@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.transports)
 async def list_transports(session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Transport, session=session)
 
 
 @router.get("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
+@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.transports)
 async def get_transport(id: int, session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Transport, session=session, id=id)
 
