@@ -1,7 +1,8 @@
-__all__ = ["Base", "User", "Admin", "Transport", "Contract"]
+__all__ = ["Base", "User", "Admin", "Transport", "Contract", "File"]
 
 from .base import Base
 from .user import User
 from .admin import Admin
 from .transport import Transport
 from .contract import Contract
+from .file import File

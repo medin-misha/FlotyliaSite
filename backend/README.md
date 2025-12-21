@@ -5,6 +5,7 @@
 - Python 3.13+
 - PostgreSQL
 - OpenSSL (для генерации JWT‑ключей)
+- Redis
 
 ## 🔧 Настройка окружения
 
@@ -12,6 +13,12 @@
 
 ```bash
 postgres_url="postgresql+asyncpg://<user>:<password>@<host>:<port>/<dbname>"
+redis_config__url="redis://localhost:6379"
+
+bucket_config__access_key="str"
+bucket_config__secret_key="str"
+bucket_config__endpoint_url="https://storagxcloud.net"
+bucket_config__bucket_name="flotket"
 ```
 
 2. Сгенерируйте JWT‑ключи `backend/`:
@@ -25,7 +32,13 @@ cd ..
 
 ## ▶️ Запуск приложения локально
 
-Не забудь мигрировать базу данных
+Запустите Redis (обязательно для работы кеширования):
+
+```bash
+docker compose up -d redis
+```
+
+Не забудьте мигрировать базу данных
 
 ```bash
 alembic upgrade head

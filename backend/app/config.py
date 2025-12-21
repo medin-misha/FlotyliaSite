@@ -18,6 +18,7 @@ class CacheNameSpaces(BaseModel):
     users: str = "users"
     contracts: str = "contracts"
     transports: str = "transports"
+    files: str = "files"
 
 class CacheConfig(BaseModel):
     prefix: str = "cache"
@@ -31,6 +32,12 @@ class RedisConfig(BaseModel):
     def connection_string(self) -> str:
         return f"{self.url}/{self.db.cache}"
 
+class BucketSettings(BaseModel):
+    access_key: str = ""
+    secret_key: str = ""
+    endpoint_url: str = ""
+    bucket_name: str = ""
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", # файл который читаем
@@ -43,5 +50,6 @@ class Settings(BaseSettings):
     auth_jwt: AuthJWT = AuthJWT()
     cache_config: CacheConfig = CacheConfig()
     redis_config: RedisConfig = RedisConfig()
+    bucket_config: BucketSettings
 
 settings = Settings()
