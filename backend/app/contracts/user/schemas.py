@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
-
+from core.models.user import UserStatus
 
 class UserBase(BaseModel):
     name: str
@@ -8,6 +8,16 @@ class UserBase(BaseModel):
     phone: str
     work_in: str
     passport_url: Optional[str] = None
+    invoice: Optional[str] = None
+    status: Optional[str] = UserStatus.PENDING
+
+    @field_validator("status")
+    def validate_status(cls, v):
+        if v not in [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE]:
+            raise ValueError(
+                f"Invalid status. Status must be one of: {UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE}"
+                )
+        return v
 
     class Config:
         from_attributes = True
@@ -27,7 +37,16 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     work_in: Optional[str] = None
     passport_url: Optional[str] = None
+    invoice: Optional[str] = None
+    status: Optional[str] = UserStatus.PENDING
 
+    @field_validator("status")
+    def validate_status(cls, v):
+        if v not in [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE]:
+            raise ValueError(
+                f"Invalid status. Status must be one of: {UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE}"
+                )
+        return v
     class Config:
         from_attributes = True
 
