@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     email: EmailStr
     phone: str
     work_in: str
-    passport_url: Optional[str] = None
+    passport_file: Optional[int] = None
     invoice: Optional[str] = None
     status: Optional[str] = UserStatus.PENDING
 
@@ -36,7 +36,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     work_in: Optional[str] = None
-    passport_url: Optional[str] = None
+    passport_file: Optional[int] = None
     invoice: Optional[str] = None
     status: Optional[str] = UserStatus.PENDING
 

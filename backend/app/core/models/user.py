@@ -1,5 +1,5 @@
 from .base import Base
-from sqlalchemy import String
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 class UserStatus:
@@ -13,6 +13,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     phone: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
     work_in: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-    passport_url: Mapped[str] = mapped_column(String(255), nullable=True)
+    passport_file: Mapped[int] = mapped_column(ForeignKey("file.id"), nullable=True)
     invoice: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=UserStatus.PENDING)

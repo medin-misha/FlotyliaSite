@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 class ContractBase(BaseModel):
-    contract_url: str
+    contract_file: Optional[int] = None
     transport_id: int
     user_id: int
     date_of_signing: Optional[datetime] = None
@@ -19,7 +19,7 @@ class ContractCreate(ContractBase):
         from_attributes = True
 
 class ContractUpdate(BaseModel):
-    contract_url: Optional[str] = None
+    contract_file: Optional[int] = None
     transport_id: Optional[int] = None
     user_id: Optional[int] = None
     date_of_signing: Optional[datetime] = None
