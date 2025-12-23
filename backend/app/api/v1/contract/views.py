@@ -5,6 +5,7 @@ from core.models import Contract
 from core.database import database
 from contracts.contract import ContractCreate, ContractReturn
 from services.crud import CRUD
+from services.contracts import create_contract
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
 from fastapi_cache.decorator import cache
@@ -17,8 +18,8 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 
 @router.post("/", response_model=ContractReturn, status_code=status.HTTP_201_CREATED)
-async def create_contract(data: ContractCreate, session: SessionDep, admin: AdminDep):
-    return await CRUD.create(data=data, model=Contract, session=session)
+async def create_contract_view(data: ContractCreate, session: SessionDep, admin: AdminDep):
+    return await create_contract(session=session, contract=data)
 
 
 @router.get("/", response_model=list[ContractReturn], status_code=status.HTTP_200_OK)
