@@ -22,14 +22,12 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",  # Vite
-        "http://localhost:3000",  # CRA
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_config.allow_origins.split(","),
+    allow_credentials=settings.cors_config.allow_credentials,
+    allow_methods=settings.cors_config.allow_methods.split(","),
+    allow_headers=settings.cors_config.allow_headers.split(","),
 )
+print(settings.cors_config.allow_origins.split(","))
 app.include_router(main_router)
 
 if __name__ == "__main__":

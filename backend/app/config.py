@@ -38,6 +38,12 @@ class BucketSettings(BaseModel):
     endpoint_url: str = ""
     bucket_name: str = ""
 
+class CORSConfig(BaseModel):
+    allow_origins: str = "*"
+    allow_credentials: bool = True
+    allow_methods: str = "*"
+    allow_headers: str = "*"
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", # файл который читаем
@@ -51,5 +57,6 @@ class Settings(BaseSettings):
     cache_config: CacheConfig = CacheConfig()
     redis_config: RedisConfig = RedisConfig()
     bucket_config: BucketSettings
+    cors_config: CORSConfig = CORSConfig()
 
 settings = Settings()
