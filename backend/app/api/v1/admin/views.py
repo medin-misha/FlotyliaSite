@@ -15,15 +15,15 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 
 @router.post("/", response_model=AdminReturn, status_code=status.HTTP_201_CREATED)
-async def create_admin_view(
-    data: AdminCreateForm, session: SessionDep
-):
+async def create_admin_view(data: AdminCreateForm, session: SessionDep):
     return await create_admin(data=data, session=session)
 
 
 @router.get("/", response_model=list[AdminReturn], status_code=status.HTTP_200_OK)
-async def list_admins(session: SessionDep, admin: AdminDep):
-    return await CRUD.get(model=Admin, session=session)
+async def list_admins(
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
+):
+    return await CRUD.get(model=Admin, session=session, page=page, limit=limit)
 
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=JWToken)

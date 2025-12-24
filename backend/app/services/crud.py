@@ -40,7 +40,6 @@ class CRUD:
         """
         instance = model(**data.model_dump())
         try:
-            
             session.add(instance)
             await session.commit()
             await session.refresh(instance)
@@ -56,6 +55,8 @@ class CRUD:
         model: Type[ModelT],
         session: AsyncSession,
         id: int | None = None,
+        page: int = 1,
+        limit: int = 10,
     ) -> Union[ModelT, list[ModelT]]:
         """
         💡 Универсальный метод чтения данных из базы.
@@ -67,6 +68,8 @@ class CRUD:
             model: ORM-модель (дочерний класс Base)
             session: асинхронная сессия SQLAlchemy
             id: идентификатор записи (опционально)
+            page: страница (опционально)
+            limit: лимит (опционально)
 
         Returns:
             Один объект модели или список всех объектов.
@@ -81,7 +84,7 @@ class CRUD:
                 stmt = stmt.where(model.id == id)
 
             result: Result = await session.execute(stmt)
-            data = result.scalars().all()
+            data = result.scalars().all()[(page - 1) * limit : page * limit]
             if id is not None:
                 if not data:
                     raise HTTPException(

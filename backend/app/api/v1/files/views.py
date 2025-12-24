@@ -14,6 +14,7 @@ router = APIRouter(prefix="/files", tags=["files"])
 
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 
+
 @router.post("/", response_model=FileReturn, status_code=status.HTTP_201_CREATED)
 async def upload_file_view(
     session: SessionDep,
@@ -23,6 +24,7 @@ async def upload_file_view(
     Загрузка файла в S3 и сохранение ссылки в БД.
     """
     return await create_file(session=session, file=file)
+
 
 @router.get("/{file_id}")
 async def get_file_view(

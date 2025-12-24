@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, Response, Request
+from fastapi import APIRouter, status, Depends, Response, Request, UploadFile
 from services import CRUD
 from core.models import User
 from core.database import database
@@ -22,13 +22,23 @@ async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDe
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.users)
-async def get_users_view(session: SessionDep, admin: AdminDep):
-    return await CRUD.get(model=User, session=session)
+@cache(
+    expire=60,
+    key_builder=cache_key_builder,
+    namespace=settings.cache_config.namespaces.users,
+)
+async def get_users_view(
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
+):
+    return await CRUD.get(model=User, session=session, page=page, limit=limit)
 
 
 @router.get("/{id}", status_code=status.HTTP_200_OK)
-@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.users)
+@cache(
+    expire=60,
+    key_builder=cache_key_builder,
+    namespace=settings.cache_config.namespaces.users,
+)
 async def get_user_view(session: SessionDep, id: int, admin: AdminDep):
     return await CRUD.get(model=User, session=session, id=id)
 

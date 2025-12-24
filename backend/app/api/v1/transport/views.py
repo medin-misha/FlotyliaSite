@@ -22,13 +22,23 @@ async def create_transport(data: TransportCreate, session: SessionDep, admin: Ad
 
 
 @router.get("/", response_model=list[TransportReturn], status_code=status.HTTP_200_OK)
-@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.transports)
-async def list_transports(session: SessionDep, admin: AdminDep):
-    return await CRUD.get(model=Transport, session=session)
+@cache(
+    expire=60,
+    key_builder=cache_key_builder,
+    namespace=settings.cache_config.namespaces.transports,
+)
+async def list_transports(
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
+):
+    return await CRUD.get(model=Transport, session=session, page=page, limit=limit)
 
 
 @router.get("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
-@cache(expire=60, key_builder=cache_key_builder, namespace=settings.cache_config.namespaces.transports)
+@cache(
+    expire=60,
+    key_builder=cache_key_builder,
+    namespace=settings.cache_config.namespaces.transports,
+)
 async def get_transport(id: int, session: SessionDep, admin: AdminDep):
     return await CRUD.get(model=Transport, session=session, id=id)
 
