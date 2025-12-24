@@ -19,6 +19,11 @@ bucket_config__access_key="str"
 bucket_config__secret_key="str"
 bucket_config__endpoint_url="https://storagxcloud.net"
 bucket_config__bucket_name="flotket"
+cors_config__allow_origins= "https://localhost:8000 " # хосты разбиваються через запятую ","
+# опционально
+cors_config__allow_credentials= "true"
+cors_config__allow_methods= "*"
+cors_config__allow_headers= "*"
 ```
 
 2. Сгенерируйте JWT‑ключи `backend/`:
