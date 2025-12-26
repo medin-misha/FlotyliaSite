@@ -27,7 +27,6 @@ app.add_middleware(
     allow_methods=settings.cors_config.allow_methods.split(","),
     allow_headers=settings.cors_config.allow_headers.split(","),
 )
-print(settings.cors_config.allow_origins.split(","))
 app.include_router(main_router)
 
 if __name__ == "__main__":
