@@ -3,9 +3,31 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"   # host:container
+    expose:
+      - "8000"   # host:container
+    networks:
+      - webnet
   redis:
     image: redis:8-alpine
     ports:
       - "6379:6379"
+    networks:
+      - webnet
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d # конфигурация nginx находиться в ./nginx
+      - ./certsbot:/var/www/certsbot
+      - ./certs:/etc/nginx/certs # сертификаты находяться в ./certs
+    depends_on:
+      - web
+    restart: always
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
