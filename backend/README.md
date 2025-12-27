@@ -24,6 +24,7 @@ cors_config__allow_origins= "https://localhost:8000 " # хосты разбив�
 cors_config__allow_credentials= "true"
 cors_config__allow_methods= "*"
 cors_config__allow_headers= "*"
+debug=False # True если хочешь видеть sql запросы
 ```
 
 2. Сгенерируйте JWT‑ключи `backend/`:

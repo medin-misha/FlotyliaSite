@@ -52,6 +52,7 @@ class Settings(BaseSettings):
         env_nested_delimiter="__", # Если видишь двойное подчеркивание в имени переменной в .env, считай это вложенностью
         case_sensitive=False, # нечувствительность к регистру
     )
+    debug: bool = False
     postgres_url: str
     auth_jwt: AuthJWT = AuthJWT()
     cache_config: CacheConfig = CacheConfig()
