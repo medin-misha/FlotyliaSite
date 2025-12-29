@@ -38,7 +38,7 @@ async def create_residence_permit(
     key_builder=cache_key_builder,
     namespace=settings.cache_config.namespaces.residence_permits,
 )
-async def get_residence_permit(session: SessionDep, page: int = 1, limit: int = 10):
+async def get_residence_permit(session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10):
     return await CRUD.get(
         model=ResidencePermit, session=session, page=page, limit=limit
     )
@@ -46,7 +46,7 @@ async def get_residence_permit(session: SessionDep, page: int = 1, limit: int = 
 
 @router.patch("/{id}", response_model=ResidencePermitReturn)
 async def update_residence_permit(
-    id: int, residence_permit: ResidencePermitUpdate, session: SessionDep
+    id: int, residence_permit: ResidencePermitUpdate, session: SessionDep, admin: AdminDep
 ):
     return await CRUD.patch(
         model=ResidencePermit, session=session, id=id, new_data=residence_permit
@@ -54,5 +54,5 @@ async def update_residence_permit(
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_residence_permit(id: int, session: SessionDep):
+async def delete_residence_permit(id: int, session: SessionDep, admin: AdminDep):
     return await CRUD.delete(model=ResidencePermit, session=session, id=id)
