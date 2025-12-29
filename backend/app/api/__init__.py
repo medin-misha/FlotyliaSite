@@ -7,9 +7,11 @@ from .v1.contract import router as contract_router
 from .v1.transport import router as transport_router
 from .v1.admin import router as admin_router
 from .v1.files.views import router as files_router
+from .v1.residence_permit.views import router as residence_permit_router
 
 main_router.include_router(users_router)
 main_router.include_router(contract_router)
 main_router.include_router(transport_router)
 main_router.include_router(admin_router)
 main_router.include_router(files_router)
+main_router.include_router(residence_permit_router)
