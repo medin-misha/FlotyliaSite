@@ -60,6 +60,12 @@ async def _get_relation_users_contracts(session: AsyncSession, contracts: list) 
                         "Passport_url": user.passport_file
                         if user.passport_file
                         else None,
+                        "Visa_url": user.visa_file,
+                        "Insurance_url": user.insurance_file,
+                        "Telegram": user.telegram,
+                        "City": user.city,
+                        "Address": user.address,
+                        "Stay_type": user.stay_type,
                         "Contract_url": f"api/v1/files/{contract.contract_file}"
                         if contract.contract_file
                         else None,
@@ -91,6 +97,12 @@ async def _get_not_relation_users(session: AsyncSession) -> list:
                     "Passport_url": user.passport_file
                     if user.passport_file
                     else None,
+                    "Visa_url": user.visa_file,
+                    "Insurance_url": user.insurance_file,
+                    "Telegram": user.telegram,
+                    "City": user.city,
+                    "Address": user.address,
+                    "Stay_type": user.stay_type,
                 }
             )
         return result
