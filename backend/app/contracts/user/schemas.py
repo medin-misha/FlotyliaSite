@@ -15,6 +15,7 @@ class UserBase(BaseModel):
     address: Optional[str] = None
     stay_type: Optional[str] = None
     insurance_file: Optional[int] = None
+    visa_file: Optional[int] = None
 
     @field_validator("status")
     def validate_status(cls, v):
@@ -49,6 +50,7 @@ class UserUpdate(BaseModel):
     address: Optional[str] = None
     stay_type: Optional[str] = None
     insurance_file: Optional[int] = None
+    visa_file: Optional[int] = None
 
     @field_validator("status")
     def validate_status(cls, v):

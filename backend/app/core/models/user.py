@@ -20,6 +20,7 @@ class User(Base):
     work_in: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     passport_file: Mapped[int] = mapped_column(ForeignKey("file.id"), nullable=True)
     insurance_file: Mapped[int] = mapped_column(ForeignKey("file.id"), nullable=True)
+    visa_file: Mapped[int] = mapped_column(ForeignKey("file.id"), nullable=True)
 
     invoice: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=UserStatus.PENDING)
