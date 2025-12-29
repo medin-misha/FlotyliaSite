@@ -10,6 +10,11 @@ class UserBase(BaseModel):
     passport_file: Optional[int] = None
     invoice: Optional[str] = None
     status: Optional[str] = UserStatus.PENDING
+    telegram: Optional[str] = None
+    city: Optional[str] = None
+    address: Optional[str] = None
+    stay_type: Optional[str] = None
+    insurance_file: Optional[int] = None
 
     @field_validator("status")
     def validate_status(cls, v):
@@ -39,6 +44,11 @@ class UserUpdate(BaseModel):
     passport_file: Optional[int] = None
     invoice: Optional[str] = None
     status: Optional[str] = UserStatus.PENDING
+    telegram: Optional[str] = None
+    city: Optional[str] = None
+    address: Optional[str] = None
+    stay_type: Optional[str] = None
+    insurance_file: Optional[int] = None
 
     @field_validator("status")
     def validate_status(cls, v):

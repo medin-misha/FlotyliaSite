@@ -6,3 +6,4 @@ from .admin import Admin
 from .transport import Transport
 from .contract import Contract
 from .file import File
+from .residence_permit import ResidencePermit
