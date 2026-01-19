@@ -12,6 +12,8 @@ from fastapi_cache.decorator import cache
 from core.cache import cache_key_builder
 from config import settings
 from services.export import export_to_exel
+from services.users.search import all_str_field_search
+
 
 router = APIRouter(prefix="/users", tags=["users"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
@@ -30,9 +32,9 @@ async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDe
     namespace=settings.cache_config.namespaces.users,
 )
 async def get_users_view(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = ""
 ) -> list[UserReturn]:
-    return await CRUD.get(model=User, session=session, page=page, limit=limit)
+    return await all_str_field_search(model=User, session=session, page=page, limit=limit, query=search)
 
 @router.get("/export", status_code=status.HTTP_200_OK)
 async def export_users_view(session: SessionDep) -> StreamingResponse:
