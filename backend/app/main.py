@@ -11,11 +11,14 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis = Redis.from_url(settings.redis_config.url)
-    FastAPICache.init(
-        RedisBackend(redis),
-        prefix=settings.cache_config.prefix,
-    )
+    # redis = Redis.from_url(
+    #     settings.redis_config.url,
+    #     max_connections=50,
+    # )
+    # FastAPICache.init(
+    #     RedisBackend(redis),
+    #     prefix=settings.cache_config.prefix,
+    # )
     yield
 
 app = FastAPI(lifespan=lifespan)

@@ -13,12 +13,9 @@ def cache_key_builder(
     args: Tuple[Any, ...] = (),
     kwargs: Dict[str, Any] = {}
 ) -> Optional[str]:
-    exlude_kwargs = [
-        AsyncSession,
-        AdminReturn
-    ]
+    safe_types = (int, float, str, bool, type(None))
     for key, value in kwargs.copy().items():
-        if type(value) in exlude_kwargs:
+        if type(value) not in safe_types:
             kwargs.pop(key)
     hash = hashlib.md5(
         f"{func.__module__}:{func.__name__}:{args}:{kwargs}".encode()

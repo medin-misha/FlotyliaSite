@@ -1,6 +1,6 @@
 from .base import Base
 from sqlalchemy import String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class UserStatus:
     PENDING = "pending"
@@ -22,3 +22,5 @@ class User(Base):
 
     invoice: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=UserStatus.PENDING)
+
+    documents: Mapped[list["Document"]] = relationship("Document", lazy="selectin")
