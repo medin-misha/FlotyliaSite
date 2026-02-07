@@ -43,6 +43,15 @@ async def get_residence_permit(session: SessionDep, admin: AdminDep, page: int =
         model=ResidencePermit, session=session, page=page, limit=limit
     )
 
+@router.get("/{id}", response_model=ResidencePermitReturn, status_code=status.HTTP_200_OK)
+@cache(
+    expire=60,
+    key_builder=cache_key_builder,
+    namespace=settings.cache_config.namespaces.residence_permits,
+)
+async def get_residence_permit_by_id(id: int, session: SessionDep, admin: AdminDep):
+    return await CRUD.get(model=ResidencePermit, session=session, id=id)
+
 
 @router.patch("/{id}", response_model=ResidencePermitReturn)
 async def update_residence_permit(

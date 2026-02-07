@@ -4,7 +4,11 @@ from config import settings
 
 class Database:
     def __init__(self, url: str):
-        self.engine = create_async_engine(url=url, echo=settings.debug)
+        self.engine = create_async_engine(
+            url=url,
+            echo=settings.debug,
+            # connect_args={"ssl": "require"}
+        )
         self.sessionmaker = async_sessionmaker(
             self.engine,
             class_=AsyncSession,

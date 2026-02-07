@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from fastapi import HTTPException, status
 from core.models import Admin
 from contracts.admin import AdminCreateForm, AdminReturn, AdminCreate
 from services.crud import CRUD
