@@ -7,15 +7,12 @@ class UserBase(BaseModel):
     email: EmailStr
     phone: str
     work_in: str
-    passport_file: Optional[int] = None
     invoice: Optional[str] = None
     status: Optional[str] = UserStatus.PENDING
     telegram: Optional[str] = None
     city: Optional[str] = None
     address: Optional[str] = None
     stay_type: Optional[str] = None
-    insurance_file: Optional[int] = None
-    visa_file: Optional[int] = None
 
     @field_validator("status")
     def validate_status(cls, v):
@@ -65,6 +62,7 @@ class UserUpdate(BaseModel):
 
 class UserReturn(UserBase):
     id: int
+    documents: list
 
     class Config:
         from_attributes = True
