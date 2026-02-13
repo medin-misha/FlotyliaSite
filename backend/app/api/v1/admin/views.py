@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from typing import Annotated
+from typing import Annotated, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import database
 from core.models import Admin
@@ -15,29 +15,29 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 
 @router.post("/", response_model=AdminReturn, status_code=status.HTTP_201_CREATED)
-async def create_admin_view(data: AdminCreateForm, session: SessionDep):
+async def create_admin_view(data: AdminCreateForm, session: SessionDep) -> AdminReturn:
     return await create_admin(data=data, session=session)
 
 
 @router.get("/", response_model=list[AdminReturn], status_code=status.HTTP_200_OK)
 async def list_admins(
     session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
-):
+) -> List[AdminReturn]:
     return await CRUD.get(model=Admin, session=session, page=page, limit=limit)
 
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=JWToken)
-async def jwt_auth_admin(token: JWToken = Depends(auth_utils.jwt_auth_admin)):
+async def jwt_auth_admin(token: JWToken = Depends(auth_utils.jwt_auth_admin)) -> JWToken:
     return token
 
 
 @router.get("/me", status_code=status.HTTP_200_OK)
-async def me(admin: AdminDep):
+async def me(admin: AdminDep) -> AdminReturn:
     return admin
 
 
 @router.get("/{id}", response_model=AdminReturn, status_code=status.HTTP_200_OK)
-async def get_admin(id: int, session: SessionDep, admin: AdminDep):
+async def get_admin(id: int, session: SessionDep, admin: AdminDep) -> AdminReturn:
     return await CRUD.get(model=Admin, session=session, id=id)
 
 

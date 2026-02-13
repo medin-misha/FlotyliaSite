@@ -21,7 +21,7 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDep):
+async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDep) -> UserReturn:
     return await CRUD.create(data=user, model=User, session=session)
 
 
@@ -33,7 +33,7 @@ async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDe
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_users_view(
     session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = ""
-):
+) -> list[UserReturn]:
     return await all_str_field_search(model=User, session=session, page=page, limit=limit, query=search)
 
 @router.get("/export", status_code=status.HTTP_200_OK)

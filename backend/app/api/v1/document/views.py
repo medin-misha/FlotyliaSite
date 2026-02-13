@@ -16,7 +16,7 @@ sessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 adminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_document_view(document: DocumentCreate, session: sessionDep):
+async def create_document_view(document: DocumentCreate, session: sessionDep) -> DocumentReturn:
     return await CRUD.create(data=document, model=Document, session=session)
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)

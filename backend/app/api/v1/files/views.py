@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, UploadFile, File, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
@@ -19,7 +20,7 @@ SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 async def upload_file_view(
     session: SessionDep,
     file: UploadFile = File(...),
-):
+) -> FileReturn:
     """
     Загрузка файла в S3 и сохранение ссылки в БД.
     """
@@ -30,5 +31,5 @@ async def upload_file_view(
 async def get_file_view(
     session: SessionDep,
     file_id: int,
-):
+) -> StreamingResponse:
     return await get_file_by_id(session=session, file_id=file_id)

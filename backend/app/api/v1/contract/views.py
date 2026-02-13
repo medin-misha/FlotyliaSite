@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, status
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +21,7 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 @router.post("/", response_model=ContractReturn, status_code=status.HTTP_201_CREATED)
 async def create_contract_view(
     data: ContractCreate, session: SessionDep, admin: AdminDep
-):
+) -> ContractReturn:
     return await create_contract(session=session, contract=data)
 
 
@@ -32,7 +33,7 @@ async def create_contract_view(
 @router.get("/", response_model=list[ContractReturn], status_code=status.HTTP_200_OK)
 async def list_contracts(
     session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
-):
+) -> List[ContractReturn]:
     return await CRUD.get(model=Contract, session=session, page=page, limit=limit)
 
 
@@ -42,14 +43,14 @@ async def list_contracts(
 #     namespace=settings.cache_config.namespaces.contracts,
 # )
 @router.get("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
-async def get_contract(id: int, session: SessionDep, admin: AdminDep):
+async def get_contract(id: int, session: SessionDep, admin: AdminDep) -> ContractReturn:
     return await CRUD.get(model=Contract, session=session, id=id)
 
 
 @router.patch("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
 async def update_contract(
     id: int, data: ContractCreate, session: SessionDep, admin: AdminDep
-):
+) -> ContractReturn:
     return await CRUD.patch(new_data=data, model=Contract, session=session, id=id)
 
 
