@@ -4,29 +4,25 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     expose:
-      - "8000"   # host:container
+      - "8000" # host:container
     networks:
       - webnet
-  redis:
-    image: redis:8-alpine
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_db
     ports:
-      - "6379:6379"
-    networks:
-      - webnet
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
+      - "5432:5432"
     volumes:
-      - ./nginx:/etc/nginx/conf.d # конфигурация nginx находиться в ./nginx
-      - ./certsbot:/var/www/certsbot
-      - ./certs:/etc/nginx/certs # сертификаты находяться в ./certs
-    depends_on:
-      - web
-    restart: always
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - webnet
+    restart: always
+
+volumes:
+  postgres_data:
 
 networks:
   webnet:
