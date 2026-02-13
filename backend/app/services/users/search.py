@@ -45,7 +45,6 @@ async def all_str_field_search(
         field_conditions = [col.ilike(word_pattern) for col in searchable_columns]
         word_conditions.append(or_(*field_conditions))
 
-    stmt = select(model).where(and_(*word_conditions)).limit(limit).offset(offset)
+    stmt = select(model).where(and_(*word_conditions)).limit(limit).offset(offset).order_by(model.id.desc())
     result: Result = await session.execute(stmt)
     return result.scalars().all()
-    
