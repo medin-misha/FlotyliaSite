@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from core.models.user import UserStatus
+from contracts.document import DocumentReturn
+
 
 class UserBase(BaseModel):
     name: str
@@ -62,7 +64,7 @@ class UserUpdate(BaseModel):
 
 class UserReturn(UserBase):
     id: int
-    documents: list
+    documents: list[DocumentReturn]
 
     class Config:
         from_attributes = True
