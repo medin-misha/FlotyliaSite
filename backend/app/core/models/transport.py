@@ -8,6 +8,6 @@ class Transport(Base):
    model: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
    color: Mapped[str] = mapped_column(String(20), nullable=True)
    number: Mapped[str] = mapped_column(String(20), nullable=True)
-   
+   message: Mapped[str] = mapped_column(String(1000), nullable=True)
    
    

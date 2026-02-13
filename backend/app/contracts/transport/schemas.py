@@ -7,6 +7,7 @@ class TransportBase(BaseModel):
     model: str
     color: Optional[str] = None
     number: Optional[str] = None
+    message: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -23,6 +24,7 @@ class TransportUpdate(BaseModel):
     model: Optional[str] = None
     color: Optional[str] = None
     number: Optional[str] = None
+    message: Optional[str] = None
 
     class Config:
         from_attributes = True
