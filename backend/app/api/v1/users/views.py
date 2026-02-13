@@ -25,26 +25,18 @@ async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDe
     return await CRUD.create(data=user, model=User, session=session)
 
 
-# @cache(
-#     expire=60,
-#     # key_builder=cache_key_builder,
-#     # namespace=settings.cache_config.namespaces.users,
-# )
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_users_view(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = ""
-) -> list[UserReturn]:
-    return await all_str_field_search(model=User, session=session, page=page, limit=limit, query=search)
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str | None = None
+) -> list[UserReturn] | None:
+    # return await all_str_field_search(model=User, session=session, page=page, limit=limit, query=search)
+    return await CRUD.get(model=User, session=session, page=page, limit=limit, search=search)
 
 @router.get("/export", status_code=status.HTTP_200_OK)
 async def export_users_view(session: SessionDep) -> StreamingResponse:
     return await export_to_exel(session=session)
 
-# @cache(
-#     expire=60,
-#     key_builder=cache_key_builder,
-#     namespace=settings.cache_config.namespaces.users,
-# )
+
 @router.get("/{id}", status_code=status.HTTP_200_OK)
 async def get_user_view(session: SessionDep, id: int, admin: AdminDep) -> UserReturn:
     return await CRUD.get(model=User, session=session, id=id)

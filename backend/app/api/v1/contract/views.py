@@ -25,23 +25,13 @@ async def create_contract_view(
     return await create_contract(session=session, contract=data)
 
 
-# @cache(
-#     expire=60,
-#     key_builder=cache_key_builder,
-#     namespace=settings.cache_config.namespaces.contracts,
-# )
 @router.get("/", response_model=list[ContractReturn], status_code=status.HTTP_200_OK)
 async def list_contracts(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = None
 ) -> List[ContractReturn]:
-    return await CRUD.get(model=Contract, session=session, page=page, limit=limit)
+    return await CRUD.get(model=Contract, session=session, page=page, limit=limit, search=search)
 
 
-# @cache(
-#     expire=60,
-#     key_builder=cache_key_builder,
-#     namespace=settings.cache_config.namespaces.contracts,
-# )
 @router.get("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
 async def get_contract(id: int, session: SessionDep, admin: AdminDep) -> ContractReturn:
     return await CRUD.get(model=Contract, session=session, id=id)
