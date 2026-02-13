@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 class UserStatus:
     PENDING = "pending"
     ACTIVE = "active"
-    INACTIVE = "inactive"
+    INACTIVE = "inoperative"
 
 
 class User(Base):
