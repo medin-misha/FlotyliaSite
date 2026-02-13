@@ -1,7 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, Result
+from sqlalchemy import insert, select, Result, String, or_, and_
+from sqlalchemy.inspection import inspect
+from sqlalchemy.orm.mapper import Mapper
 from sqlalchemy.exc import IntegrityError, DataError, OperationalError
 from pydantic import BaseModel
 
@@ -57,6 +59,8 @@ class CRUD:
         id: int | None = None,
         page: int = 1,
         limit: int = 10,
+        search: str | None = None,
+        fields: list[str] | None = None,
     ) -> Union[ModelT, list[ModelT]]:
         """
         💡 Универсальный метод чтения данных из базы.
@@ -70,6 +74,8 @@ class CRUD:
             id: идентификатор записи (опционально)
             page: страница (опционально)
             limit: лимит (опционально)
+            search: поисковый запрос (опционально)
+            fields: поля для поиска (опционально)
 
         Returns:
             Один объект модели или список всех объектов.
@@ -82,6 +88,23 @@ class CRUD:
             stmt = select(model)
             if id is not None:
                 stmt = stmt.where(model.id == id)
+            elif search:
+                if fields:
+                    # TODO сделать фильтрацию по конкретным полям
+                    stmt = stmt.where(or_(*[getattr(model, field).ilike(f"%{search}%") for field in fields]))
+                else:
+                    mapper: Mapper = inspect(model)
+                    words = search.strip().split()
+                    columns = []
+                    word_conditions = []
+                    for column in mapper.columns:
+                        if isinstance(column.type, String):
+                            columns.append(column)
+                    for word in words:
+                        word_pattern = f"%{word}%"
+                        field_conditions = [col.ilike(word_pattern) for col in columns]
+                        word_conditions.append(or_(*field_conditions))
+                    stmt = stmt.where(and_(*word_conditions))
 
             result: Result = await session.execute(stmt)
             data = result.scalars().all()[(page - 1) * limit : page * limit]
@@ -92,7 +115,6 @@ class CRUD:
                         detail=f"{model.__name__} with id={id} not found.",
                     )
                 return data[0]
-
             return data
         except HTTPException:
             raise
