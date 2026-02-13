@@ -27,10 +27,9 @@ async def create_user_view(user: UserCreate, session: SessionDep, admin: AdminDe
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_users_view(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str | None = None
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str | None = None, field: str | None = None
 ) -> list[UserReturn] | None:
-    # return await all_str_field_search(model=User, session=session, page=page, limit=limit, query=search)
-    return await CRUD.get(model=User, session=session, page=page, limit=limit, search=search)
+    return await CRUD.get(model=User, session=session, page=page, limit=limit, search=search, field=field)
 
 @router.get("/export", status_code=status.HTTP_200_OK)
 async def export_users_view(session: SessionDep) -> StreamingResponse:

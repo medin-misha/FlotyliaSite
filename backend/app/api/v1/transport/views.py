@@ -24,9 +24,9 @@ async def create_transport(data: TransportCreate, session: SessionDep, admin: Ad
 
 @router.get("/", response_model=list[TransportReturn], status_code=status.HTTP_200_OK)
 async def list_transports(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = None
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str | None = None, field: str | None = None
 ) -> List[TransportReturn]:
-    return await CRUD.get(model=Transport, session=session, page=page, limit=limit, search=search)
+    return await CRUD.get(model=Transport, session=session, page=page, limit=limit, search=search, field=field)
 
 
 

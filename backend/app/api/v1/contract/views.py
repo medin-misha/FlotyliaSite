@@ -27,9 +27,9 @@ async def create_contract_view(
 
 @router.get("/", response_model=list[ContractReturn], status_code=status.HTTP_200_OK)
 async def list_contracts(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = None
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str | None = None, field: str | None = None
 ) -> List[ContractReturn]:
-    return await CRUD.get(model=Contract, session=session, page=page, limit=limit, search=search)
+    return await CRUD.get(model=Contract, session=session, page=page, limit=limit, search=search, field=field)
 
 
 @router.get("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)

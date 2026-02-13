@@ -21,9 +21,9 @@ async def create_admin_view(data: AdminCreateForm, session: SessionDep) -> Admin
 
 @router.get("/", response_model=list[AdminReturn], status_code=status.HTTP_200_OK)
 async def list_admins(
-    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str = None
+    session: SessionDep, admin: AdminDep, page: int = 1, limit: int = 10, search: str | None = None, field: str | None = None
 ) -> List[AdminReturn]:
-    return await CRUD.get(model=Admin, session=session, page=page, limit=limit, search=search)
+    return await CRUD.get(model=Admin, session=session, page=page, limit=limit, search=search, field=field)
 
 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=JWToken)

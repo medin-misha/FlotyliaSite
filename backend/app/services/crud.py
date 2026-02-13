@@ -1,11 +1,12 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, Result, String, or_, and_
+from sqlalchemy import insert, select, Result, String, or_, and_, Boolean, Integer, DateTime, Date, Float
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.mapper import Mapper
 from sqlalchemy.exc import IntegrityError, DataError, OperationalError
 from pydantic import BaseModel
+from datetime import datetime
 
 from typing import TypeVar, Type, Union
 import logging
@@ -48,6 +49,7 @@ class CRUD:
         except HTTPException:
             raise
         except Exception as err:
+            await session.rollback()
             DBErrorHandler.handle(err=err, model=model)
         else:
             return instance
@@ -60,7 +62,7 @@ class CRUD:
         page: int = 1,
         limit: int = 10,
         search: str | None = None,
-        fields: list[str] | None = None,
+        field: str | None = None,
     ) -> Union[ModelT, list[ModelT]]:
         """
         💡 Универсальный метод чтения данных из базы.
@@ -84,20 +86,27 @@ class CRUD:
             HTTPException(404): если запись по id не найдена.
             HTTPException(400/503/500): если произошла SQL-ошибка (через DBErrorHandler).
         """
+        if page < 1:
+            page = 1
+        if limit < 1:
+            limit = 10
         try:
             stmt = select(model)
+            mapper: Mapper = inspect(model)
+            model_columns = {column.name: column for column in mapper.columns}
             if id is not None:
                 stmt = stmt.where(model.id == id)
             elif search:
-                if fields:
-                    # TODO сделать фильтрацию по конкретным полям
-                    stmt = stmt.where(or_(*[getattr(model, field).ilike(f"%{search}%") for field in fields]))
+                if field is not None:
+                    if field not in model_columns.keys():
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Field '{field}' not found in {model.__name__}")
+                    model_field = getattr(model, field)
+                    stmt = stmt.where(model_field == CRUD.parse_value(mapper.columns[field], search))
                 else:
-                    mapper: Mapper = inspect(model)
                     words = search.strip().split()
                     columns = []
                     word_conditions = []
-                    for column in mapper.columns:
+                    for column in model_columns.values():
                         if isinstance(column.type, String):
                             columns.append(column)
                     for word in words:
@@ -105,9 +114,9 @@ class CRUD:
                         field_conditions = [col.ilike(word_pattern) for col in columns]
                         word_conditions.append(or_(*field_conditions))
                     stmt = stmt.where(and_(*word_conditions))
-
+            stmt = stmt.limit(limit).offset((page - 1) * limit)
             result: Result = await session.execute(stmt)
-            data = result.scalars().all()[(page - 1) * limit : page * limit]
+            data = result.scalars().all()
             if id is not None:
                 if not data:
                     raise HTTPException(
@@ -169,7 +178,6 @@ class CRUD:
             for field, value in update_data.items():
                 setattr(instance, field, value)
 
-            session.add(instance)
             await session.commit()
             await session.refresh(instance)
 
@@ -220,3 +228,56 @@ class CRUD:
         except Exception as err:
             await session.rollback()
             DBErrorHandler.handle(err=err, model=model, action="deleting")
+    
+    @staticmethod
+    def parse_value(column, raw_value: str):
+        column_type = column.type
+        boolean_map = {
+                    "true": True,
+                    "false": False,
+                    "1": True,
+                    "0": False,
+                    "yes": True,
+                    "no": False,
+                }
+        try:
+            # STRING
+            if isinstance(column_type, String):
+                return raw_value
+
+            # INTEGER
+            elif isinstance(column_type, Integer):
+                return int(raw_value)
+
+            # FLOAT
+            elif isinstance(column_type, Float):
+                return float(raw_value)
+
+            # BOOLEAN
+            elif isinstance(column_type, Boolean):
+
+                value = raw_value.lower()
+                if value not in boolean_map:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Invalid value '{raw_value}' for field '{column.name}'"
+                    )
+
+                return boolean_map[value]
+
+            # DATE
+            elif isinstance(column_type, Date):
+                return datetime.strptime(raw_value, "%Y-%m-%d").date()
+
+            # DATETIME
+            elif isinstance(column_type, DateTime):
+                return datetime.fromisoformat(raw_value)
+
+            # fallback
+            return raw_value
+
+        except Exception:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid value '{raw_value}' for field '{column.name}'"
+            )
