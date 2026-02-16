@@ -18,7 +18,6 @@ class User(Base):
     address: Mapped[str] = mapped_column(String(528), nullable=True)
     stay_type: Mapped[str] = mapped_column(String(50), nullable=True)
     work_in: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-    visa_file: Mapped[int] = mapped_column(ForeignKey("file.id"), nullable=True)
 
     invoice: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=UserStatus.PENDING)
