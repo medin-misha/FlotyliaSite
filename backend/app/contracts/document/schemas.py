@@ -1,4 +1,5 @@
 from pydantic import BaseModel, PositiveInt
+from typing import Optional
 
 class DocumentBase(BaseModel):
     description: str
@@ -16,3 +17,11 @@ class DocumentReturn(DocumentBase):
 
 class DocumentCreate(DocumentBase): 
     pass
+
+class DocumentUpdate(BaseModel):
+    description: Optional[str] = None
+    file_id: Optional[PositiveInt] = None
+    user_id: Optional[PositiveInt] = None
+
+    class Config:
+        from_attributes = True

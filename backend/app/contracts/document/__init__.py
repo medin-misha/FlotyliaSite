@@ -1,3 +1,3 @@
-__all__ = ["DocumentCreate", "DocumentReturn"]
+__all__ = ["DocumentCreate", "DocumentReturn", "DocumentUpdate"]
 
-from .schemas import DocumentCreate, DocumentReturn
+from .schemas import DocumentCreate, DocumentReturn, DocumentUpdate
