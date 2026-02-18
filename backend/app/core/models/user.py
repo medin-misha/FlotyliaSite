@@ -14,6 +14,7 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
     
     telegram: Mapped[str] = mapped_column(String(255), nullable=True)
+    whatsapp: Mapped[str] = mapped_column(String(15), nullable=True)
     city: Mapped[str] = mapped_column(String(255), nullable=True)
     address: Mapped[str] = mapped_column(String(528), nullable=True)
     stay_type: Mapped[str] = mapped_column(String(50), nullable=True)
