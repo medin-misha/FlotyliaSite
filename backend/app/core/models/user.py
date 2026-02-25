@@ -12,6 +12,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     phone: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
+    how_found_it: Mapped[str] = mapped_column(String(255), nullable=True)
     
     telegram: Mapped[str] = mapped_column(String(255), nullable=True)
     whatsapp: Mapped[str] = mapped_column(String(15), nullable=True)
