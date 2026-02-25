@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator, Field
 from typing import Optional
+from datetime import date
 from core.models.user import UserStatus
 from contracts.document import DocumentReturn
 
@@ -18,6 +19,8 @@ class UserBase(BaseModel):
     phone: str = string_15_required
     work_in: str = string_50_required
     how_found_it: Optional[str] = string_255_optional
+    desired_transport: Optional[str] = string_255_optional
+    birth_date: Optional[date] = None
     invoice: Optional[str] = string_255_optional
     status: Optional[str] = Field(default=UserStatus.PENDING, max_length=20)
     telegram: Optional[str] = string_255_optional
@@ -55,6 +58,8 @@ class UserUpdate(UserBase):
     phone: Optional[str] = string_15_optional
     work_in: Optional[str] = string_50_optional
     how_found_it: Optional[str] = string_255_optional
+    desired_transport: Optional[str] = string_255_optional
+    birth_date: Optional[date] = None
     invoice: Optional[str] = string_255_optional
     status: Optional[str] = Field(default=None, max_length=20)
     telegram: Optional[str] = string_255_optional

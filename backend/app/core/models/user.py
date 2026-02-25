@@ -1,5 +1,6 @@
 from .base import Base
-from sqlalchemy import String, ForeignKey
+from datetime import date
+from sqlalchemy import String, ForeignKey, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class UserStatus:
@@ -13,6 +14,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     phone: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
     how_found_it: Mapped[str] = mapped_column(String(255), nullable=True)
+    desired_transport: Mapped[str] = mapped_column(String(255), nullable=True)
+    birth_date: Mapped[date] = mapped_column(Date, nullable=True)
     
     telegram: Mapped[str] = mapped_column(String(255), nullable=True)
     whatsapp: Mapped[str] = mapped_column(String(15), nullable=True)
