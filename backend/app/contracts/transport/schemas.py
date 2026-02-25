@@ -8,6 +8,7 @@ class TransportBase(BaseModel):
     color: Optional[str] = None
     number: Optional[str] = None
     message: Optional[str] = None
+    rental_price: Optional[int] = 1750
 
     class Config:
         from_attributes = True
@@ -25,6 +26,7 @@ class TransportUpdate(BaseModel):
     color: Optional[str] = None
     number: Optional[str] = None
     message: Optional[str] = None
+    rental_price: Optional[int] = None
 
     class Config:
         from_attributes = True

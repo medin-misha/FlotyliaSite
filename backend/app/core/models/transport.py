@@ -1,4 +1,4 @@
-from sqlalchemy import String, DateTime
+from sqlalchemy import String, DateTime, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from .base import Base
 
@@ -9,5 +9,5 @@ class Transport(Base):
    color: Mapped[str] = mapped_column(String(20), nullable=True)
    number: Mapped[str] = mapped_column(String(20), nullable=True)
    message: Mapped[str] = mapped_column(String(1000), nullable=True)
-   
+   rental_price: Mapped[int] = mapped_column(Integer, default=1750, nullable=True)
    
