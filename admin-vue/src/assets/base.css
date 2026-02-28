@@ -1,0 +1,11 @@
+:root {
+  --button-bg: #7867fa;
+  --button-text-color: #fff;
+  --button-hover-bg: #6782fa;
+  /* sidebar */
+  --slidebar-bg: #1d1d1d;
+  --slidebar-item-hover-bg: #282727;
+  --slidebar-item-active-bg: #7867fa75;
+  /* header */
+  --header-bg: #1d1d1d;
+}

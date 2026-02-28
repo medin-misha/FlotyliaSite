@@ -1,0 +1,204 @@
+{
+    "buttons": {
+        "connect-button": "Join us"
+        
+    },
+    "nav-bar": {
+        "about": "About us",
+        "contacts": "Contacts",
+        "work-with-us": "Jobs with us",
+        "transport": "Transport rental"
+    },
+    "main-header": "Join MFS — the most reliable and loyal fleet for food delivery couriers in the Czech Republic!",
+    "main-subheader": "Register in just 5 minutes and start delivering.",
+    "transport-subheader": "Types of transport:",
+    "transport": {
+        "bike": {
+            "title": "Bike",
+            "price": "500 CZK / week",
+            "service": "Service, repairs, and maintenance included",
+            "included": "Includes: lights, phone holder, lock"
+        },
+        "ebike": {
+            "title": "Electric bicycle",
+            "model1": "DUOTTS c29 dual",
+            "model2": "DUOTTS F20",
+            "price1": "1,750 CZK / week",
+            "price2": "2,000 CZK / week",
+            "amenities": "Bigger, faster, more convenient, with a longer range",
+            "price_month1": "Monthly payment — 5,950 CZK (15% discount)",
+            "price_month2": "Monthly payment — 6,800 CZK (15% discount)",
+            "included": "Includes: phone holder, lock, alarm, two batteries",
+            "service": "Full service and repairs included"
+        },
+        "escooter": {
+            "title": "Electric scooter",
+            "price": "990 CZK / week",
+            "service": "Full service and repairs included",
+            "included": "Includes: phone holder, lock, alarm"
+            
+        },
+        "scooter": {
+            "title": "Motor scooter",
+            "price": "1,850 CZK / week",
+            "deposit": "Deposit — 2,000 CZK",
+            "service": "Service and maintenance included"
+        },
+        "car": {
+            "title": "Car",
+            "categories": "3 categories:",
+            "price": "1,500 / 2,000 / 2,500 CZK / week",
+            "deposit": "Deposit — 3,000 CZK",
+            "discount": "Monthly payment — (20% discount)"
+        }
+    },
+    "how-to-start": {
+        "title": "How to start?",
+        "button": "Apply now",
+        "steps": [
+            "Apply ",
+            "now",
+            "Pick up the vehicle and the delivery box",
+            "You go online and start earning!"
+        ]
+    },
+    "why-us": {
+        "title": "Why should you choose us?",
+        "support-link-aria": "Write to MFS support in Telegram",
+        "item1": {
+            "title": "1. Salary 4 times a month",
+            "line1": "Get your money often and without delays!",
+            "line2": "Forget about “waiting until the end of the month.”",
+            "line3": "We pay you every week – reliably, on time, by Wednesday at the latest!"
+        },
+        "item2": {
+            "title": "2. We handle all the paperwork:",
+            "line1": "including your registration, documents, and formalities – everything is done quickly and without your involvement.",
+            "line2": "You just hop on the car / bike / scooter and start earning!"
+        },
+        "item3": {
+            "title": "3. Electric transport without deposits or hidden fees,",
+            "line1": "including equipment and service fully covered in the rental price",
+            "line2": "Take it and go — no deposits, no headaches!"
+        }
+    },
+    "transport-section": {
+        "title": "Transport",
+        "alts": {
+            "car": "Car",
+            "bike2": "Electric bicycle",
+            "scooter": "Electric scooter",
+            "bike": "Bicycle",
+            "motorcycle": "Motor scooter"
+        }
+    },
+    "no-transport": {
+        "title": "No transport?",
+        "text1": "No problem! We offer fully serviced transport for working on Bolt Food and Foodora.",
+        "text2-title": "Everything is included in the price:",
+        "text2-list": [
+            "Full equipment (phone holder, lights, lock)",
+            "Service and repairs",
+            "Insurance",
+            "Electric transport without deposits or hidden fees!"
+        ]
+    },
+    "contacts": {
+        "title": "Contacts:",
+        "text1-line1": "Contact us!",
+        "text1-line2": "We will be happy to answer all your questions!",
+        "text2": "Recruitment and support for couriers 24/7"
+    },
+    "form": {
+        "header": "Registration form with",
+        "logo-alt": "Platform logo",
+        "section1": {
+            "title": "General information about you"
+        },
+        "section2": {
+            "title": "Documents"
+        },
+        "fields": {
+            "name": "Full name (Latin letters)",
+            "phone": "Czech phone number",
+            "email": "Email address",
+            "city": "City",
+            "birth_date": "Date of birth",
+            "address": "Residence address in the Czech Republic",
+            "desired_transport": "What type of transport would you like to work with?",
+            "how_found_it": "How did you hear about us?",
+            "invoice": "Enter your Czech bank account number",
+            "stay_type": "What type of stay in the Czech Republic do you have?"
+        },
+        "placeholders": {
+            "phone": "+420",
+            "transport": "bicycle, scooter, e-scooter, car",
+            "invoice": "1234567890/1234"
+        },
+        "platform": {
+            "label": "Select a platform to contact:"
+        },
+        "documents": {
+            "upload": "Upload",
+            "passport": "Passport + visa photo or scan",
+            "or": "OR",
+            "residence_permit": "Residence permit photo or scan (both sides)"
+        },
+        "submit": "Complete registration",
+        "consent": {
+            "label": "I consent to the processing of my personal data"
+        },
+        "alert": {
+            "consent": "Please consent to the processing of personal data."
+        }
+    },
+    "success": {
+        "title": "Thank you, you have successfully completed your registration in our fleet!",
+        "step": {
+            "label": "Next step :",
+            "description": "Please review the training materials in presentation format. If you have any further questions, don't hesitate to contact us – we'll be happy to help!",
+            "subtitle": "If you have any additional questions, do not hesitate to contact us - we will be happy to help!"
+        },
+        "cta": "View training materials",
+        "instructions": {
+            "heading": "Next, follow these steps:",
+            "bolt": [
+                "Download the Bolt Food Courier app and log in using your phone number."
+            ],
+            "foodora": [
+                "Download the Foodora Rider app.",
+                "Use your email and password to log in: Foodora321!!"
+            ]
+        },
+        "password-note": "Please do not change the password so that we can log in to the account and help you promptly in case of any difficulties during work.",
+        "store-note": "If the app is not displayed in the App Store or Play Market, change the store region to the Czech Republic."
+    },
+    "select-platform-title": "Select a platform",
+    "bolt-select": {
+        "button": "Continue with Bolt",
+        "platform-features": [
+            "· Flexible schedule",
+            "· Weekly payouts",
+            "· Income depends on orders",
+            "· Own or rental transport"
+        ],
+        "platform-details": [
+            "· Fleet commission 10%",
+            "· Available throughout the Czech Republic"
+        ],
+        "indent": "Maximum commission 1000 CZK per week"
+    },
+    "foodora-select": {
+        "button": "Continue with Foodora",
+        "platform-features": [
+            "· Schedule booking for the week ahead",
+            "· Short and long shifts",
+            "· Weekly payouts",
+            "· Own or rental transport"
+        ],
+        "platform-details": [
+            "· Fleet commission 15%",
+            "· Available only in Prague"
+        ]
+    }
+}

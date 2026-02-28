@@ -1,0 +1,204 @@
+{
+    "buttons": {
+        "connect-button": "Připojit se"
+    },
+    "nav-bar": {
+        "about": "O nás",
+        "contacts": "Kontakty",
+        "work-with-us": "Práce u nás",
+        "transport": "Pronájem dopravy"
+    },
+    "main-header": "Přidej se k MFS — nejspolehlivější a nejvstřícnější flotile pro kurýry doručující jídlo v Česku!",
+    "main-subheader": "Zaregistruj se za 5 minut a začni doručovat",
+    "transport-subheader": "Druhy dopravy:",
+    "transport": {
+        "bike": {
+            "title": "Kolo",
+            "price": "500 Kč / týden",
+            "service": "Servis, opravy a údržba v ceně",
+            "included": "Součástí: světla, držák na telefon, zámek"
+        },
+        "ebike": {
+            "title": "Elektrokolo",
+            "model1": "DUOTTS c29 dual",
+            "model2": "DUOTTS F20",
+            "price": "1750 Kč / týden",
+            "price1": "1750 Kč / týden",
+            "price2": "2000 Kč / týden",
+            "amenities": "Více, rychleji, pohodlněji, s větším dojezdem",
+            "price_month": "Při platbě na měsíc — 5950 Kč (sleva 15 %)",
+            "price_month1": "Při platbě na měsíc — 5950 Kč (sleva 15 %)",
+            "price_month2": "Při platbě na měsíc — 6800 Kč (sleva 15 %)",
+            "included": "Součástí: držák na telefon, zámek, alarm, dvě baterie",
+            "service": "Plný servis a opravy v ceně"
+        },
+        "escooter": {
+            "title": "Elektrokoloběžka",
+            "price": "990 Kč / týden",
+            "service": "Plný servis a opravy v ceně",
+            "included": "Součástí: držák na telefon, zámek, alarm"
+        },
+        "scooter": {
+            "title": "Skútr",
+            "price": "1850 Kč / týden",
+            "deposit": "Kauce — 2000 Kč",
+            "service": "Servis a údržba v ceně"
+        },
+        "car": {
+            "title": "Automobil",
+            "categories": "3 kategorie:",
+            "price": "1500 / 2000 / 2500 Kč / týden",
+            "deposit": "Kauce — 3000 Kč",
+            "discount": "Při platbě na měsíc — (sleva 20 %)"
+        }
+    },
+    "how-to-start": {
+        "title": "Jak začít?",
+        "button": "Odeslat žádost",
+        "steps": [
+            "Zanecháš ",
+            "žádost",
+            "Vybereš dopravu a termo box",
+            "Vyrážíš na trasu a vyděláváš!"
+        ]
+    },
+    "why-us": {
+        "title": "Proč právě my?",
+        "support-link-aria": "Napsat podpoře MFS v Telegramu",
+        "item1": {
+            "title": "1. Výplata 4× měsíčně",
+            "line1": "Peníze chodí často a bez zpoždění!",
+            "line2": "Zapomeň na čekání na konec měsíce.",
+            "line3": "Platíme ti každý týden — stabilně, přesně, nejpozději do středy!"
+        },
+        "item2": {
+            "title": "2. Veškerou byrokracii bereme na sebe:",
+            "line1": "Registraci, dokumenty, vyřízení — vše uděláme rychle a bez tvé účasti.",
+            "line2": "Ty jen sedneš za volant / na kolo / na koloběžku a začneš vydělávat!"
+        },
+        "item3": {
+            "title": "3. Elektrická doprava bez záloh a skrytých poplatků,",
+            "line1": "s vybavením a servisem plně zahrnutým v ceně pronájmu.",
+            "line2": "Vezmi a jeď — bez kaucí a bez starostí!"
+        }
+    },
+    "transport-section": {
+        "title": "Doprava",
+        "alts": {
+            "car": "Automobil",
+            "bike2": "Elektrokolo",
+            "scooter": "Elektrokoloběžka",
+            "bike": "Kolo",
+            "motorcycle": "Skútr"
+        }
+    },
+    "no-transport": {
+        "title": "Nemáš vlastní dopravu?",
+        "text1": "Nevadí, máme k pronájmu plně servisovanou techniku pro práci na platformách Bolt Food a Foodora.",
+        "text2-title": "Vše je zahrnuto v ceně:",
+        "text2-list": [
+            "Kompletní vybavení (držák na telefon, světla, zámek).",
+            "Servis a opravy.",
+            "Pojištění.",
+            "Elektromobilita bez záloh a skrytých poplatků!"
+        ]
+    },
+    "contacts": {
+        "title": "Kontakty:",
+        "text1-line1": "Kontaktuj nás!",
+        "text1-line2": "Rádi odpovíme na všechny tvé dotazy!",
+        "text2": "Nábor a podpora kurýrů 24/7"
+    },
+    "form": {
+        "header": "Registrační formulář s",
+        "logo-alt": "Logo platformy",
+        "section1": {
+            "title": "Obecné informace o vás"
+        },
+        "section2": {
+            "title": "Dokumenty"
+        },
+        "fields": {
+            "name": "Příjmení a jméno (latinkou)",
+            "phone": "České telefonní číslo",
+            "email": "E-mail",
+            "city": "Město",
+            "birth_date": "Datum narození",
+            "address": "Adresa bydliště v ČR",
+            "desired_transport": "Na jaké dopravě byste chtěl/a pracovat?",
+            "how_found_it": "Odkud jste se o nás dozvěděl/a?",
+            "invoice": "Uveďte číslo účtu české banky",
+            "stay_type": "Uveďte váš typ pobytu v ČR"
+        },
+        "placeholders": {
+            "phone": "+420",
+            "transport": "kolo, koloběžka, skútr, auto",
+            "invoice": "1234567890/1234"
+        },
+        "platform": {
+            "label": "Vyberte platformu pro kontakt:"
+        },
+        "documents": {
+            "upload": "Nahrát",
+            "passport": "Foto nebo sken pasu + víza",
+            "or": "NEBO",
+            "residence_permit": "Foto nebo sken povolení k pobytu (z obou stran)"
+        },
+        "submit": "Dokončit registraci",
+        "consent": {
+            "label": "Souhlasím se zpracováním svých osobních údajů"
+        },
+        "alert": {
+            "consent": "Prosím udělte souhlas se zpracováním osobních údajů."
+        }
+    },
+    "success": {
+        "title": "Děkujeme, úspěšně jste dokončili registraci v naší flotile!",
+        "step": {
+            "label": "Další krok :",
+            "description": "prosíme seznamte se s výukovými materiály ve formě prezentací.",
+            "subtitle": "Pokud budete mít další otázky, neváhejte se ozvat – rádi pomůžeme!"
+        },
+        "cta": "Zobrazit výukové materiály",
+        "instructions": {
+            "heading": "Dále proveďte následující kroky:",
+            "bolt": [
+                "Stáhněte si aplikaci Bolt Food Courier a přihlaste se pomocí svého telefonního čísla."
+            ],
+            "foodora": [
+                "Stáhněte si aplikaci Foodora Rider.",
+                "Pro přihlášení použijte váš e-mail a heslo: Foodora321!!"
+            ]
+        },
+        "password-note": "Prosíme, neměňte heslo, abychom vám v případě potíží mohli vstoupit do účtu a rychle pomoci.",
+        "store-note": "Pokud se aplikace nezobrazuje v App Store nebo Play Marketu, změňte region obchodu na Česko."
+    },
+    "select-platform-title": "Vyberte platformu",
+    "bolt-select": {
+        "button": "Pokračovat s Bolt",
+        "platform-features": [
+            "· Volný rozvrh",
+            "· Výplaty jednou týdně",
+            "· Příjem závisí na objednávkách",
+            "· Vlastní nebo pronajatá doprava"
+        ],
+        "platform-details": [
+            "· Provize flotily 10%",
+            "· Dostupné po celé ČR"
+        ],
+        "indent": "Maximální provize 1000 Kč týdně"
+    },
+    "foodora-select": {
+        "button": "Pokračovat s Foodora",
+        "platform-features": [
+            "· Rezervace směn týden dopředu",
+            "· Krátké i dlouhé směny",
+            "· Výplaty jednou týdně",
+            "· Vlastní nebo pronajatá doprava"
+        ],
+        "platform-details": [
+            "· Provize flotily 15%",
+            "· Dostupné pouze v Praze"
+        ]
+    }
+}
