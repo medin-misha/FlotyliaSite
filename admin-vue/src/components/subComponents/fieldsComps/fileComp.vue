@@ -1,6 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import APIPosts from '@/api/posts'
+import api from '@/api/api'
 
 const props = defineProps({
   field: Object,
@@ -8,22 +9,69 @@ const props = defineProps({
 
 const value = defineModel('value', { type: [Number, String, Object] })
 
-if (typeof value.value === 'object') {
+if (typeof value.value === 'object' && value.value !== null) {
   value.value = value.value.file_id
-  value['updated'] = value.value.id
 }
 
-const serverUrl = import.meta.env.VITE_API_URL
-const fileUrl = ref(value.value ? `${serverUrl}/files/${value.value}` : '')
-const uploading = ref(false)
 const fileInput = ref(null)
+const uploading = ref(false)
+const previewUrl = ref(null)
+const isImagePreview = ref(false)
 
-watch(value, (v) => {
-  fileUrl.value = v ? `${serverUrl}/files/${v}` : ''
-})
+const revokePreviewUrl = () => {
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+    previewUrl.value = null
+  }
+}
 
-const patch = (fileId) => {
-  console.log('Patch:', fileId)
+const fetchFileBlob = async (fileId) => {
+  return await api.get(`/files/${fileId}`, { responseType: 'blob' })
+}
+
+const loadPreview = async (fileId) => {
+  revokePreviewUrl()
+  isImagePreview.value = false
+
+  if (!fileId) return
+
+  try {
+    const response = await fetchFileBlob(fileId)
+    const mimeType = response.data.type || ''
+    if (!mimeType.startsWith('image/')) return
+
+    previewUrl.value = URL.createObjectURL(response.data)
+    isImagePreview.value = true
+  } catch (error) {
+    console.error('Failed to load preview:', error)
+  }
+}
+
+const openFile = async () => {
+  if (uploading.value || !value.value) return
+
+  const openedWindow = window.open('', '_blank', 'noopener,noreferrer')
+
+  try {
+    const response = await fetchFileBlob(value.value)
+    const blobUrl = URL.createObjectURL(response.data)
+
+    if (openedWindow) {
+      openedWindow.location.href = blobUrl
+    } else {
+      window.open(blobUrl, '_blank', 'noopener,noreferrer')
+    }
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
+  } catch (error) {
+    if (openedWindow) openedWindow.close()
+    console.error('Failed to open file:', error)
+  }
+}
+
+const selectFile = () => {
+  if (uploading.value) return
+  fileInput.value?.click()
 }
 
 const onFileChange = async (event) => {
@@ -36,9 +84,7 @@ const onFileChange = async (event) => {
     const fileId = res.data.id
 
     value.value = fileId
-    patch({ [props.field.key]: fileId })
-
-    fileUrl.value = URL.createObjectURL(file)
+    await loadPreview(fileId)
   } catch (err) {
     console.error('File upload failed', err)
   } finally {
@@ -46,24 +92,37 @@ const onFileChange = async (event) => {
   }
 }
 
-const selectFile = () => {
-  fileInput.value.click()
-}
+watch(
+  () => value.value,
+  async (newFileId) => {
+    await loadPreview(newFileId)
+  },
+  { immediate: true },
+)
+
+onBeforeUnmount(() => {
+  revokePreviewUrl()
+})
 </script>
 
 <template>
   <div class="details-field">
-    <a :href="fileUrl" target="_blank">
+    <button type="button" class="file-link-button" @click="openFile" :disabled="!value">
       <label class="details-input-label"> {{ field.label }}: {{ value || '' }} </label>
-    </a>
+    </button>
 
     <div class="details-file-wrapper" :class="{ uploading }" @click="selectFile">
-      <input ref="fileInput" type="file" class="hidden-input" @change="onFileChange" />
+      <input ref="fileInput" type="file" class="hidden-input" @change="onFileChange" :disabled="uploading" />
 
-      <img v-if="fileUrl" :src="fileUrl" class="details-file-preview" alt="Preview" />
-
+      <img
+        v-if="isImagePreview && previewUrl"
+        :src="previewUrl"
+        class="details-file-preview"
+        alt="Preview"
+      />
+      <span v-else-if="value" class="details-file-placeholder">Открыть файл</span>
       <span v-else class="details-file-placeholder">
-        {{ uploading ? 'Uploading...' : 'Select file' }}
+        {{ uploading ? 'Загрузка...' : 'Выбрать файл' }}
       </span>
     </div>
   </div>
@@ -84,7 +143,6 @@ const selectFile = () => {
   font-weight: bold;
 }
 
-/* Область выбора файла — как input справа */
 .details-file-wrapper {
   width: 30%;
   min-height: 48px;
@@ -108,14 +166,12 @@ const selectFile = () => {
   pointer-events: none;
 }
 
-/* Превью */
 .details-file-preview {
   max-width: 100%;
   max-height: 80px;
   object-fit: contain;
 }
 
-/* Заглушка */
 .details-file-placeholder {
   font-size: 0.9rem;
   font-weight: bold;
@@ -126,11 +182,21 @@ const selectFile = () => {
 .hidden-input {
   display: none;
 }
-a {
-  text-decoration: none;
+
+.file-link-button {
+  background: transparent;
+  border: none;
+  padding: 0;
   color: var(--button-bg);
+  cursor: pointer;
 }
-a:hover {
+
+.file-link-button:hover {
   color: var(--button-hover-bg);
+}
+
+.file-link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>

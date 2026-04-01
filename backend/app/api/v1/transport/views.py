@@ -3,7 +3,7 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Transport
 from core.database import database
-from contracts.transport import TransportCreate, TransportReturn
+from contracts.transport import TransportCreate, TransportReturn, TransportUpdate
 from services.crud import CRUD
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
@@ -37,7 +37,7 @@ async def get_transport(id: int, session: SessionDep, admin: AdminDep) -> Transp
 
 @router.patch("/{id}", response_model=TransportReturn, status_code=status.HTTP_200_OK)
 async def update_transport(
-    id: int, data: TransportCreate, session: SessionDep, admin: AdminDep
+    id: int, data: TransportUpdate, session: SessionDep, admin: AdminDep
 ) -> TransportReturn:
     return await CRUD.patch(new_data=data, model=Transport, session=session, id=id)
 

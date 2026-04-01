@@ -23,14 +23,14 @@ const loadLanguageAsync = (lang) => {
   <header>
     <div>
       <nav>
-        <a href="#about" @click="$router.push('/')">{{ $t("nav-bar.about") }}</a>
-        <a href="#work" @click="$router.push('/')">{{ $t("nav-bar.work-with-us") }}</a>
-        <a href="#transport" @click="$router.push('/')">{{ $t("nav-bar.transport") }}</a>
-        <a href="#footer" @click="$router.push('/')">{{ $t("nav-bar.contacts") }}</a>
+        <a class="app-fade-transition" href="#about" @click="$router.push('/')">{{ $t("nav-bar.about") }}</a>
+        <a class="app-fade-transition" href="#work" @click="$router.push('/')">{{ $t("nav-bar.work-with-us") }}</a>
+        <a class="app-fade-transition" href="#transport" @click="$router.push('/')">{{ $t("nav-bar.transport") }}</a>
+        <a class="app-fade-transition" href="#footer" @click="$router.push('/')">{{ $t("nav-bar.contacts") }}</a>
       </nav>
 
       <div>
-        <button @click="$router.push('/select-platform')">{{ $t("buttons.connect-button") }}</button>
+        <button class="app-pill-button app-fade-transition app-alt-button-text" @click="$router.push('/select-platform')">{{ $t("buttons.connect-button") }}</button>
         <img src="/MiniLogo.svg" alt="MFS Logo" />
       </div>
       <select v-model="selectedLang" @change="loadLanguageAsync(selectedLang)" >
@@ -72,7 +72,6 @@ nav {
 }
 
 nav a {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 17px;
   line-height: 100%;
@@ -80,7 +79,6 @@ nav a {
   color: var(--brand-text-color);
   text-decoration: none;
   white-space: nowrap;
-  transition: opacity 0.2s ease;
 }
 
 nav a:hover {
@@ -94,19 +92,10 @@ nav + div {
 }
 
 button {
-  font-family: 'Montserrat Alternates', sans-serif;
-  font-weight: 600;
   font-size: 20px;
-  line-height: 100%;
-  letter-spacing: 0%;
   color: var(--brand-color);
   background-color: var(--brand-text-color);
-  border: none;
-  border-radius: 30px;
   padding: 12px 36px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s ease;
 }
 
 button:hover {
@@ -120,7 +109,6 @@ img {
 }
 
 select {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 17px;
   line-height: 100%;

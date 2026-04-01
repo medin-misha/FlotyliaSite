@@ -1,0 +1,10 @@
+{
+  "publishes": {
+    "humble-waffle-esdb": {
+      "siteUrl": "https://humble-waffle-esdb.here.now/",
+      "claimToken": "c14de4b9af6296df0ebfa3bb283a805003bc72f41f21b63e24f8f1e26840fe7b",
+      "claimUrl": "https://here.now/claim?slug=humble-waffle-esdb&token=c14de4b9af6296df0ebfa3bb283a805003bc72f41f21b63e24f8f1e26840fe7b",
+      "expiresAt": "2026-03-17T11:19:43.817Z"
+    }
+  }
+}

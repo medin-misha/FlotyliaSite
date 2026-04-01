@@ -84,37 +84,37 @@ export const productCreateSchema = {
   fields: [
     {
       key: 'name',
-      label: 'Name',
+      label: 'Имя',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'price',
-      label: 'Price',
+      label: 'Цена',
       type: 'number',
       component: NumberCreateComp,
     },
     {
       key: 'quantity',
-      label: 'Quantity',
+      label: 'Количество',
       type: 'number',
       component: NumberCreateComp,
     },
     {
       key: 'description',
-      label: 'Description',
+      label: 'Описание',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'contract_id',
-      label: 'Contract ID',
+      label: 'ID контракта',
       type: 'number',
       component: NumberCreateComp,
     },
     {
       key: 'type',
-      label: 'Type',
+      label: 'Тип',
       type: 'string',
       component: SelectCreateComp,
       options: [
@@ -125,7 +125,7 @@ export const productCreateSchema = {
     },
     {
       key: 'status',
-      label: 'Status',
+      label: 'Статус',
       type: 'string',
       component: SelectCreateComp,
       options: [

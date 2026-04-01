@@ -8,20 +8,7 @@ from fastapi_cache.backends.redis import RedisBackend
 from config import settings
 from contextlib import asynccontextmanager
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # redis = Redis.from_url(
-    #     settings.redis_config.url,
-    #     max_connections=50,
-    # )
-    # FastAPICache.init(
-    #     RedisBackend(redis),
-    #     prefix=settings.cache_config.prefix,
-    # )
-    yield
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,

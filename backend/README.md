@@ -1,84 +1,122 @@
-# 🚀 Запуск проекта
+# Backend
 
-## 📦 Требования
+README описывает запуск backend из папки `backend`.
 
-- Python 3.13+
+## Что нужно
+
+- Python 3.11+
 - PostgreSQL
-- OpenSSL (для генерации JWT‑ключей)
-- Redis
+- S3-совместимое хранилище для файлов
+- JWT-ключи в `backend/certs/`
 
-## 🔧 Настройка окружения
+В проекте уже есть `pyproject.toml` и `uv.lock`, поэтому удобнее всего использовать `uv`.
 
-1. Создайте файл `backend/app/.env` и укажите переменную подключения к базе данных:
+## Переменные окружения
 
-```bash
-postgres_url="postgresql+asyncpg://<user>:<password>@<host>:<port>/<dbname>"
-redis_config__url="redis://localhost:6379"
+Backend читает `.env` из папки `backend/app`, поэтому ниже все команды запускаются именно оттуда.
 
-bucket_config__access_key="str"
-bucket_config__secret_key="str"
-bucket_config__endpoint_url="https://storagxcloud.net"
-bucket_config__bucket_name="flotket"
-cors_config__allow_origins= "https://localhost:8000 " # хосты разбиваються через запятую ","
-# опционально
-cors_config__allow_credentials= "true"
-cors_config__allow_methods= "*"
-cors_config__allow_headers= "*"
-debug=False # True если хочешь видеть sql запросы
+Файл: `backend/app/.env`
+
+Переменные, которые реально используются кодом:
+
+```env
+postgres_url="postgresql+asyncpg://postgres:postgres@localhost:5432/app_db"
+
+bucket_config__access_key="..."
+bucket_config__secret_key="..."
+bucket_config__endpoint_url="https://s3.eu-north-1.amazonaws.com"
+bucket_config__bucket_name="paper4print-images"
+
+cors_config__allow_origins="http://localhost:5174,http://localhost:5173"
+
+debug=False
 ```
 
-2. Сгенерируйте JWT‑ключи `backend/`:
+Дополнительно можно задать:
 
-```bash
-mkdir -p certs && cd certs # создание директории и переход в неё (обязытельно именно certs/)
-openssl genrsa -out jwt-private.pem 2048
-openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem
-cd ..
+```env
+cors_config__allow_credentials=True
+cors_config__allow_methods="*"
+cors_config__allow_headers="*"
 ```
 
-## ▶️ Запуск приложения локально
+Примечания:
 
-Запустите Redis (обязательно для работы кеширования):
+- `debug` должен быть именно булевым значением: `True` или `False`.
 
-```bash
-docker compose up -d redis
-```
+## JWT-ключи
 
-Не забудьте мигрировать базу данных
+По умолчанию backend ищет ключи здесь:
 
-```bash
-alembic upgrade head
-```
+- `backend/certs/jwt-private.pem`
+- `backend/certs/jwt-public.pem`
 
-И запуск
+Если файлов нет, сгенерируйте их:
 
 ```bash
-uvicorn app.main:app --reload
+cd backend
+mkdir -p certs
+openssl genrsa -out certs/jwt-private.pem 2048
+openssl rsa -in certs/jwt-private.pem -pubout -out certs/jwt-public.pem
 ```
 
-## 🐳 Запуск с Docker Compose (не забудь создать ключи и .env)
+## Установка зависимостей
+
+Из корня проекта:
 
 ```bash
-docker compose up --build
+cd backend
+uv sync
 ```
 
-## 🐳 Запуск из Dockerfile (не забудь создать ключи и .env)
+Если `uv` не установлен:
 
 ```bash
-docker build -t flotyliasite-web ./backend
-docker run -p 8000:8000 flotyliasite-web
+pip install uv
+cd backend
+uv sync
 ```
 
-Откройте браузер и перейдите по адресу `http://127.0.0.1:8000/docs`.
+## Миграции базы данных
 
-## 🔐 Работа с API
+Так как `.env` и `alembic.ini` лежат в `backend/app`, миграции нужно запускать из этой папки:
 
-1. **Создание администратора** – в Swagger (`/docs`) найдите `POST /admin` и создайте администратора.
-2. **Авторизация** – используйте `POST /admin/login`, передав `username` и `password`. В ответ получите JWT‑токен.
-   - Скопируйте токен.
-   - Нажмите кнопку **Authorize** в правом верхнем углу Swagger UI и вставьте токен в поле `Bearer <token>`.
-3. После авторизации можно пользоваться всеми эндпоинтами API.
+```bash
+cd backend/app
+../.venv/bin/alembic upgrade head
+```
 
----
+Если используете `uv` без обращения к `.venv` напрямую:
 
-_Happy coding!_
+```bash
+cd backend/app
+uv run alembic upgrade head
+```
+
+## Локальный запуск
+
+Запуск backend в режиме разработки:
+
+```bash
+cd backend/app
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Альтернатива через уже созданное виртуальное окружение:
+
+```bash
+cd backend/app
+../.venv/bin/python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+После запуска сервис будет доступен по адресам:
+
+- `http://127.0.0.1:8000/health`
+- `http://127.0.0.1:8000/docs`
+
+## Первый вход в API
+
+1. Откройте Swagger: `http://127.0.0.1:8000/docs`
+2. Создайте администратора через `POST /api/v1/admin/`
+3. Получите токен через `POST /api/v1/admin/login`
+4. Нажмите `Authorize` и передайте токен в формате `Bearer <token>`

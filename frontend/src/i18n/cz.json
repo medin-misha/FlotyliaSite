@@ -6,52 +6,40 @@
         "about": "O nás",
         "contacts": "Kontakty",
         "work-with-us": "Práce u nás",
-        "transport": "Pronájem dopravy"
+        "transport": "Pronájem dopravy",
+        "language": "Jazyk"
     },
     "main-header": "Přidej se k MFS — nejspolehlivější a nejvstřícnější flotile pro kurýry doručující jídlo v Česku!",
     "main-subheader": "Zaregistruj se za 5 minut a začni doručovat",
-    "transport-subheader": "Druhy dopravy:",
+    "transport-subheader": "Druhy dopravy",
+    "transport-intro": {
+        "line1": "Poskytujeme dopravu pro kurýry ve formátu 'vše v ceně' — vezmete a můžete ihned vyrazit do práce.",
+        "line2": "V ceně je zahrnut servis, opravy i veškeré potřebné vybavení — bez starostí a zbytečných nákladů.",
+        "line3": "Při platbě na měsíc je cena ještě výhodnější."
+    },
     "transport": {
         "bike": {
-            "title": "Kolo",
-            "price": "500 Kč / týden",
-            "service": "Servis, opravy a údržba v ceně",
-            "included": "Součástí: světla, držák na telefon, zámek"
+            "title": "Klasická kola",
+            "line1": "Jednoduché a spolehlivé řešení pro začátek.",
+            "line2": "Minimální náklady, maximální využití. Servis je plně v naší režii."
         },
         "ebike": {
-            "title": "Elektrokolo",
-            "model1": "DUOTTS c29 dual",
-            "model2": "DUOTTS F20",
-            "price": "1750 Kč / týden",
-            "price1": "1750 Kč / týden",
-            "price2": "2000 Kč / týden",
-            "amenities": "Více, rychleji, pohodlněji, s větším dojezdem",
-            "price_month": "Při platbě na měsíc — 5950 Kč (sleva 15 %)",
-            "price_month1": "Při platbě na měsíc — 5950 Kč (sleva 15 %)",
-            "price_month2": "Při platbě na měsíc — 6800 Kč (sleva 15 %)",
-            "included": "Součástí: držák na telefon, zámek, alarm, dvě baterie",
-            "service": "Plný servis a opravy v ceně"
+            "title": "Elektrokola",
+            "line1": "Nejoblíbenější varianta mezi kurýry. Rychlé, pohodlné a šetří energii.",
+            "line2": "Od 1 250 Kč týdně včetně servisu, oprav a kompletního vybavení."
         },
         "escooter": {
-            "title": "Elektrokoloběžka",
-            "price": "990 Kč / týden",
-            "service": "Plný servis a opravy v ceně",
-            "included": "Součástí: držák na telefon, zámek, alarm"
-        },
-        "scooter": {
-            "title": "Skútr",
-            "price": "1850 Kč / týden",
-            "deposit": "Kauce — 2000 Kč",
-            "service": "Servis a údržba v ceně"
+            "title": "Elektrokoloběžky",
+            "line1": "Ideální pro kratší vzdálenosti a centrum města.",
+            "line2": "Lehké, obratné a plně servisované."
         },
         "car": {
-            "title": "Automobil",
-            "categories": "3 kategorie:",
-            "price": "1500 / 2000 / 2500 Kč / týden",
-            "deposit": "Kauce — 3000 Kč",
-            "discount": "Při platbě na měsíc — (sleva 20 %)"
+            "title": "Automobily",
+            "line1": "Pro ty, kteří chtějí zvládnout více objednávek a pracovat za každého počasí.",
+            "line2": "Od 2 000 Kč týdně."
         }
     },
+    "transport-footnote": "* Na většinu dopravy není vyžadována kauce. U automobilů je kauce nutná. Běžné opotřebení hradíme my, v případě nehody odpovídá za škodu řidič.",
     "how-to-start": {
         "title": "Jak začít?",
         "button": "Odeslat žádost",
@@ -127,29 +115,49 @@
             "address": "Adresa bydliště v ČR",
             "desired_transport": "Na jaké dopravě byste chtěl/a pracovat?",
             "how_found_it": "Odkud jste se o nás dozvěděl/a?",
-            "invoice": "Uveďte číslo účtu české banky",
-            "stay_type": "Uveďte váš typ pobytu v ČR"
+            "invoice": "Uveďte číslo účtu české banky nebo jiný způsob platby",
+            "stay_type": "Uveďte váš typ pobytu v ČR",
+            "citizenship": "Státní příslušnost"
+        },
+        "transport-options": {
+            "bike": "Kolo",
+            "escooter": "Koloběžka",
+            "scooter": "Skútr",
+            "car": "Automobil"
         },
         "placeholders": {
             "phone": "+420",
-            "transport": "kolo, koloběžka, skútr, auto",
-            "invoice": "1234567890/1234"
+            "transport": "Vyberte dopravu",
+            "invoice": "1234567890/1234",
+            "citizenship": "Vyberte státní příslušnost"
+        },
+        "citizenship": {
+            "other": "Jiná"
         },
         "platform": {
             "label": "Vyberte platformu pro kontakt:"
         },
+        "whatsapp-hint": "Ujistěte se, že zadáváte číslo, na kterém máte registrovaný WhatsApp.",
         "documents": {
             "upload": "Nahrát",
-            "passport": "Foto nebo sken pasu + víza",
+            "passport": "Foto ID pasu z obou stran",
+            "passport_foreign": "Foto cestovního pasu z obou stran",
             "or": "NEBO",
-            "residence_permit": "Foto nebo sken povolení k pobytu (z obou stran)"
+            "residence_permit": "Foto nebo sken víza",
+            "op": "Občanský průkaz (OP)",
+            "op_front": "Občanský průkaz – přední strana",
+            "op_back": "Občanský průkaz – zadní strana",
+            "passport_front": "Cestovní pas – přední strana",
+            "residence_permit_front": "Vízum / povolení k pobytu – přední strana",
+            "drop_here": "Přetáhněte soubory sem nebo klikněte pro nahrání"
         },
         "submit": "Dokončit registraci",
         "consent": {
             "label": "Souhlasím se zpracováním svých osobních údajů"
         },
         "alert": {
-            "consent": "Prosím udělte souhlas se zpracováním osobních údajů."
+            "consent": "Prosím udělte souhlas se zpracováním osobních údajů.",
+            "submit": "Formulář se nepodařilo odeslat. Zkuste to prosím znovu."
         }
     },
     "success": {
@@ -161,9 +169,9 @@
         },
         "cta": "Zobrazit výukové materiály",
         "instructions": {
-            "heading": "Dále proveďte následující kroky:",
+            "heading": "Váš účet se právě zpracovává — během dne vás budeme kontaktovat.",
             "bolt": [
-                "Stáhněte si aplikaci Bolt Food Courier a přihlaste se pomocí svého telefonního čísla."
+                "Stáhněte si aplikaci Bolt Food Courier"
             ],
             "foodora": [
                 "Stáhněte si aplikaci Foodora Rider.",

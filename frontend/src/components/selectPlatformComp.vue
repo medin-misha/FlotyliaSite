@@ -6,7 +6,7 @@ const { t } = useI18n({useScope: "global"})
 
 <template>
   <div class="select-platform">
-    <h2>{{ t("select-platform-title") }}</h2>
+    <h2 class="app-section-heading select-platform-title">{{ t("select-platform-title") }}</h2>
 
     <div class="platforms">
       <div class="platform bolt">
@@ -26,7 +26,9 @@ const { t } = useI18n({useScope: "global"})
           </div>
         </div>
 
-        <button class="btn-bolt" @click="$router.push('/form/bolt')">{{ $t("bolt-select.button") }}</button>
+        <button class="app-pill-button app-fade-transition app-alt-button-text btn-bolt" @click="$router.push('/form/bolt')">
+            {{ $t("bolt-select.button") }}
+        </button>
       </div>
 
       <div class="platform foodora">
@@ -45,7 +47,9 @@ const { t } = useI18n({useScope: "global"})
           </div>
         </div>
 
-        <button class="btn-foodora" @click="$router.push('/form/foodora')">{{ $t("foodora-select.button") }}</button>
+        <button class="app-pill-button app-fade-transition app-alt-button-text btn-foodora" @click="$router.push('/form/foodora')">
+            {{ $t("foodora-select.button") }}
+        </button>
       </div>
     </div>
   </div>
@@ -56,13 +60,7 @@ const { t } = useI18n({useScope: "global"})
   padding: 40px 0;
 }
 
-h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
+.select-platform-title {
   text-align: center;
   margin: 0 0 40px 0;
 }
@@ -110,7 +108,6 @@ h2 {
 }
 
 .platform-features p {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 20px;
   line-height: 160%;
@@ -120,7 +117,6 @@ h2 {
 }
 
 .platform-details p {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 18px;
   line-height: 160%;
@@ -135,17 +131,9 @@ h2 {
 
 button {
   width: clamp(400px, 100%, 650px);
-  font-family: 'Montserrat Alternates', sans-serif;
-  font-weight: 600;
   font-size: 20px;
-  line-height: 100%;
-  letter-spacing: 0%;
   color: var(--brand-text-color);
-  border: none;
-  border-radius: 30px;
   padding: 16px 32px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
 }
 
 button:hover {

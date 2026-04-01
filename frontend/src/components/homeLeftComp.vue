@@ -14,75 +14,41 @@ const { t } = useI18n({useScope: "global"})
 
     <img class="deliver-img" src="/deliver.png" alt="Курьер на велосипеде" />
 
-    <h3>{{ $t("transport-subheader") }}</h3>
+    <h3 class="app-section-heading transport-heading">{{ $t("transport-subheader") }}</h3>
+
+    <div class="transport-intro">
+      <p>{{ $t("transport-intro.line1") }}</p>
+      <p>{{ $t("transport-intro.line2") }}</p>
+      <p>{{ $t("transport-intro.line3") }}</p>
+    </div>
 
     <div class="transport-list">
       <div class="transport-item">
-        <p class="transport-title">{{ $t("transport.bike.title") }}</p>
-        <ul>
-          <li>{{ $t("transport.bike.price") }}</li>
-          <li>{{ $t("transport.bike.service") }}</li>
-          <li>{{ $t("transport.bike.included") }}</li>
-        </ul>
+        <h3 class="transport-title">{{ $t("transport.bike.title") }}</h3>
+        <p>{{ $t("transport.bike.line1") }}</p>
+        <p>{{ $t("transport.bike.line2") }}</p>
       </div>
 
       <div class="transport-item">
-        <p class="transport-title">
-          {{ $t("transport.ebike.title") }}<br />{{ $t("transport.ebike.model1") }}
-        </p>
-        <ul>
-          <li>{{ $t("transport.ebike.price1") }}</li>
-          <li>{{ $t("transport.ebike.price_month1") }}</li>
-          <li>
-            {{ $t("transport.ebike.included") }}
-          </li>
-          <li>{{ $t("transport.ebike.service") }}</li>
-        </ul>
+        <h3 class="transport-title">{{ $t("transport.ebike.title") }}</h3>
+        <p>{{ $t("transport.ebike.line1") }}</p>
+        <p>{{ $t("transport.ebike.line2") }}</p>
       </div>
 
       <div class="transport-item">
-        <p class="transport-title">
-          {{ $t("transport.ebike.title") }}<br />{{ $t("transport.ebike.model2") }}
-        </p>
-        <ul>
-          <li>{{ $t("transport.ebike.amenities") }}</li>
-          <li>{{ $t("transport.ebike.price2") }}</li>
-          <li>{{ $t("transport.ebike.price_month2") }}</li>
-          <li>
-            {{ $t("transport.ebike.included") }}
-          </li>
-          <li>{{ $t("transport.ebike.service") }}</li>
-        </ul>
+        <h3 class="transport-title">{{ $t("transport.escooter.title") }}</h3>
+        <p>{{ $t("transport.escooter.line1") }}</p>
+        <p>{{ $t("transport.escooter.line2") }}</p>
       </div>
 
       <div class="transport-item">
-        <p class="transport-title">{{ $t("transport.escooter.title") }}</p>
-        <ul>
-          <li>{{ $t("transport.escooter.price") }}</li>
-          <li>{{ $t("transport.escooter.included") }}</li>
-          <li>{{ $t("transport.escooter.service") }}</li>
-        </ul>
-      </div>
-
-      <div class="transport-item">
-        <p class="transport-title">{{ $t("transport.scooter.title") }}</p>
-        <ul>
-          <li>{{ $t("transport.scooter.price") }}</li>
-          <li>{{ $t("transport.scooter.deposit") }}</li>
-          <li>{{ $t("transport.scooter.service") }}</li>
-        </ul>
-      </div>
-
-      <div class="transport-item">
-        <p class="transport-title">{{ $t("transport.car.title") }}</p>
-        <ul>
-          <li>{{ $t("transport.car.categories") }}</li>
-          <li>{{ $t("transport.car.price") }}</li>
-          <li>{{ $t("transport.car.deposit") }}</li>
-          <li>{{ $t("transport.car.discount") }}</li>
-        </ul>
+        <h3 class="transport-title">{{ $t("transport.car.title") }}</h3>
+        <p>{{ $t("transport.car.line1") }}</p>
+        <p>{{ $t("transport.car.line2") }}</p>
       </div>
     </div>
+
+    <p class="transport-footnote">{{ $t("transport-footnote") }}</p>
   </div>
 </template>
 
@@ -92,7 +58,6 @@ const { t } = useI18n({useScope: "global"})
 }
 
 h1 {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 45px;
   line-height: 100%;
@@ -102,7 +67,6 @@ h1 {
 }
 
 h2 {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 32px;
   line-height: 100%;
@@ -118,14 +82,28 @@ h2 {
   margin-bottom: 40px;
 }
 
-h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
+.transport-heading {
+  margin-bottom: 16px;
+}
+
+.transport-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 24px;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 140%;
+  color: var(--color-text);
+}
+
+.transport-footnote {
+  margin-top: 16px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 140%;
+  color: var(--color-text);
+  opacity: 0.75;
 }
 
 .transport-list {
@@ -141,7 +119,6 @@ h3 {
 }
 
 .transport-title {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   font-size: 20px;
   line-height: 100%;
@@ -149,25 +126,11 @@ h3 {
   color: var(--color-text);
 }
 
-.transport-item ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.transport-item li {
-  font-family: 'Montserrat', sans-serif;
+.transport-item p {
   font-weight: 400;
   font-size: 18px;
-  line-height: 100%;
+  line-height: 140%;
   letter-spacing: 0%;
   color: var(--color-text);
-}
-
-.transport-item li::before {
-  content: '• ';
 }
 </style>

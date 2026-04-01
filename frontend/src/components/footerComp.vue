@@ -2,14 +2,14 @@
   <footer id="footer">
     <div>
       <span>MAY fleet solutions</span>
-      <a href="https://t.me/MFS_support" target="_blank">telegram: @MFS_support</a>
-      <a href="mailto:may.fleet.solutions@gmail.com" target="_blank">may.fleet.solutions@gmail.com</a>
-      <a href="tel:+420733588688">+420 733 588 688</a>
+      <a class="app-fade-transition" href="https://t.me/MFS_support" target="_blank">telegram: @MFS_support</a>
+      <a class="app-fade-transition" href="mailto:may.fleet.solutions@gmail.com" target="_blank">may.fleet.solutions@gmail.com</a>
+      <a class="app-fade-transition" href="tel:+420733588688">+420 733 588 688</a>
       <nav>
-        <a href="https://t.me/MFS_support" target="_blank">
+        <a class="app-fade-transition" href="https://t.me/MFS_support" target="_blank">
           <img src="/telegramIcon.svg" alt="Telegram" />
         </a>
-        <a href="https://www.instagram.com/mfs_cz?igsh=MWxpc3E5NG1yN3B5bQ==" target="_blank">
+        <a class="app-fade-transition" href="https://www.instagram.com/mfs_cz?igsh=MWxpc3E5NG1yN3B5bQ==" target="_blank">
           <img src="/instagramIcon.svg" alt="Instagram" />
         </a>
       </nav>
@@ -38,7 +38,6 @@ footer > div {
 }
 
 span {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 16px;
   line-height: 100%;
@@ -48,7 +47,6 @@ span {
 }
 
 footer > div > a {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 16px;
   line-height: 100%;
@@ -56,7 +54,6 @@ footer > div > a {
   color: var(--brand-text-color);
   text-decoration: none;
   white-space: nowrap;
-  transition: opacity 0.2s ease;
 }
 
 footer > div > a:hover {
@@ -72,7 +69,6 @@ nav {
 nav a {
   display: flex;
   align-items: center;
-  transition: opacity 0.2s ease;
 }
 
 nav a:hover {

@@ -21,6 +21,7 @@ const requestStatesStore = useRequestStates()
           :limit="pageStore.paginationData.limit"
           :search="pageStore.paginationData.search"
           :filter="pageStore.filter"
+          :form="pageStore.pageData.schema"
           :key="`${pageStore.pageData.adres}
         -${pageStore.paginationData.page}
         -${pageStore.paginationData.limit}

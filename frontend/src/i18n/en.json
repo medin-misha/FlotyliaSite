@@ -7,51 +7,40 @@
         "about": "About us",
         "contacts": "Contacts",
         "work-with-us": "Jobs with us",
-        "transport": "Transport rental"
+        "transport": "Transport rental",
+        "language": "Language"
     },
     "main-header": "Join MFS — the most reliable and loyal fleet for food delivery couriers in the Czech Republic!",
     "main-subheader": "Register in just 5 minutes and start delivering.",
-    "transport-subheader": "Types of transport:",
+    "transport-subheader": "Types of Transport",
+    "transport-intro": {
+        "line1": "We provide transport for couriers in an \"all-inclusive\" format — just take it and start working right away.",
+        "line2": "The price already includes maintenance, repairs, and all necessary equipment — no extra costs or downtime.",
+        "line3": "Monthly payments come with better pricing."
+    },
     "transport": {
         "bike": {
-            "title": "Bike",
-            "price": "500 CZK / week",
-            "service": "Service, repairs, and maintenance included",
-            "included": "Includes: lights, phone holder, lock"
+            "title": "Regular Bikes",
+            "line1": "A simple and reliable option to get started.",
+            "line2": "Low cost, maximum efficiency. Full service included."
         },
         "ebike": {
-            "title": "Electric bicycle",
-            "model1": "DUOTTS c29 dual",
-            "model2": "DUOTTS F20",
-            "price1": "1,750 CZK / week",
-            "price2": "2,000 CZK / week",
-            "amenities": "Bigger, faster, more convenient, with a longer range",
-            "price_month1": "Monthly payment — 5,950 CZK (15% discount)",
-            "price_month2": "Monthly payment — 6,800 CZK (15% discount)",
-            "included": "Includes: phone holder, lock, alarm, two batteries",
-            "service": "Full service and repairs included"
+            "title": "E-bikes",
+            "line1": "The most popular choice among couriers. Fast, convenient, and less tiring.",
+            "line2": "From 1,250 CZK per week, including maintenance, repairs, and full equipment."
         },
         "escooter": {
-            "title": "Electric scooter",
-            "price": "990 CZK / week",
-            "service": "Full service and repairs included",
-            "included": "Includes: phone holder, lock, alarm"
-            
-        },
-        "scooter": {
-            "title": "Motor scooter",
-            "price": "1,850 CZK / week",
-            "deposit": "Deposit — 2,000 CZK",
-            "service": "Service and maintenance included"
+            "title": "E-scooters",
+            "line1": "Perfect for short distances and city centers.",
+            "line2": "Lightweight, agile, and fully serviced."
         },
         "car": {
-            "title": "Car",
-            "categories": "3 categories:",
-            "price": "1,500 / 2,000 / 2,500 CZK / week",
-            "deposit": "Deposit — 3,000 CZK",
-            "discount": "Monthly payment — (20% discount)"
+            "title": "Cars",
+            "line1": "For those who want to handle more orders and work in any weather.",
+            "line2": "From 2,000 CZK per week."
         }
     },
+    "transport-footnote": "* No deposit is required for most vehicles. A deposit is required for cars. Regular wear and tear is covered by us, but in case of an accident, the driver is responsible for the damage.",
     "how-to-start": {
         "title": "How to start?",
         "button": "Apply now",
@@ -127,29 +116,49 @@
             "address": "Residence address in the Czech Republic",
             "desired_transport": "What type of transport would you like to work with?",
             "how_found_it": "How did you hear about us?",
-            "invoice": "Enter your Czech bank account number",
-            "stay_type": "What type of stay in the Czech Republic do you have?"
+            "invoice": "Enter your Czech bank account number or specify another payment method",
+            "stay_type": "What type of stay in the Czech Republic do you have?",
+            "citizenship": "Citizenship"
+        },
+        "transport-options": {
+            "bike": "Bicycle",
+            "escooter": "Scooter",
+            "scooter": "Motor scooter",
+            "car": "Car"
         },
         "placeholders": {
             "phone": "+420",
-            "transport": "bicycle, scooter, e-scooter, car",
-            "invoice": "1234567890/1234"
+            "transport": "Select transport",
+            "invoice": "1234567890/1234",
+            "citizenship": "Select citizenship"
+        },
+        "citizenship": {
+            "other": "Other"
         },
         "platform": {
             "label": "Select a platform to contact:"
         },
+        "whatsapp-hint": "Make sure you enter the phone number that your WhatsApp account is registered to.",
         "documents": {
             "upload": "Upload",
-            "passport": "Passport + visa photo or scan",
+            "passport": "ID passport photo from both sides",
+            "passport_foreign": "Foreign passport photo from both sides",
             "or": "OR",
-            "residence_permit": "Residence permit photo or scan (both sides)"
+            "residence_permit": "Visa photo or scan",
+            "op": "ID card (občanský průkaz)",
+            "op_front": "Občanský průkaz – front side",
+            "op_back": "Občanský průkaz – back side",
+            "passport_front": "Passport – front side",
+            "residence_permit_front": "Visa / residence permit – front side",
+            "drop_here": "Drag & drop files here or click to upload"
         },
         "submit": "Complete registration",
         "consent": {
             "label": "I consent to the processing of my personal data"
         },
         "alert": {
-            "consent": "Please consent to the processing of personal data."
+            "consent": "Please consent to the processing of personal data.",
+            "submit": "Failed to submit the form. Please try again."
         }
     },
     "success": {
@@ -161,7 +170,7 @@
         },
         "cta": "View training materials",
         "instructions": {
-            "heading": "Next, follow these steps:",
+            "heading": "Your account is being processed — we will contact you within the day.",
             "bolt": [
                 "Download the Bolt Food Courier app and log in using your phone number."
             ],

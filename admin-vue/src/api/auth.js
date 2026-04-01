@@ -33,7 +33,7 @@ const APIAuth = {
   login,
   getAdmins: async (page, limit) => request('get', '/admin', null, { page: page, limit: limit }),
   getMeInfo: async () => request('get', '/admin/me'),
-  deleteAdmin: async (id) => request('get', `/admin/${id}`),
+  deleteAdmin: async (id) => request('delete', `/admin/${id}`),
   getAdminById: async (id) => request('get', `/admin/${id}`),
 }
 

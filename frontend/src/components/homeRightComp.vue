@@ -13,8 +13,8 @@ const { tm } = useI18n({ useScope: "global" })
 
     <div class="how-to-start">
       <div class="how-to-start-header">
-        <h2>{{ $t("how-to-start.title") }}</h2>
-        <button @click="$router.push('/select-platform')">{{ $t("how-to-start.button") }}</button>
+        <h2 class="app-section-heading">{{ $t("how-to-start.title") }}</h2>
+        <button class="app-pill-button app-fade-transition app-alt-button-text" @click="$router.push('/select-platform')">{{ $t("how-to-start.button") }}</button>
       </div>
 
       <ol class="steps-list">
@@ -35,7 +35,7 @@ const { tm } = useI18n({ useScope: "global" })
 
     <div class="why-us">
       <div class="why-us-header" id="work">
-        <h2>{{ $t("why-us.title") }}</h2>
+        <h2 class="app-section-heading">{{ $t("why-us.title") }}</h2>
         <a
           href="https://t.me/MFS_support"
           target="_blank"
@@ -74,7 +74,7 @@ const { tm } = useI18n({ useScope: "global" })
     </div>
 
     <div class="transport" id="transport">
-      <h2>{{ $t("transport-section.title") }}</h2>
+      <h2 class="app-section-heading stacked-section-heading">{{ $t("transport-section.title") }}</h2>
       <div class="transport-grid">
         <img src="/transports/car.png" :alt="$t('transport-section.alts.car')" class="transport-car" />
         <img src="/transports/bike2.png" :alt="$t('transport-section.alts.bike2')" class="transport-bike2" />
@@ -85,11 +85,11 @@ const { tm } = useI18n({ useScope: "global" })
     </div>
 
     <div class="no-transport">
-      <h2>{{ $t("no-transport.title") }}</h2>
-      <p>
+      <h2 class="app-section-heading stacked-section-heading">{{ $t("no-transport.title") }}</h2>
+      <p class="app-body-copy no-transport-copy">
         {{ $t("no-transport.text1") }}
       </p>
-      <p>
+      <p class="app-body-copy no-transport-copy">
         <strong>{{ $t("no-transport.text2-title") }}</strong><br />
         <template v-for="(item, idx) in tm('no-transport.text2-list')" :key="idx">
           • {{ item }}<br />
@@ -97,8 +97,8 @@ const { tm } = useI18n({ useScope: "global" })
       </p>
     </div>
 
-    <div class="contacts">
-      <h2>{{ $t("contacts.title") }}</h2>
+    <div class="contacts" id="contacts">
+      <h2 class="app-section-heading stacked-section-heading">{{ $t("contacts.title") }}</h2>
       <p>
         {{ $t("contacts.text1-line1") }}<br />
         {{ $t("contacts.text1-line2") }}
@@ -148,30 +148,11 @@ const { tm } = useI18n({ useScope: "global" })
   margin-bottom: 24px;
 }
 
-.how-to-start-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
-  margin: 0;
-}
-
 .how-to-start-header button {
-  font-family: 'Montserrat Alternates', sans-serif;
-  font-weight: 600;
   font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 0%;
   color: var(--brand-text-color);
   background-color: var(--brand-color);
-  border: none;
-  border-radius: 30px;
   padding: 12px 28px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s ease;
 }
 
 .how-to-start-header button:hover {
@@ -203,7 +184,6 @@ const { tm } = useI18n({ useScope: "global" })
 }
 
 .step-text {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
   font-size: 18px;
   line-height: 100%;
@@ -231,16 +211,6 @@ const { tm } = useI18n({ useScope: "global" })
   margin-bottom: 20px;
 }
 
-.why-us-header h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
-  margin: 0;
-}
-
 .msg-icon {
   width: 48px;
   height: 48px;
@@ -253,7 +223,6 @@ const { tm } = useI18n({ useScope: "global" })
 }
 
 .why-us-item p {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   font-size: 18px;
   line-height: 140%;
@@ -273,13 +242,7 @@ const { tm } = useI18n({ useScope: "global" })
   height: 500px;
 }
 
-.transport h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
+.stacked-section-heading {
   margin: 0 0 24px 0;
 }
 
@@ -332,23 +295,7 @@ const { tm } = useI18n({ useScope: "global" })
   margin-top: 40px;
 }
 
-.no-transport h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
-  margin: 0 0 24px 0;
-}
-
-.no-transport p {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 140%;
-  letter-spacing: 0%;
-  color: var(--color-text);
+.no-transport-copy {
   margin: 0 0 16px 0;
 }
 
@@ -360,18 +307,7 @@ const { tm } = useI18n({ useScope: "global" })
   margin-top: 40px;
 }
 
-.contacts h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
-  margin: 0 0 24px 0;
-}
-
 .contacts p {
-  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 24px;
   line-height: 140%;

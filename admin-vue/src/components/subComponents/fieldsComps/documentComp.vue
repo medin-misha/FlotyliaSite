@@ -1,16 +1,74 @@
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import APIPosts from '@/api/posts'
+import api from '@/api/api'
+
 const props = defineProps({
   document: Object,
   field: Object,
 })
+
 const emit = defineEmits(['updated', 'deleted'])
-const serverUrl = import.meta.env.VITE_API_URL
-const fileUrl = ref(`${serverUrl}/files/${props.document.file_id}`)
 const fileInput = ref(null)
 const description = ref(props.document.description || '')
 const loading = ref(false)
+const currentFileId = ref(props.document.file_id || null)
+const previewUrl = ref(null)
+const isImagePreview = ref(false)
+
+const revokePreviewUrl = () => {
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+    previewUrl.value = null
+  }
+}
+
+const fetchFileBlob = async (fileId) => {
+  return await api.get(`/files/${fileId}`, {
+    responseType: 'blob',
+  })
+}
+
+const loadPreview = async (fileId = currentFileId.value) => {
+  revokePreviewUrl()
+  isImagePreview.value = false
+
+  if (!fileId) return
+
+  try {
+    const response = await fetchFileBlob(fileId)
+    const mimeType = response.data.type || ''
+
+    if (!mimeType.startsWith('image/')) return
+
+    previewUrl.value = URL.createObjectURL(response.data)
+    isImagePreview.value = true
+  } catch (error) {
+    console.error('Failed to load preview:', error)
+  }
+}
+
+const openFile = async () => {
+  if (loading.value || !currentFileId.value) return
+
+  const openedWindow = window.open('', '_blank', 'noopener,noreferrer')
+
+  try {
+    const response = await fetchFileBlob(currentFileId.value)
+    const blobUrl = URL.createObjectURL(response.data)
+
+    if (openedWindow) {
+      openedWindow.location.href = blobUrl
+    } else {
+      window.open(blobUrl, '_blank', 'noopener,noreferrer')
+    }
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
+  } catch (error) {
+    if (openedWindow) openedWindow.close()
+    console.error('Failed to open file:', error)
+  }
+}
 
 const triggerFileInput = () => {
   if (loading.value) return
@@ -45,7 +103,8 @@ const onFileChange = async (event) => {
       newDoc = uploadRes.data
     }
 
-    fileUrl.value = `${serverUrl}/files/${newDoc.file_id}`
+    currentFileId.value = newDoc.file_id
+    await loadPreview(newDoc.file_id)
     emit('updated', newDoc)
   } catch (error) {
     console.error('Failed to upload file:', error)
@@ -70,13 +129,33 @@ const deleteDocument = async () => {
     emit('deleted')
   }
 }
+
+watch(
+  () => props.document.file_id,
+  async (newFileId) => {
+    currentFileId.value = newFileId || null
+    await loadPreview(newFileId)
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.document.description,
+  (newDescription) => {
+    description.value = newDescription || ''
+  },
+)
+
+onBeforeUnmount(() => {
+  revokePreviewUrl()
+})
 </script>
 
 <template>
   <section :class="{ 'component-loading': loading }">
-    <a :href="fileUrl" target="_blank">
+    <button type="button" class="file-link-button" @click="openFile" :disabled="!currentFileId">
       <label class="details-input-label"> {{ field.label }} </label>
-    </a>
+    </button>
     <input
       type="text"
       v-model="description"
@@ -94,7 +173,13 @@ const deleteDocument = async () => {
         :disabled="loading"
       />
 
-      <img v-if="document.file_id" :src="fileUrl" class="details-file-preview" alt="Preview" />
+      <img
+        v-if="isImagePreview && previewUrl"
+        :src="previewUrl"
+        class="details-file-preview"
+        alt="Preview"
+      />
+      <span v-else-if="currentFileId" class="details-file-placeholder">Открыть файл</span>
       <span v-else class="details-file-placeholder">{{
         loading ? 'Загрузка...' : 'Выбрать файл'
       }}</span>
@@ -168,12 +253,22 @@ section {
 .hidden-input {
   display: none;
 }
-a {
-  text-decoration: none;
+
+.file-link-button {
+  background: transparent;
+  border: none;
+  padding: 0;
   color: var(--button-bg);
+  cursor: pointer;
 }
-a:hover {
+
+.file-link-button:hover {
   color: var(--button-hover-bg);
+}
+
+.file-link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .delete-btn {

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator, Field
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from core.models.user import UserStatus
 from contracts.document import DocumentReturn
 
@@ -27,7 +27,8 @@ class UserBase(BaseModel):
     whatsapp: Optional[str] = string_15_optional
     city: Optional[str] = string_255_optional
     address: Optional[str] = string_528_optional
-    stay_type: Optional[str] = string_50_optional
+    citizenship: Optional[str] = Field(default=None, max_length=100, min_length=2)
+    consent: bool = False
 
     @field_validator("status")
     def validate_status(cls, v):
@@ -66,7 +67,8 @@ class UserUpdate(UserBase):
     whatsapp: Optional[str] = string_15_optional
     city: Optional[str] = string_255_optional
     address: Optional[str] = string_528_optional
-    stay_type: Optional[str] = string_50_optional
+    citizenship: Optional[str] = Field(default=None, max_length=100, min_length=2)
+    consent: Optional[bool] = None
 
     @field_validator("status")
     def validate_status(cls, v):
@@ -84,6 +86,7 @@ class UserUpdate(UserBase):
 
 class UserReturn(UserBase):
     id: int
+    created_at: datetime
     documents: list[DocumentReturn]
 
     class Config:

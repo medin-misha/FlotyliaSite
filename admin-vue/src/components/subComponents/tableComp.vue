@@ -12,6 +12,7 @@ const props = defineProps({
   limit: Number,
   search: String,
   filter: String,
+  form: Object,
 })
 
 const pageStore = usePageStore()
@@ -44,12 +45,38 @@ onUnmounted(() => clearTimeout(retryTimeout))
       <table>
         <thead>
           <tr>
-            <th v-for="obj in Object.keys(objectsList[0])">{{ obj }}</th>
+            <template v-if="form?.fields">
+              <th v-for="field in form.fields" :key="field.key">{{ field.label }}</th>
+            </template>
+            <template v-else>
+              <th v-for="key in Object.keys(objectsList[0])" :key="key">{{ key }}</th>
+            </template>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="obj in objectsList" @click="statesStore.setDetailState(obj.id)">
-            <td v-for="key in Object.keys(obj)">{{ obj[key] }}</td>
+          <tr v-for="obj in objectsList" :key="obj.id" @click="statesStore.setDetailState(obj.id)">
+            <template v-if="form?.fields">
+              <td v-for="field in form.fields" :key="field.key">
+                <template v-if="typeof obj[field.key] === 'object'">
+                  {{ obj[field.key] !== null && (Array.isArray(obj[field.key]) ? obj[field.key].length > 0 : Object.keys(obj[field.key]).length > 0) ? 'True' : 'False' }}
+                </template>
+                <template v-else-if="typeof obj[field.key] === 'boolean'">
+                  {{ obj[field.key] ? 'True' : 'False' }}
+                </template>
+                <template v-else>{{ obj[field.key] }}</template>
+              </td>
+            </template>
+            <template v-else>
+              <td v-for="key in Object.keys(obj)" :key="key">
+                <template v-if="typeof obj[key] === 'object'">
+                  {{ obj[key] !== null && (Array.isArray(obj[key]) ? obj[key].length > 0 : Object.keys(obj[key]).length > 0) ? 'True' : 'False' }}
+                </template>
+                <template v-else-if="typeof obj[key] === 'boolean'">
+                  {{ obj[key] ? 'True' : 'False' }}
+                </template>
+                <template v-else>{{ obj[key] }}</template>
+              </td>
+            </template>
           </tr>
         </tbody>
       </table>
@@ -85,11 +112,10 @@ section {
   align-items: center;
   flex-direction: column;
   width: 100%;
-  padding: 1rem;
 }
 .table-wrapper {
   display: block;
-  max-width: 80vw;
+  max-width: 91vw;
   overflow-x: auto;
   padding-bottom: 1rem;
 }

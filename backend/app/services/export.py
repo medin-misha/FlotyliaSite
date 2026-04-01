@@ -7,7 +7,7 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font
 from openpyxl.utils import get_column_letter
 import io
-from core.models import User, Transport, Contract, File, Document
+from core.models import User, Transport, Contract, File, Document, Admin, Product
 from services.error_handlers import DBErrorHandler
 from fastapi import HTTPException
 from sqlalchemy import Result
@@ -41,6 +41,8 @@ async def export_to_exel(session: AsyncSession) -> StreamingResponse:
         "Transports": Transport,
         "Files": File,
         "Documents": Document,
+        "Products": Product,
+        "Admins": Admin,
     }
 
     buffer = io.BytesIO()

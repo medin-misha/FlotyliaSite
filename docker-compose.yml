@@ -1,12 +1,4 @@
 services:
-  web:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    expose:
-      - "8000" # host:container
-    networks:
-      - webnet
   postgres:
     image: postgres:16
     environment:
@@ -17,13 +9,22 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - webnet
     restart: always
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Web Console
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: supersecretpassword
+    volumes:
+      - ./minio-data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
 
 volumes:
   postgres_data:
-
-networks:
-  webnet:
-    driver: bridge
+  minio_data:

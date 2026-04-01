@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from "vue-i18n"
 
 const route = useRoute()
-const { t, tm } = useI18n({ useScope: "global" })
+const { t } = useI18n({ useScope: "global" })
 
 const company = computed(() => String(route.params.company || '').toLowerCase())
 const isBolt = computed(() => company.value === 'bolt')
@@ -23,13 +23,6 @@ const accentColor = computed(() => {
   return 'var(--brand-color)'
 })
 
-const instructionLines = computed(() => {
-  if (isBolt.value) {
-    return tm('success.instructions.bolt')
-  }
-  return tm('success.instructions.foodora')
-})
-
 const downloadAll = () => {
   files.value.forEach((url) => {
     const a = document.createElement('a')
@@ -44,7 +37,6 @@ const downloadAll = () => {
 
 
 const instructionHeading = computed(() => t('success.instructions.heading'))
-const passwordNote = computed(() => t('success.password-note'))
 </script>
 
 <template>
@@ -55,18 +47,13 @@ const passwordNote = computed(() => t('success.password-note'))
       </h2>
 
       <div class="step-block">
-        <span class="step-number">3.</span>
-        <div class="step-text">
-          <p class="step-heading">
-            <span class="step-label">{{ $t("success.step.label") }}</span>
-            <span class="step-description">
-              {{ $t("success.step.description") }}
-            </span>
-          </p>
-          <p class="step-subtitle">
-            {{ $t("success.step.subtitle") }}
-          </p>
-        </div>
+        <p class="step-heading">
+          <span class="step-label">{{ $t("success.step.label") }}</span>
+          <span class="step-description"> {{ $t("success.step.description") }}</span>
+        </p>
+        <p class="step-subtitle">
+          {{ $t("success.step.subtitle") }}
+        </p>
       </div>
 
       <button type="button" class="cta-button" @click="downloadAll()">
@@ -75,10 +62,6 @@ const passwordNote = computed(() => t('success.password-note'))
 
       <div class="instructions">
         <p class="instructions-heading">{{ instructionHeading }}</p>
-        <div class="instructions-body">
-          <p v-for="line in instructionLines" :key="line">{{ line }}</p>
-          <p v-if="isFoodora" class="instructions-note">{{ passwordNote }}</p>
-        </div>
       </div>
 
       <p class="store-note">
@@ -123,27 +106,10 @@ const passwordNote = computed(() => t('success.password-note'))
   width: 100%;
   max-width: 940px;
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  justify-content: center;
-  margin-top: 4px;
-}
-
-.step-number {
-  font-family: 'Mulish', sans-serif;
-  font-weight: 500;
-  font-size: 40px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--brand-color);
-  flex-shrink: 0;
-}
-
-.step-text {
-  display: flex;
   flex-direction: column;
   gap: 6px;
   color: var(--color-text);
+  margin-top: 4px;
 }
 
 .step-heading {

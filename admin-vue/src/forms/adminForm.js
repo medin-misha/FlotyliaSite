@@ -15,7 +15,7 @@ export const adminSchema = {
 
     {
       key: 'username',
-      label: 'Username',
+      label: 'Имя ',
       type: 'string',
       readonly: true,
       component: StringComp,
@@ -23,7 +23,7 @@ export const adminSchema = {
 
     {
       key: 'hashed_password',
-      label: 'Password',
+      label: 'Пароль',
       type: 'string',
       inputType: 'password',
       readonly: true,
@@ -32,7 +32,7 @@ export const adminSchema = {
 
     {
       key: 'last_login_at',
-      label: 'Last login',
+      label: 'Последнияя аутентификация',
       type: 'datetime',
       readonly: true,
       component: StringComp,
@@ -40,7 +40,7 @@ export const adminSchema = {
 
     {
       key: 'created_at',
-      label: 'Created at',
+      label: 'Создан',
       type: 'datetime',
       readonly: true,
       component: StringComp,
@@ -52,14 +52,14 @@ export const adminCreateSchema = {
   fields: [
     {
       key: 'username',
-      label: 'Username',
+      label: 'Имя',
       type: 'string',
       component: stringCreateComp,
     },
 
     {
       key: 'password',
-      label: 'Password',
+      label: 'Пароль',
       type: 'string',
       inputType: 'password',
       component: stringCreateComp,

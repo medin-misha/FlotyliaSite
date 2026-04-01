@@ -1,6 +1,6 @@
 from .base import Base
-from datetime import date
-from sqlalchemy import String, ForeignKey, Date
+from datetime import date, datetime
+from sqlalchemy import String, ForeignKey, Date, DateTime, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class UserStatus:
@@ -10,6 +10,7 @@ class UserStatus:
 
 
 class User(Base):
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     phone: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
@@ -21,10 +22,11 @@ class User(Base):
     whatsapp: Mapped[str] = mapped_column(String(15), nullable=True)
     city: Mapped[str] = mapped_column(String(255), nullable=True)
     address: Mapped[str] = mapped_column(String(528), nullable=True)
-    stay_type: Mapped[str] = mapped_column(String(50), nullable=True)
     work_in: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-
+    citizenship: Mapped[str] = mapped_column(String(100), nullable=True)
+    
     invoice: Mapped[str] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=UserStatus.PENDING)
+    consent: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="0")
 
     documents: Mapped[list["Document"]] = relationship("Document", lazy="selectin")

@@ -6,7 +6,9 @@ from typing import Annotated
 from core.database import database
 from services.files.crud import create_file, get_file_by_id
 from contracts.file.schemas import FileReturn
+from contracts.admin import AdminReturn
 from core.cache import cache_key_builder
+from core.auth import utils as auth_utils
 from fastapi_cache.decorator import cache
 from fastapi_cache.coder import PickleCoder
 from config import settings
@@ -14,7 +16,7 @@ from config import settings
 router = APIRouter(prefix="/files", tags=["files"])
 
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
-
+AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 @router.post("/", response_model=FileReturn, status_code=status.HTTP_201_CREATED)
 async def upload_file_view(
@@ -31,5 +33,6 @@ async def upload_file_view(
 async def get_file_view(
     session: SessionDep,
     file_id: int,
+    admin: AdminDep
 ) -> StreamingResponse:
     return await get_file_by_id(session=session, file_id=file_id)

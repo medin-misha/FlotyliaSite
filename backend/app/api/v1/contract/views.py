@@ -4,7 +4,7 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Contract
 from core.database import database
-from contracts.contract import ContractCreate, ContractReturn
+from contracts.contract import ContractCreate, ContractReturn, ContractUpdate
 from services.crud import CRUD
 from services.contracts import create_contract
 from core.auth import utils as auth_utils
@@ -39,7 +39,7 @@ async def get_contract(id: int, session: SessionDep, admin: AdminDep) -> Contrac
 
 @router.patch("/{id}", response_model=ContractReturn, status_code=status.HTTP_200_OK)
 async def update_contract(
-    id: int, data: ContractCreate, session: SessionDep, admin: AdminDep
+    id: int, data: ContractUpdate, session: SessionDep, admin: AdminDep
 ) -> ContractReturn:
     return await CRUD.patch(new_data=data, model=Contract, session=session, id=id)
 

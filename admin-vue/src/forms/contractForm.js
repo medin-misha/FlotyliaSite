@@ -19,7 +19,7 @@ export const contractSchema = {
 
     {
       key: 'contract_file',
-      label: 'Contract file',
+      label: 'Файл контракта',
       type: 'number',
       isFile: true,
       component: FileComp,
@@ -27,7 +27,7 @@ export const contractSchema = {
 
     {
       key: 'transport_id',
-      label: 'Transport',
+      label: 'ID транспорта',
       type: 'number',
       readonly: false,
       component: NumberComp,
@@ -35,7 +35,7 @@ export const contractSchema = {
 
     {
       key: 'user_id',
-      label: 'User',
+      label: 'ID курьера',
       type: 'number',
       readonly: false,
       component: NumberComp,
@@ -43,14 +43,14 @@ export const contractSchema = {
 
     {
       key: 'date_of_signing',
-      label: 'Date of signing',
+      label: 'Дата подписания',
       type: 'datetime',
       component: StringComp,
     },
 
     {
       key: 'is_active',
-      label: 'Active',
+      label: 'Активен',
       type: 'boolean',
       component: CheckboxComp,
     },
@@ -62,25 +62,25 @@ export const contractCreateSchema = {
   fields: [
     {
       key: 'transport_id',
-      label: 'Transport ID',
+      label: 'ID транспорта',
       type: 'number',
       component: StringCreateComp,
     },
     {
       key: 'user_id',
-      label: 'User ID',
+      label: 'ID курьера',
       type: 'number',
       component: StringCreateComp,
     },
     {
       key: 'date_of_signing',
-      label: 'Date of signing',
+      label: 'Дата подписания',
       type: 'date',
       component: DateCreateComp,
     },
     {
       key: 'contract_file',
-      label: 'Contract file',
+      label: 'Файл контракта',
       type: 'file',
       component: FileCreateComp,
     },

@@ -3,6 +3,7 @@ import NumberComp from '@/components/subComponents/fieldsComps/numberComp.vue'
 import DocumentListComp from '@/components/subComponents/fieldsComps/documentListComp.vue'
 import SelectComp from '@/components/subComponents/fieldsComps/selectComp.vue'
 import DateComp from '@/components/subComponents/fieldsComps/dateComp.vue'
+import CheckboxComp from '@/components/subComponents/fieldsComps/checkboxComp.vue'
 import stringCreateComp from '@/components/subComponents/createComps/stringCreateComp.vue'
 import SelectCreateComp from '@/components/subComponents/createComps/selectCreateComp.vue'
 import DateCreateComp from '@/components/subComponents/createComps/dateCreateComp.vue'
@@ -21,74 +22,49 @@ export const userSchema = {
       readonly: true,
       component: NumberComp,
     },
-
+    {
+      key: 'created_at',
+      label: 'Отметка времени',
+      type: 'date',
+      readonly: true,
+      component: DateComp,
+    },
     {
       key: 'name',
-      label: 'Name',
+      label: 'Имя фамилия',
       type: 'string',
       component: StringComp,
     },
-
     {
-      key: 'email',
-      label: 'Email',
+      key: 'city',
+      label: 'Город',
       type: 'string',
       component: StringComp,
     },
-
     {
       key: 'phone',
-      label: 'Phone',
-      type: 'string',
-      component: StringComp,
-    },
-
-    {
-      key: 'work_in',
-      label: 'Work in',
-      type: 'string',
-      component: StringComp,
-    },
-
-    {
-      key: 'how_found_it',
-      label: 'How found it',
+      label: 'Номер телефона',
       type: 'string',
       component: StringComp,
     },
     {
-      key: 'desired_transport',
-      label: 'Desired transport',
+      key: 'email',
+      label: 'Электронная почта',
       type: 'string',
       component: StringComp,
     },
     {
       key: 'birth_date',
-      label: 'Birth date',
+      label: 'Дата рождения',
       type: 'date',
       component: DateComp,
     },
-
     {
-      key: 'invoice',
-      label: 'Invoice',
+      key: 'address',
+      label: 'Адрес проживания',
       type: 'string',
       component: StringComp,
     },
-
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'string',
-      readonly: false,
-      component: SelectComp,
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'active', label: 'Active' },
-        { value: 'inoperative', label: 'Inoperative' },
-      ],
-    },
-
     {
       key: 'telegram',
       label: 'Telegram',
@@ -102,24 +78,52 @@ export const userSchema = {
       component: StringComp,
     },
     {
-      key: 'city',
-      label: 'City',
+      key: 'desired_transport',
+      label: 'Тип транспорта',
       type: 'string',
       component: StringComp,
     },
-
     {
-      key: 'address',
-      label: 'Address',
+      key: 'invoice',
+      label: 'Номер счета',
       type: 'string',
       component: StringComp,
     },
-
     {
-      key: 'stay_type',
-      label: 'Stay type',
+      key: 'citizenship',
+      label: 'Гражданство',
       type: 'string',
       component: StringComp,
+    },
+    {
+      key: 'consent',
+      label: 'Обработка данных',
+      type: 'boolean',
+      component: CheckboxComp,
+    },
+    {
+      key: 'work_in',
+      label: 'Работает в',
+      type: 'string',
+      component: StringComp,
+    },
+    {
+      key: 'how_found_it',
+      label: 'Как нас нашел',
+      type: 'string',
+      component: StringComp,
+    },
+    {
+      key: 'status',
+      label: 'Статус',
+      type: 'string',
+      readonly: false,
+      component: SelectComp,
+      options: [
+        { value: 'pending', label: 'Pending' },
+        { value: 'active', label: 'Active' },
+        { value: 'inoperative', label: 'Inoperative' },
+      ],
     },
     {
       key: 'documents',
@@ -135,71 +139,40 @@ export const userCreateSchema = {
   fields: [
     {
       key: 'name',
-      label: 'Name',
+      label: 'Имя фамилия',
       type: 'string',
       component: stringCreateComp,
     },
-
     {
-      key: 'email',
-      label: 'Email',
+      key: 'city',
+      label: 'Город',
       type: 'string',
       component: stringCreateComp,
     },
-
     {
       key: 'phone',
-      label: 'Phone',
-      type: 'string',
-      component: stringCreateComp,
-    },
-
-    {
-      key: 'work_in',
-      label: 'Work in',
-      type: 'string',
-      component: stringCreateComp,
-    },
-
-    {
-      key: 'how_found_it',
-      label: 'How found it',
+      label: 'Номер телефона',
       type: 'string',
       component: stringCreateComp,
     },
     {
-      key: 'desired_transport',
-      label: 'Desired transport',
+      key: 'email',
+      label: 'Электронная почта',
       type: 'string',
       component: stringCreateComp,
     },
     {
       key: 'birth_date',
-      label: 'Birth date',
+      label: 'Дата рождения',
       type: 'date',
       component: DateCreateComp,
     },
-
     {
-      key: 'invoice',
-      label: 'Invoice',
+      key: 'address',
+      label: 'Адрес проживания',
       type: 'string',
       component: stringCreateComp,
     },
-
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'string',
-      readonly: false,
-      component: SelectCreateComp,
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'active', label: 'Active' },
-        { value: 'inoperative', label: 'Inoperative' },
-      ],
-    },
-
     {
       key: 'telegram',
       label: 'Telegram',
@@ -208,29 +181,57 @@ export const userCreateSchema = {
     },
     {
       key: 'whatsapp',
-      label: 'Whatsapp',
+      label: 'WhatsApp',
       type: 'string',
       component: stringCreateComp,
     },
     {
-      key: 'city',
-      label: 'City',
+      key: 'desired_transport',
+      label: 'Тип транспорта для доставки',
       type: 'string',
       component: stringCreateComp,
     },
-
     {
-      key: 'address',
-      label: 'Address',
+      key: 'invoice',
+      label: 'Укажите номер счета чешского банка либо укажите другой тип оплаты',
       type: 'string',
       component: stringCreateComp,
     },
-
     {
-      key: 'stay_type',
-      label: 'Stay type',
+      key: 'citizenship',
+      label: 'Гражданство',
       type: 'string',
       component: stringCreateComp,
+    },
+    {
+      key: 'consent',
+      label: 'Согласие на обработку персональных данных',
+      type: 'boolean',
+      component: stringCreateComp,
+    },
+    {
+      key: 'work_in',
+      label: 'Работает в',
+      type: 'string',
+      component: stringCreateComp,
+    },
+    {
+      key: 'how_found_it',
+      label: 'Как нас нашел',
+      type: 'string',
+      component: stringCreateComp,
+    },
+    {
+      key: 'status',
+      label: 'Статус',
+      type: 'string',
+      readonly: false,
+      component: SelectCreateComp,
+      options: [
+        { value: 'pending', label: 'Pending' },
+        { value: 'active', label: 'Active' },
+        { value: 'inoperative', label: 'Inoperative' },
+      ],
     },
   ],
 }

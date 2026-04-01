@@ -16,47 +16,47 @@ export const transportSchema = {
 
     {
       key: 'type',
-      label: 'Type',
+      label: 'Тип',
       type: 'string',
       component: StringComp,
     },
 
     {
       key: 'manufacturer',
-      label: 'Manufacturer',
+      label: 'Производитель',
       type: 'string',
       component: StringComp,
     },
 
     {
       key: 'model',
-      label: 'Model',
+      label: 'Модель',
       type: 'string',
       component: StringComp,
     },
 
     {
       key: 'color',
-      label: 'Color',
+      label: 'Цвет',
       type: 'string',
       component: StringComp,
     },
 
     {
       key: 'number',
-      label: 'Number',
+      label: 'Номер',
       type: 'string',
       component: StringComp,
     },
     {
       key: 'message',
-      label: 'Message',
+      label: 'Сообщение',
       type: 'string',
       component: StringComp,
     },
     {
       key: 'rental_price',
-      label: 'Rental Price',
+      label: 'Цена аренды',
       type: 'number',
       component: NumberComp,
     },
@@ -68,43 +68,43 @@ export const transportCreateSchema = {
   fields: [
     {
       key: 'type',
-      label: 'Type',
+      label: 'Тип',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'manufacturer',
-      label: 'Manufacturer',
+      label: 'Производитель',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'model',
-      label: 'Model',
+      label: 'Модель',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'color',
-      label: 'Color',
+      label: 'Цвет',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'number',
-      label: 'Number',
+      label: 'Номер',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'message',
-      label: 'Message',
+      label: 'Сообщение',
       type: 'string',
       component: StringCreateComp,
     },
     {
       key: 'rental_price',
-      label: 'Rental Price',
+      label: 'Цена аренды',
       type: 'number',
       component: NumberCreateComp,
     },

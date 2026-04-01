@@ -5,7 +5,7 @@ from core.models import User
 from core.database import database
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
-from contracts.user.schemas import UserCreate, UserReturn
+from contracts.user.schemas import UserCreate, UserReturn, UserUpdate
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
 from fastapi_cache.decorator import cache
@@ -32,7 +32,7 @@ async def get_users_view(
     return await CRUD.get(model=User, session=session, page=page, limit=limit, search=search, field=field)
 
 @router.get("/export", status_code=status.HTTP_200_OK)
-async def export_users_view(session: SessionDep) -> StreamingResponse:
+async def export_users_view(session: SessionDep, admin: AdminDep) -> StreamingResponse:
     return await export_to_exel(session=session)
 
 
@@ -43,7 +43,7 @@ async def get_user_view(session: SessionDep, id: int, admin: AdminDep) -> UserRe
 
 @router.patch("/{id}", status_code=status.HTTP_200_OK)
 async def patch_user_view(
-    session: SessionDep, id: int, user: UserCreate, admin: AdminDep
+    session: SessionDep, id: int, user: UserUpdate, admin: AdminDep
 ) -> UserReturn:
     return await CRUD.patch(new_data=user, model=User, session=session, id=id)
 

@@ -1,0 +1,10 @@
+{
+  "publishes": {
+    "pearly-sprout-yksc": {
+      "siteUrl": "https://pearly-sprout-yksc.here.now/",
+      "claimToken": "22b76ab181df81e3a729673cdb7afe3f55311972b279115101f4347a77126286",
+      "claimUrl": "https://here.now/claim?slug=pearly-sprout-yksc&token=22b76ab181df81e3a729673cdb7afe3f55311972b279115101f4347a77126286",
+      "expiresAt": "2026-03-21T18:28:39.322Z"
+    }
+  }
+}

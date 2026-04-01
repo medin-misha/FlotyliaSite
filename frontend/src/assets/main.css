@@ -8,4 +8,47 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
+  color: var(--color-text);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-section-heading {
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.app-pill-button {
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-fade-transition {
+  transition: opacity 0.2s ease;
+}
+
+.app-alt-button-text {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight: 600;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+.app-body-copy {
+  font-size: 18px;
+  line-height: 140%;
+  letter-spacing: 0%;
+  color: var(--color-text);
+  margin: 0;
 }
