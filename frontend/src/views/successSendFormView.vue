@@ -64,9 +64,6 @@ const instructionHeading = computed(() => t('success.instructions.heading'))
         <p class="instructions-heading">{{ instructionHeading }}</p>
       </div>
 
-      <p class="store-note">
-        {{ $t("success.store-note") }}
-      </p>
     </div>
   </div>
 </template>

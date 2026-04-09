@@ -10,7 +10,7 @@ const { t } = useI18n({ useScope: "global" })
 // Reactive form data
 const formData = reactive({
   name: '',
-  phone: '',
+  phone: '+420',
   email: '',
   city: '',
   birth_date: '',
@@ -60,7 +60,7 @@ const isSubmitting = ref(false)
 // Platform selection logic
 const contactPlaceholder = computed(() => {
   if (formData.contactPlatform === 'telegram') return '@username'
-  if (formData.contactPlatform === 'whatsapp') return '+420...'
+  if (formData.contactPlatform === 'whatsapp') return '+...'
   return ''
 })
 
@@ -72,14 +72,20 @@ function selectPlatform(platform) {
     formData.contactValue = ''
   } else {
     formData.contactPlatform = platform
-    formData.contactValue = platform === 'whatsapp' ? '+420' : ''
+    formData.contactValue = platform === 'whatsapp' ? '+' : ''
   }
 }
 
+watch(() => formData.phone, (val) => {
+  if (!val.startsWith('+420')) {
+    formData.phone = '+420'
+  }
+})
+
 watch(() => formData.contactValue, (val) => {
   if (formData.contactPlatform !== 'whatsapp') return
-  if (!val.startsWith('+420')) {
-    formData.contactValue = '+420'
+  if (!val.startsWith('+')) {
+    formData.contactValue = '+'
   }
 })
 
@@ -190,7 +196,7 @@ async function submitForm() {
 
       <div class="field-group">
         <label>{{ $t("form.fields.phone") }}</label>
-        <input type="tel" v-model="formData.phone" :placeholder="$t('form.placeholders.phone')" required />
+        <input type="tel" v-model="formData.phone" required />
       </div>
 
       <div class="field-group">
@@ -376,6 +382,7 @@ async function submitForm() {
         type="submit"
         :disabled="isSubmitting || !hasRequiredFiles"
         :class="(route.params.company === 'bolt' ? 'app-pill-button app-alt-button-text submit-btn bolt' : 'app-pill-button app-alt-button-text submit-btn foodora')"
+        
       >
         {{ $t("form.submit") }}
       </button>
