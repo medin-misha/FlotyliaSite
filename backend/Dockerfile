@@ -25,8 +25,8 @@ ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONPATH="/app/app"
 
 EXPOSE 8000
-
-CMD ["gunicorn", "app.main:app", \
-     "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--workers", "2", \
-     "--bind", "0.0.0.0:8000"]
+CMD cd /app/app && alembic upgrade head && \
+    cd /app && gunicorn app.main:app \
+    --worker-class uvicorn.workers.UvicornWorker \
+    --workers 2 \
+    --bind 0.0.0.0:8000
