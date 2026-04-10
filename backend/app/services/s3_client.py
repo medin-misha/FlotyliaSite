@@ -1,4 +1,5 @@
 from aiobotocore.session import get_session
+from botocore.config import Config
 from fastapi import HTTPException, status
 from contextlib import asynccontextmanager
 from config import settings
@@ -25,6 +26,10 @@ class S3Client:
         async with self.session.create_client(
             "s3",
             **self.config,
+            config=Config(
+                signature_version="s3v4",
+                s3={"addressing_style": "path", "payload_signing_enabled": False},
+            ),
         ) as client:
             yield client
     

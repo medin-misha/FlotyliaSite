@@ -67,7 +67,6 @@ class S3ErrorHandler:
         Обрабатывает исключения botocore и выбрасывает HTTPException.
         """
         from botocore.exceptions import ClientError, EndpointConnectionError
-
         if isinstance(err, EndpointConnectionError):
             logger.error(f"S3 connection error during {action}: {err}")
             raise HTTPException(
