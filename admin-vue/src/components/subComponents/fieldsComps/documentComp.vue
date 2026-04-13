@@ -2,6 +2,7 @@
 import { onBeforeUnmount, ref, watch } from 'vue'
 import APIPosts from '@/api/posts'
 import api from '@/api/api'
+import { openBlobInNewTab } from '@/utils/openBlobInNewTab'
 
 const props = defineProps({
   document: Object,
@@ -51,21 +52,12 @@ const loadPreview = async (fileId = currentFileId.value) => {
 const openFile = async () => {
   if (loading.value || !currentFileId.value) return
 
-  const openedWindow = window.open('', '_blank', 'noopener,noreferrer')
-
   try {
-    const response = await fetchFileBlob(currentFileId.value)
-    const blobUrl = URL.createObjectURL(response.data)
-
-    if (openedWindow) {
-      openedWindow.location.href = blobUrl
-    } else {
-      window.open(blobUrl, '_blank', 'noopener,noreferrer')
-    }
-
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
+    await openBlobInNewTab(async () => {
+      const response = await fetchFileBlob(currentFileId.value)
+      return response.data
+    }, description.value || field?.label || 'Document')
   } catch (error) {
-    if (openedWindow) openedWindow.close()
     console.error('Failed to open file:', error)
   }
 }
