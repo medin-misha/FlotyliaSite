@@ -1,6 +1,10 @@
 import api from './api.js'
 import { useAuthStore } from '../stores/auth.js'
 
+function withTrailingSlash(url) {
+  return url.endsWith('/') ? url : `${url}/`
+}
+
 // Универсальная функция для запроса
 const request = async (method, url, data = null, params = null) => {
   try {
@@ -29,9 +33,9 @@ const login = async (name, password) => {
 
 const APIAuth = {
   createAdmin: async (name, password) =>
-    request('post', '/admin', { username: name, password: password }),
+    request('post', withTrailingSlash('/admin'), { username: name, password: password }),
   login,
-  getAdmins: async (page, limit) => request('get', '/admin', null, { page: page, limit: limit }),
+  getAdmins: async (page, limit) => request('get', withTrailingSlash('/admin'), null, { page: page, limit: limit }),
   getMeInfo: async () => request('get', '/admin/me'),
   deleteAdmin: async (id) => request('delete', `/admin/${id}`),
   getAdminById: async (id) => request('get', `/admin/${id}`),

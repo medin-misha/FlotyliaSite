@@ -1,5 +1,9 @@
 import api from './api'
 
+function withTrailingSlash(url) {
+  return url.endsWith('/') ? url : `${url}/`
+}
+
 const APIPosts = {
   createFile: async (file) => {
     const formData = new FormData()
@@ -11,7 +15,7 @@ const APIPosts = {
     })
   },
   createPost: async (URL, body) => {
-    return await api.post(`${URL}`, body)
+    return await api.post(withTrailingSlash(URL), body)
   },
   updatePost: async (URL, id, body) => {
     return await api.patch(`${URL}/${id}`, body)
