@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: [localhost:9090]
+
+  - job_name: cadvisor
+    static_configs:
+      - targets: [cadvisor:8080]
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: container_(cpu_usage_seconds_total|memory_working_set_bytes|last_seen|network_receive_bytes_total|network_transmit_bytes_total)|machine_(cpu_cores|memory_bytes)
+        action: keep
