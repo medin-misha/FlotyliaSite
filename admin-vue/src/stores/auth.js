@@ -1,8 +1,12 @@
 import { defineStore } from 'pinia'
 import Cookies from 'js-cookie'
 
+const isHttpsOnly =
+  import.meta.env.VITE_HTTPS_ONLY === 'true' ||
+  (typeof window !== 'undefined' && window.location.protocol === 'https:')
+
 const cookieOptions = {
-  secure: import.meta.env.VITE_HTTPS_ONLY === 'true',
+  secure: isHttpsOnly,
   sameSite: 'strict',
   expires: 7,
 }

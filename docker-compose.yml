@@ -76,7 +76,7 @@ services:
       context: ./admin-vue
       args:
         VITE_API_URL: /api/v1
-        VITE_HTTPS_ONLY: "false"
+        VITE_HTTPS_ONLY: "true"
     networks:
       - frontend-net
     restart: always
