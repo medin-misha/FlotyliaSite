@@ -155,7 +155,19 @@
         "consent": {
             "label": "Souhlasím se zpracováním svých osobních údajů"
         },
+        "serverError": {
+            "title": "Formulář se nepodařilo odeslat",
+            "network": "Zkontrolujte připojení k internetu a zkuste to znovu.",
+            "timeout": "Server odpovídá příliš dlouho. Zkuste to prosím o chvíli později.",
+            "validation": "Nepodařilo se zpracovat údaje z formuláře. Zkontrolujte zadané informace a zkuste to znovu.",
+            "upload": "Nepodařilo se nahrát soubory. Zkuste to prosím znovu.",
+            "serviceUnavailable": "Služba je dočasně nedostupná. Zkuste to později nebo nám napište na Telegram.",
+            "server": "Na serveru došlo k chybě. Zkuste to později nebo nám napište na Telegram.",
+            "partial": "Vaše žádost se už mohla odeslat jen částečně. Neodesílejte ji hned znovu. Napište nám na Telegram a pomůžeme vám registraci dokončit.",
+            "unknown": "Formulář se nepodařilo odeslat. Zkuste to prosím znovu."
+        },
         "alert": {
+            "required": "Vyplňte prosím všechna pole formuláře.",
             "consent": "Prosím udělte souhlas se zpracováním osobních údajů.",
             "submit": "Formulář se nepodařilo odeslat. Zkuste to prosím znovu."
         }

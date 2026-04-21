@@ -156,7 +156,19 @@
         "consent": {
             "label": "I consent to the processing of my personal data"
         },
+        "serverError": {
+            "title": "We could not submit your form",
+            "network": "Check your internet connection and try again.",
+            "timeout": "The server is taking too long to respond. Please try again a little later.",
+            "validation": "We could not process the form data. Check the entered information and try again.",
+            "upload": "We could not upload the files. Please try again.",
+            "serviceUnavailable": "The service is temporarily unavailable. Please try again later or write to us on Telegram.",
+            "server": "A server error occurred. Please try again later or write to us on Telegram.",
+            "partial": "Your application may have been submitted only partially. Do not submit it again right away. Write to us on Telegram and we will help you finish the registration.",
+            "unknown": "We could not submit your form. Please try again."
+        },
         "alert": {
+            "required": "Please fill in all form fields.",
             "consent": "Please consent to the processing of personal data.",
             "submit": "Failed to submit the form. Please try again."
         }

@@ -29,7 +29,39 @@ function getErrorMessage(error, fallbackMessage) {
     return fallbackMessage;
 }
 
-function createRequestError(error, fallbackMessage) {
+function getErrorType(error, action) {
+    if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNABORTED") {
+            return "timeout";
+        }
+
+        if (!error.response) {
+            return "network";
+        }
+
+        const status = error.response.status;
+
+        if (status === 503) {
+            return "service_unavailable";
+        }
+
+        if (status >= 500) {
+            return "server";
+        }
+
+        if (status === 400 || status === 422) {
+            return "validation";
+        }
+    }
+
+    if (action === "upload") {
+        return "upload";
+    }
+
+    return "unknown";
+}
+
+function createRequestError(error, fallbackMessage, action = "request") {
     const requestError = new Error(getErrorMessage(error, fallbackMessage));
 
     if (axios.isAxiosError(error)) {
@@ -37,17 +69,19 @@ function createRequestError(error, fallbackMessage) {
         requestError.data = error.response?.data;
     }
 
+    requestError.type = getErrorType(error, action);
+    requestError.action = action;
+
     return requestError;
 }
 
 const APIPosts = {
     createPost: async (data, url) => {
-        console.log(data)
         try {
             return await api.post(url, data)
         } catch (error) {
             console.error(`Failed to create resource at ${url}`, error)
-            throw createRequestError(error, "Failed to create resource")
+            throw createRequestError(error, "Failed to create resource", "request")
         }
     },
     createFile: async (file) => {
@@ -62,7 +96,7 @@ const APIPosts = {
             })
         } catch (error) {
             console.error("Failed to upload file", error)
-            throw createRequestError(error, "Failed to upload file")
+            throw createRequestError(error, "Failed to upload file", "upload")
         }
     }
 }
