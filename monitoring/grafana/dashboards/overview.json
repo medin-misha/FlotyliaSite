@@ -263,12 +263,12 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "max(time() - container_last_seen{container_label_com_docker_compose_service=\"nginx\",name!=\"\"})",
+          "expr": "max(time() - container_last_seen{container_label_com_docker_compose_service=\"caddy\",name!=\"\"})",
           "instant": true,
           "refId": "A"
         }
       ],
-      "title": "Nginx",
+      "title": "Caddy",
       "type": "stat"
     },
     {
@@ -487,7 +487,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|admin|nginx|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}[2m])) * 100",
+          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service=~\"backend|frontend|admin|caddy|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}[2m])) * 100",
           "legendFormat": "{{ container_label_com_docker_compose_service }}",
           "refId": "A"
         }
@@ -515,7 +515,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "container_memory_working_set_bytes{container_label_com_docker_compose_service=~\"backend|frontend|admin|nginx|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}",
+          "expr": "container_memory_working_set_bytes{container_label_com_docker_compose_service=~\"backend|frontend|admin|caddy|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}",
           "legendFormat": "{{ container_label_com_docker_compose_service }}",
           "refId": "A"
         }
@@ -543,7 +543,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|admin|nginx|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}[2m]))",
+          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_network_receive_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|admin|caddy|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}[2m]))",
           "legendFormat": "{{ container_label_com_docker_compose_service }}",
           "refId": "A"
         }
@@ -571,7 +571,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|admin|nginx|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}[2m]))",
+          "expr": "sum by (container_label_com_docker_compose_service) (rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service=~\"backend|frontend|admin|caddy|minio|grafana|prometheus|loki|promtail|cadvisor\",name!=\"\"}[2m]))",
           "legendFormat": "{{ container_label_com_docker_compose_service }}",
           "refId": "A"
         }
@@ -684,11 +684,11 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{project=\"flotyliasite\",service=\"nginx\"}",
+          "expr": "{project=\"flotyliasite\",service=\"caddy\"}",
           "refId": "A"
         }
       ],
-      "title": "Nginx Logs",
+      "title": "Caddy Logs",
       "type": "logs"
     }
   ]
