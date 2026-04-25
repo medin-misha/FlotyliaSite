@@ -50,7 +50,11 @@ services:
       - "8000:8000"
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "python - <<'PY'\nimport urllib.request\nurllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)\nprint('ok')\nPY"]
+      test:
+        [
+          "CMD-SHELL",
+          "python - <<'PY'\nimport urllib.request\nurllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)\nprint('ok')\nPY",
+        ]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -61,11 +65,16 @@ services:
       context: ./frontend
       args:
         VITE_API_URL: /api/v1
+        VITE_HTTPS_ONLY: "true"
     networks:
       - frontend-net
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ | grep -q '<title>MFS</title>'"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1/ | grep -q '<title>MFS</title>'",
+        ]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -81,7 +90,8 @@ services:
       - frontend-net
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ | grep -q '/admin/assets/'"]
+      test:
+        ["CMD-SHELL", "wget -qO- http://127.0.0.1/ | grep -q '/admin/assets/'"]
       interval: 15s
       timeout: 10s
       retries: 5
