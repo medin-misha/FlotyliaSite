@@ -1,6 +1,10 @@
 import axios from "axios";
 import api from "./api";
 
+function withTrailingSlash(url) {
+    return url.endsWith("/") ? url : `${url}/`
+}
+
 function getErrorMessage(error, fallbackMessage) {
     if (axios.isAxiosError(error)) {
         const responseData = error.response?.data;
@@ -78,7 +82,7 @@ function createRequestError(error, fallbackMessage, action = "request") {
 const APIPosts = {
     createPost: async (data, url) => {
         try {
-            return await api.post(url, data)
+            return await api.post(withTrailingSlash(url), data)
         } catch (error) {
             console.error(`Failed to create resource at ${url}`, error)
             throw createRequestError(error, "Failed to create resource", "request")
@@ -89,7 +93,7 @@ const APIPosts = {
             const formData = new FormData()
             formData.append("file", file)
 
-            return await api.post("/files", formData, {
+            return await api.post(withTrailingSlash("/files"), formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

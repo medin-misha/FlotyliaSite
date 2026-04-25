@@ -8,7 +8,7 @@ const APIPosts = {
   createFile: async (file) => {
     const formData = new FormData()
     formData.append('file', file)
-    return await api.post(`/files`, formData, {
+    return await api.post(withTrailingSlash('/files'), formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
