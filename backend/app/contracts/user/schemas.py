@@ -13,7 +13,7 @@ string_15_optional = Field(default=None, max_length=15, min_length=2)
 string_15_required = Field(max_length=15, min_length=2)
 
 
-class UserBase(BaseModel):
+class UserInputBase(BaseModel):
     name: str = string_255_required
     email: EmailStr
     phone: str = string_15_required
@@ -44,7 +44,7 @@ class UserBase(BaseModel):
         from_attributes = True
 
 
-class UserCreate(UserBase):
+class UserCreate(UserInputBase):
     """Schema for creating a new user"""
 
     pass
@@ -53,7 +53,7 @@ class UserCreate(UserBase):
         from_attributes = True
 
 
-class UserUpdate(UserBase):
+class UserUpdate(UserInputBase):
     name: Optional[str] = string_255_optional
     email: Optional[EmailStr] = None
     phone: Optional[str] = string_15_optional
@@ -84,10 +84,70 @@ class UserUpdate(UserBase):
         from_attributes = True
 
 
-class UserReturn(UserBase):
+class UserReturn(BaseModel):
     id: int
     created_at: datetime
+    name: str
+    email: str
+    phone: str
+    work_in: str
+    how_found_it: Optional[str] = None
+    desired_transport: Optional[str] = None
+    birth_date: Optional[date] = None
+    invoice: Optional[str] = None
+    status: Optional[str] = UserStatus.PENDING
+    telegram: Optional[str] = None
+    whatsapp: Optional[str] = None
+    city: Optional[str] = None
+    address: Optional[str] = None
+    citizenship: Optional[str] = None
+    consent: bool = False
     documents: list[DocumentReturn]
+
+    @field_validator("status")
+    def validate_status(cls, v):
+        if v is None:
+            return v
+        if v not in [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE]:
+            raise ValueError(
+                f"Invalid status. Status must be one of: {UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE}"
+            )
+        return v
 
     class Config:
         from_attributes = True
+
+
+class UserImportCreate(BaseModel):
+    created_at: Optional[datetime] = None
+    name: str
+    email: str
+    phone: str
+    how_found_it: Optional[str] = None
+    desired_transport: Optional[str] = None
+    birth_date: Optional[date] = None
+    telegram: Optional[str] = None
+    whatsapp: Optional[str] = None
+    city: Optional[str] = None
+    address: Optional[str] = None
+    work_in: str
+    citizenship: Optional[str] = None
+    invoice: Optional[str] = None
+    status: str = UserStatus.PENDING
+    consent: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class UserImportError(BaseModel):
+    row: int
+    email: Optional[str] = None
+    detail: str
+
+
+class UserImportReport(BaseModel):
+    received: int
+    imported: int
+    skipped: int
+    errors: list[UserImportError]

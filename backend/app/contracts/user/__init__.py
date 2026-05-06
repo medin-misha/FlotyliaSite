@@ -1,2 +1,9 @@
-__all__ = ["UserCreate", "UserUpdate", "UserReturn"]
+__all__ = [
+    "UserCreate",
+    "UserUpdate",
+    "UserReturn",
+    "UserImportCreate",
+    "UserImportError",
+    "UserImportReport",
+]
 from .schemas import *
