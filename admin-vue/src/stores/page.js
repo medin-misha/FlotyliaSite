@@ -11,7 +11,7 @@ export const usePageStore = defineStore('page', {
     },
     paginationData: {
       page: 1,
-      limit: 10,
+      limit: 50,
       search: '',
       filter: '',
     },
