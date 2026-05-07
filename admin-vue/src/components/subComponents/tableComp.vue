@@ -37,6 +37,25 @@ const fetchWithRetry = async () => {
 const objectsList = (await fetchWithRetry()).data
 console.log(objectsList)
 onUnmounted(() => clearTimeout(retryTimeout))
+
+const statusClass = (obj) => {
+  const status = obj.status
+  if (status === 'pending') return 'row-pending'
+  if (status === 'active') return 'row-active'
+  if (status === 'inoperative') return 'row-inoperative'
+  if (status === 'processing') return 'row-processing'
+  if (status === 'in activation') return 'row-in-activation'
+  return ''
+}
+
+const getOptionLabel = (field, value) => {
+  if (!field?.options) {
+    return value
+  }
+
+  const selectedOption = field.options.find((option) => option.value === value)
+  return selectedOption?.label ?? value
+}
 </script>
 
 <template>
@@ -54,7 +73,7 @@ onUnmounted(() => clearTimeout(retryTimeout))
           </tr>
         </thead>
         <tbody>
-          <tr v-for="obj in objectsList" :key="obj.id" @click="statesStore.setDetailState(obj.id)">
+          <tr v-for="obj in objectsList" :key="obj.id" :class="statusClass(obj)" @click="statesStore.setDetailState(obj.id)">
             <template v-if="form?.fields">
               <td v-for="field in form.fields" :key="field.key">
                 <template v-if="typeof obj[field.key] === 'object'">
@@ -63,7 +82,7 @@ onUnmounted(() => clearTimeout(retryTimeout))
                 <template v-else-if="typeof obj[field.key] === 'boolean'">
                   {{ obj[field.key] ? 'True' : 'False' }}
                 </template>
-                <template v-else>{{ obj[field.key] }}</template>
+                <template v-else>{{ getOptionLabel(field, obj[field.key]) }}</template>
               </td>
             </template>
             <template v-else>
@@ -148,6 +167,36 @@ nav {
 
 tbody tr:hover {
   background-color: var(--slidebar-item-hover-bg);
+}
+.row-pending {
+  background-color: #fffbeb;
+}
+.row-active {
+  background-color: #f0fdf4;
+}
+.row-inoperative {
+  background-color: #fff1f2;
+}
+.row-processing {
+  background-color: #eff6ff;
+}
+.row-in-activation {
+  background-color: #f5f3ff;
+}
+.row-pending:hover {
+  background-color: #fef3c7;
+}
+.row-active:hover {
+  background-color: #dcfce7;
+}
+.row-inoperative:hover {
+  background-color: #ffe4e6;
+}
+.row-processing:hover {
+  background-color: #dbeafe;
+}
+.row-in-activation:hover {
+  background-color: #ede9fe;
 }
 button {
   width: 50px;

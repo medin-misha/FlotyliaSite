@@ -7,6 +7,15 @@ class UserStatus:
     PENDING = "pending"
     ACTIVE = "active"
     INACTIVE = "inoperative"
+    PROCESSING = "processing"
+    INACTIVATION = "in activation"
+    ALL = (
+        PENDING,
+        ACTIVE,
+        INACTIVE,
+        PROCESSING,
+        INACTIVATION,
+    )
 
 
 class User(Base):

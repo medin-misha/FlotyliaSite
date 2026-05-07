@@ -11,6 +11,16 @@ string_50_optional = Field(default=None, max_length=50, min_length=2)
 string_50_required = Field(max_length=50, min_length=2)
 string_15_optional = Field(default=None, max_length=15, min_length=2)
 string_15_required = Field(max_length=15, min_length=2)
+user_status_values = UserStatus.ALL
+user_status_error = f"Invalid status. Status must be one of: {', '.join(user_status_values)}"
+
+
+def validate_user_status(v: Optional[str]):
+    if v is None:
+        return v
+    if v not in user_status_values:
+        raise ValueError(user_status_error)
+    return v
 
 
 class UserInputBase(BaseModel):
@@ -32,13 +42,7 @@ class UserInputBase(BaseModel):
 
     @field_validator("status")
     def validate_status(cls, v):
-        if v is None:
-            return v
-        if v not in [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE]:
-            raise ValueError(
-                f"Invalid status. Status must be one of: {UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE}"
-            )
-        return v
+        return validate_user_status(v)
 
     class Config:
         from_attributes = True
@@ -72,13 +76,7 @@ class UserUpdate(UserInputBase):
 
     @field_validator("status")
     def validate_status(cls, v):
-        if v is None:
-            return v
-        if v not in [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE]:
-            raise ValueError(
-                f"Invalid status. Status must be one of: {UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE}"
-            )
-        return v
+        return validate_user_status(v)
 
     class Config:
         from_attributes = True
@@ -106,13 +104,7 @@ class UserReturn(BaseModel):
 
     @field_validator("status")
     def validate_status(cls, v):
-        if v is None:
-            return v
-        if v not in [UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE]:
-            raise ValueError(
-                f"Invalid status. Status must be one of: {UserStatus.PENDING, UserStatus.ACTIVE, UserStatus.INACTIVE}"
-            )
-        return v
+        return validate_user_status(v)
 
     class Config:
         from_attributes = True
@@ -135,6 +127,10 @@ class UserImportCreate(BaseModel):
     invoice: Optional[str] = None
     status: str = UserStatus.PENDING
     consent: bool = False
+
+    @field_validator("status")
+    def validate_status(cls, v):
+        return validate_user_status(v)
 
     class Config:
         from_attributes = True

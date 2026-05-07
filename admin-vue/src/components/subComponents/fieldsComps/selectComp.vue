@@ -6,14 +6,19 @@ const props = defineProps({
 })
 
 const value = defineModel('value')
+
+const selectedOptionLabel = () => {
+  const selectedOption = props.field?.options?.find((option) => option.value === value.value)
+  return selectedOption?.label ?? value.value
+}
 </script>
 
 <template>
   <div class="details-field">
-    <label class="details-input-label"> {{ field.label }}: {{ value }} </label>
+    <label class="details-input-label"> {{ field.label }}: {{ selectedOptionLabel() }} </label>
 
     <select class="details-input" v-model="value" v-if="!field.readonly">
-      <option v-for="option in field.options" :key="option" :value="option.value">
+      <option v-for="option in field.options" :key="option.value" :value="option.value">
         {{ option.label }}
       </option>
     </select>

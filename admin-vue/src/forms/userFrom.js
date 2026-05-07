@@ -7,6 +7,15 @@ import CheckboxComp from '@/components/subComponents/fieldsComps/checkboxComp.vu
 import stringCreateComp from '@/components/subComponents/createComps/stringCreateComp.vue'
 import SelectCreateComp from '@/components/subComponents/createComps/selectCreateComp.vue'
 import DateCreateComp from '@/components/subComponents/createComps/dateCreateComp.vue'
+
+const userStatusOptions = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'active', label: 'Active' },
+  { value: 'inoperative', label: 'Inoperative' },
+  { value: 'processing', label: 'Processing' },
+  { value: 'in activation', label: 'In Activation' },
+]
+
 export const userSchema = {
   endpoint: '/users',
   filters: [
@@ -119,11 +128,7 @@ export const userSchema = {
       type: 'string',
       readonly: false,
       component: SelectComp,
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'active', label: 'Active' },
-        { value: 'inoperative', label: 'Inoperative' },
-      ],
+      options: userStatusOptions,
     },
     {
       key: 'documents',
@@ -227,11 +232,7 @@ export const userCreateSchema = {
       type: 'string',
       readonly: false,
       component: SelectCreateComp,
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'active', label: 'Active' },
-        { value: 'inoperative', label: 'Inoperative' },
-      ],
+      options: userStatusOptions,
     },
   ],
 }
