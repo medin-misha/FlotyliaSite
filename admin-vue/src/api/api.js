@@ -25,7 +25,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.log(error.response)
-    if (error.response.status === 401) {
+    if (error.response.status === 401 && !error.config.url.includes('/admin/login')) {
       const store = useAuthStore()
       store.logout()
     } else if (error.response.status === 400) {

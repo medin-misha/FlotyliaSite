@@ -6,6 +6,7 @@ const login = ref(null)
 const password = ref(null)
 
 const loginUser = () => {
+  if (!login.value || !password.value) return
   APIAuth.login(login.value, password.value)
 }
 </script>
