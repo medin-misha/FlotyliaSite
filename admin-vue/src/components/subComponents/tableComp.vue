@@ -174,7 +174,7 @@ tbody tr:hover {
   background-color: #2a1215;
 }
 .row-inactivation {
-  background-color: #2a2410;
+  background-color: #2a1020;
 }
 .row-processing {
   background-color: #2a1c10;
@@ -186,7 +186,7 @@ tbody tr:hover {
   background-color: #381a1e;
 }
 .row-inactivation:hover {
-  background-color: #383015;
+  background-color: #3d1530;
 }
 .row-processing:hover {
   background-color: #382615;
