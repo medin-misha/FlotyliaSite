@@ -12,7 +12,7 @@ class UserStatus:
 class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
-    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
     phone: Mapped[str] = mapped_column(String(15), nullable=False, index=True)
     how_found_it: Mapped[str] = mapped_column(String(255), nullable=True)
     desired_transport: Mapped[str] = mapped_column(String(255), nullable=True)
