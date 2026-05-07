@@ -168,28 +168,28 @@ tbody tr:hover {
   background-color: var(--slidebar-item-hover-bg);
 }
 .row-active {
-  background-color: #f0fdf4;
+  background-color: #142a1e;
 }
 .row-inoperative {
-  background-color: #fff1f2;
+  background-color: #2a1215;
 }
 .row-inactivation {
-  background-color: #fffbeb;
+  background-color: #2a2410;
 }
 .row-processing {
-  background-color: #fff7ed;
+  background-color: #2a1c10;
 }
 .row-active:hover {
-  background-color: #dcfce7;
+  background-color: #1c3829;
 }
 .row-inoperative:hover {
-  background-color: #ffe4e6;
+  background-color: #381a1e;
 }
 .row-inactivation:hover {
-  background-color: #fef3c7;
+  background-color: #383015;
 }
 .row-processing:hover {
-  background-color: #fed7aa;
+  background-color: #382615;
 }
 button {
   width: 50px;
