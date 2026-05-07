@@ -13,11 +13,11 @@ const loginUser = () => {
 <template>
   <section>
     <h1>Login user: {{ login }}</h1>
-    <form>
-      <input v-model="login" type="text" placeholder="Login" />
-      <input v-model="password" type="text" placeholder="Password" />
+    <form @submit.prevent="loginUser">
+      <input v-model="login" type="text" name="username" autocomplete="username" placeholder="Login" />
+      <input v-model="password" type="password" name="password" autocomplete="current-password" placeholder="Password" />
       <button
-        @click.prevent="loginUser"
+        type="submit"
         :disabled="!login || !password"
         :class="{ disabled: !login || !password }"
       >
