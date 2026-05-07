@@ -40,11 +40,10 @@ onUnmounted(() => clearTimeout(retryTimeout))
 
 const statusClass = (obj) => {
   const status = obj.status
-  if (status === 'pending') return 'row-pending'
   if (status === 'active') return 'row-active'
   if (status === 'inoperative') return 'row-inoperative'
+  if (status === 'inactivation') return 'row-inactivation'
   if (status === 'processing') return 'row-processing'
-  if (status === 'in activation') return 'row-in-activation'
   return ''
 }
 
@@ -168,23 +167,17 @@ nav {
 tbody tr:hover {
   background-color: var(--slidebar-item-hover-bg);
 }
-.row-pending {
-  background-color: #fffbeb;
-}
 .row-active {
   background-color: #f0fdf4;
 }
 .row-inoperative {
   background-color: #fff1f2;
 }
+.row-inactivation {
+  background-color: #fffbeb;
+}
 .row-processing {
-  background-color: #eff6ff;
-}
-.row-in-activation {
-  background-color: #f5f3ff;
-}
-.row-pending:hover {
-  background-color: #fef3c7;
+  background-color: #fff7ed;
 }
 .row-active:hover {
   background-color: #dcfce7;
@@ -192,11 +185,11 @@ tbody tr:hover {
 .row-inoperative:hover {
   background-color: #ffe4e6;
 }
-.row-processing:hover {
-  background-color: #dbeafe;
+.row-inactivation:hover {
+  background-color: #fef3c7;
 }
-.row-in-activation:hover {
-  background-color: #ede9fe;
+.row-processing:hover {
+  background-color: #fed7aa;
 }
 button {
   width: 50px;
