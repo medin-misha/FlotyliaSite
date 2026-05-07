@@ -42,7 +42,7 @@ const statusClass = (obj) => {
   const status = obj.status
   if (status === 'active') return 'row-active'
   if (status === 'inoperative') return 'row-inoperative'
-  if (status === 'inactivation') return 'row-inactivation'
+  if (status === 'in activation') return 'row-inactivation'
   if (status === 'processing') return 'row-processing'
   return ''
 }
