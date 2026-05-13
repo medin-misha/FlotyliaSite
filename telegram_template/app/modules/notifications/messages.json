@@ -1,0 +1,6 @@
+{
+    "new_application": "🆕 <b>Новая заявка!</b>\n\n👤 <b>Имя:</b> {name}\n📧 <b>Email:</b> {email}\n📱 <b>Телефон:</b> {phone}\n🏢 <b>Место работы:</b> {work_in}{desired_transport_line}{how_found_it_line}{city_line}",
+    "desired_transport_line": "\n🚗 <b>Желаемый транспорт:</b> {desired_transport}",
+    "how_found_it_line": "\n📌 <b>Откуда узнал:</b> {how_found_it}",
+    "city_line": "\n🌍 <b>Город:</b> {city}"
+}
