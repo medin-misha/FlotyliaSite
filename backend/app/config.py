@@ -42,6 +42,8 @@ class Settings(BaseSettings):
     cache_config: CacheSettings = CacheSettings()
     bucket_config: BucketSettings
     cors_config: CORSConfig = CORSConfig()
+    notify_bot_url: str | None = None
+    notify_secret: str | None = None
 
 
 settings = Settings()

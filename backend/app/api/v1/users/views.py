@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, status, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, status, Depends, UploadFile
 from fastapi.responses import StreamingResponse
 from services import CRUD
 from core.models import User
@@ -9,6 +9,7 @@ from contracts.user.schemas import UserCreate, UserImportReport, UserReturn, Use
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
 from services.export import export_to_exel
+from services.notifications import notify_new_application
 from services.users.import_users import import_users
 
 
@@ -18,8 +19,14 @@ AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user_view(user: UserCreate, session: SessionDep) -> UserReturn:
-    return await CRUD.create(data=user, model=User, session=session)
+async def create_user_view(
+    user: UserCreate,
+    session: SessionDep,
+    background_tasks: BackgroundTasks,
+) -> UserReturn:
+    created = await CRUD.create(data=user, model=User, session=session)
+    background_tasks.add_task(notify_new_application, user.model_dump(mode="json"))
+    return created
 
 
 @router.get("/", status_code=status.HTTP_200_OK)

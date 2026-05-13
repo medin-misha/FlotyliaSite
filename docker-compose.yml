@@ -38,6 +38,17 @@ services:
       - backend-net
     restart: on-failure
 
+  telegram-bot:
+    build:
+      context: ./telegram_template
+    env_file:
+      - telegram_template/.env
+    networks:
+      - backend-net
+    ports:
+      - "8080:8080"
+    restart: always
+
   backend:
     build:
       context: ./backend
