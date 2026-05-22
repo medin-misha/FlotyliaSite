@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   field: Object,
@@ -7,9 +7,24 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:value'])
+const copied = ref(false)
 
 const onInput = (e) => {
   emit('update:value', e.target.value)
+}
+
+const copyValue = async () => {
+  if (!props.value) return
+
+  try {
+    await navigator.clipboard.writeText(props.value)
+    copied.value = true
+    setTimeout(() => {
+      copied.value = false
+    }, 1200)
+  } catch (error) {
+    console.error('Не удалось скопировать значение', error)
+  }
 }
 </script>
 
@@ -17,13 +32,25 @@ const onInput = (e) => {
   <div class="details-field">
     <label class="details-input-label"> {{ field.label }}: {{ value }} </label>
 
-    <textarea
-      class="details-input"
-      :value="value"
-      v-if="!field.readonly"
-      :placeholder="field.label"
-      @input="onInput"
-    />
+    <div class="details-actions">
+      <button
+        v-if="field.copyable"
+        class="copy-button"
+        type="button"
+        :disabled="!value"
+        @click="copyValue"
+      >
+        {{ copied ? 'Скопировано' : 'Копировать' }}
+      </button>
+
+      <textarea
+        class="details-input"
+        :value="value"
+        v-if="!field.readonly"
+        :placeholder="field.label"
+        @input="onInput"
+      />
+    </div>
   </div>
 </template>
 
@@ -39,8 +66,15 @@ const onInput = (e) => {
 .details-input-label {
   font-weight: bold;
 }
+.details-actions {
+  width: 45%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
 .details-input {
-  width: 30%;
+  width: 67%;
   background-color: transparent;
   color: var(--slidebar-item-text-color);
   font-weight: bold;
@@ -50,5 +84,16 @@ const onInput = (e) => {
 .details-input:focus {
   outline: none;
   color: var(--button-bg);
+}
+.copy-button {
+  width: auto;
+  min-width: 110px;
+  height: 32px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+}
+.copy-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 </style>

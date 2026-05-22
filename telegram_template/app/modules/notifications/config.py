@@ -31,6 +31,8 @@ class NotificationsSettings(BaseSettings):
     @field_validator("notify_chat_ids", mode="before")
     @classmethod
     def parse_chat_ids(cls, v: object) -> list[int]:
+        if isinstance(v, int):
+            return [v]
         if isinstance(v, list):
             return [int(x) for x in v]
         if isinstance(v, str) and v.strip():

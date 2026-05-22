@@ -1,1 +1,31 @@
+{
+  email may.fleet.solutions@gmail.com
+}
 
+www.mfs-fleet.info {
+ redir https://mfs-fleet.info{uri} permanent
+}
+
+mfs-fleet.info {
+ header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+  redir /admin /admin/ 308
+  redir /grafana /grafana/ 308
+ 
+ handle /api/* {
+  reverse_proxy backend:8000
+ }
+ handle_path /admin/* {
+  reverse_proxy admin:80
+ }
+ handle /grafana/* {
+  reverse_proxy grafana:3000
+ }
+ handle {
+  reverse_proxy frontend:80
+ }
+}

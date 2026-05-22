@@ -62,6 +62,28 @@ const openFile = async () => {
   }
 }
 
+const downloadFile = async () => {
+  if (loading.value || !currentFileId.value) return
+
+  loading.value = true
+  try {
+    const response = await fetchFileBlob(currentFileId.value)
+    const fileUrl = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+
+    link.href = fileUrl
+    link.download = description.value || `document-${props.document.id || currentFileId.value}`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(fileUrl)
+  } catch (error) {
+    console.error('Failed to download file:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
 const triggerFileInput = () => {
   if (loading.value) return
   fileInput.value?.click()
@@ -107,6 +129,10 @@ const onFileChange = async (event) => {
 
 const deleteDocument = async () => {
   if (loading.value) return
+
+  const confirmed = window.confirm('Удалить этот документ?')
+  if (!confirmed) return
+
   if (props.document.id) {
     loading.value = true
     try {
@@ -155,7 +181,28 @@ onBeforeUnmount(() => {
       placeholder="description"
       :disabled="loading"
     />
-    <button class="delete-btn" @click="deleteDocument" :disabled="loading">✕</button>
+    <div class="document-actions">
+      <button
+        type="button"
+        class="action-btn download-btn"
+        aria-label="Скачать документ"
+        title="Скачать документ"
+        @click="downloadFile"
+        :disabled="loading || !currentFileId"
+      >
+        ↓
+      </button>
+      <button
+        type="button"
+        class="action-btn delete-btn"
+        aria-label="Удалить документ"
+        title="Удалить документ"
+        @click="deleteDocument"
+        :disabled="loading"
+      >
+        ✕
+      </button>
+    </div>
     <div class="details-file-wrapper" @click="triggerFileInput" :class="{ uploading: loading }">
       <input
         ref="fileInput"
@@ -263,18 +310,50 @@ section {
   cursor: not-allowed;
 }
 
-.delete-btn {
+.document-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-btn {
   background: var(--slidebar-item-hover-bg);
   border: none;
   color: var(--slidebar-item-text-color);
   opacity: 0.3;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 0.2rem 0.5rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition:
     opacity 0.2s ease,
     color 0.2s ease;
 }
+
+.action-btn:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+}
+
+.download-btn:hover:not(:disabled) {
+  color: var(--button-bg);
+}
+
+.download-btn {
+  width: 2.6rem;
+  height: 1.8rem;
+  font-size: 1rem;
+}
+
 .delete-btn:hover {
   opacity: 1;
   color: #e74c3c;
