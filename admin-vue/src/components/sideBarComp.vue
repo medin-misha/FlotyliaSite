@@ -1,131 +1,125 @@
 <script setup>
-import { ref, markRaw } from 'vue'
+import { ref, markRaw, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth.js'
 import { usePageStore } from '../stores/page.js'
 import { useStatesStore } from '../stores/states.js'
 
 import { userSchema, userCreateSchema } from '../forms/userFrom.js'
 import { adminSchema, adminCreateSchema } from '../forms/adminForm.js'
-import { contractSchema, contractCreateSchema } from '../forms/contractForm.js'
-import { transportSchema, transportCreateSchema } from '../forms/transportForm.js'
-import { productSchema, productCreateSchema } from '../forms/productForm.js'
 
 const authStore = useAuthStore()
 const pageStore = usePageStore()
 const statesStore = useStatesStore()
+
 const menu = [
   {
     url: userSchema.endpoint,
     name: 'Users',
-    isActive: false,
+    icon: 'group',
     schema: markRaw(userSchema),
     createSchema: markRaw(userCreateSchema),
   },
   {
     url: adminSchema.endpoint,
     name: 'Admins',
-    isActive: false,
+    icon: 'shield_person',
     schema: markRaw(adminSchema),
     createSchema: markRaw(adminCreateSchema),
   },
-  {
-    url: contractSchema.endpoint,
-    name: 'Contracts',
-    isActive: false,
-    createSchema: markRaw(contractCreateSchema),
-    schema: markRaw(contractSchema),
-  },
-  {
-    url: transportSchema.endpoint,
-    name: 'Transports',
-    isActive: false,
-    createSchema: markRaw(transportCreateSchema),
-    schema: markRaw(transportSchema),
-  },
-  {
-    url: productSchema.endpoint,
-    name: 'Products',
-    isActive: false,
-    createSchema: markRaw(productCreateSchema),
-    schema: markRaw(productSchema),
-  },
 ]
 
-const activeIndex = ref(null)
+const activeIndex = ref(pageStore.pageData.name === 'Admins' ? 1 : 0)
+
 const setPage = (index) => {
   activeIndex.value = index
-  pageStore.setPage(menu[index].url, menu[index].name, menu[index].createSchema, menu[index].schema)
+  const item = menu[index]
+  pageStore.setPage(item.url, item.name, item.createSchema, item.schema)
   statesStore.setTableState()
-  pageStore.resetSearchParams()
 }
+
+// Dark Mode Toggle
+const isDark = ref(false)
+const toggleDarkMode = () => {
+  isDark.value = !isDark.value
+  const html = document.documentElement
+  if (isDark.value) {
+    html.classList.add('dark')
+    html.classList.remove('light')
+    localStorage.setItem('theme', 'dark')
+  } else {
+    html.classList.remove('dark')
+    html.classList.add('light')
+    localStorage.setItem('theme', 'light')
+  }
+}
+
+onMounted(() => {
+  isDark.value = document.documentElement.classList.contains('dark')
+})
 </script>
 
 <template>
-  <aside>
-    <h1>Admin Panel</h1>
-    <div class="side-bar-line"></div>
-    <ul>
-      <li
-        tabindex="0"
+  <aside class="fixed left-0 top-0 z-50 flex h-full w-sidebar-width flex-col overflow-y-auto border-r border-outline-variant/30 bg-surface-container-lowest p-stack-md shadow-sm transition-colors duration-300 dark:border-white/10 dark:bg-inverse-surface/95 dark:shadow-none">
+    <!-- Logo Section -->
+    <div class="mb-10 flex items-center gap-3 px-2">
+      <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed-dim">Flotylia</span>
+        <span class="font-label-sm text-label-sm text-secondary">Admin Suite</span>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-grow space-y-2">
+      <button
         v-for="(item, index) in menu"
         :key="index + item.name"
-        :class="{ active: activeIndex === index }"
         @click="setPage(index)"
+        :class="[
+          'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 text-left',
+          activeIndex === index
+            ? 'bg-primary/10 text-primary font-bold dark:bg-primary-container/20 dark:text-inverse-primary'
+            : 'text-secondary hover:bg-surface-container-high dark:text-secondary-fixed-dim dark:hover:bg-white/5'
+        ]"
       >
-        {{ item.name }}
-      </li>
-    </ul>
-    <button @click="authStore.logout()">Logout</button>
+        <span class="material-symbols-outlined">{{ item.icon }}</span>
+        <span class="font-label-md text-label-md">{{ item.name }}</span>
+      </button>
+    </nav>
+
+    <!-- Footer Area with Actions and Profile -->
+    <div class="mt-auto space-y-2 pt-6 border-t border-outline-variant/30 dark:border-white/10">
+      <!-- Dark mode switch -->
+      <button
+        @click="toggleDarkMode"
+        class="w-full flex items-center gap-3 px-4 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-white/5 rounded-xl transition-colors text-left"
+      >
+        <span class="material-symbols-outlined">{{ isDark ? 'light_mode' : 'dark_mode' }}</span>
+        <span class="font-label-md text-label-md">{{ isDark ? 'Светлая тема' : 'Темная тема' }}</span>
+      </button>
+
+      <!-- Logout Button -->
+      <button
+        @click="authStore.logout()"
+        class="w-full flex items-center gap-3 px-4 py-3 text-error dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors text-left font-semibold"
+      >
+        <span class="material-symbols-outlined">logout</span>
+        <span class="font-label-md text-label-md">Выйти</span>
+      </button>
+
+      <!-- Admin Profile Card -->
+      <div class="flex items-center gap-3 p-3 mt-4 bg-surface-container-high dark:bg-white/5 rounded-2xl">
+        <div class="overflow-hidden">
+          <p class="truncate font-label-md text-label-md font-bold">{{ authStore.user || 'Admin' }}</p>
+          <p class="text-[10px] uppercase tracking-wider opacity-60">Администратор</p>
+        </div>
+      </div>
+    </div>
   </aside>
 </template>
 
 <style scoped>
-aside {
-  width: clamp(200px, 15%, 250px);
-  background: var(--slidebar-bg);
-  min-height: 100dvh;
-  padding: 1rem 1rem 0;
-  border-right: 1px solid var(--slidebar-item-hover-bg);
-  display: flex;
-  flex-direction: column;
-}
-.side-bar-line {
-  width: 100%;
-  height: 3px;
-  background: var(--slidebar-item-hover-bg);
-  margin-bottom: 1rem;
-  margin-top: 0.3rem;
-}
-ul {
-  list-style: none;
-}
-li {
-  display: flex;
-  cursor: pointer;
-  text-align: left;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0.5rem;
-  font-size: 20px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-  border-radius: 1rem;
-}
-li:hover {
-  background: var(--slidebar-item-hover-bg);
-}
-
-li.active {
-  background: var(--slidebar-item-active-bg);
-}
-
-h1 {
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-button {
-  width: 100%;
-  margin-top: auto;
-  margin-bottom: 1rem;
-}
+/* Scoped overrides if any, but Tailwind handles most */
 </style>

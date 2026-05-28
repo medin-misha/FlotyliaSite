@@ -42,14 +42,19 @@ const instructionHeading = computed(() => t('success.instructions.heading'))
 <template>
   <div class="success-page" :style="{ '--accent-color': accentColor }">
     <div class="success-container">
+
+      <div class="check-big" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+
       <h2 class="success-title">
         {{ $t("success.title") }}
       </h2>
 
       <div class="step-block">
         <p class="step-heading">
-          <span class="step-label">{{ $t("success.step.label") }}</span>
-          <span class="step-description"> {{ $t("success.step.description") }}</span>
+          <strong>{{ $t("success.step.label") }}</strong>
+          {{ $t("success.step.description") }}
         </p>
         <p class="step-subtitle">
           {{ $t("success.step.subtitle") }}
@@ -73,197 +78,103 @@ const instructionHeading = computed(() => t('success.instructions.heading'))
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  padding: clamp(40px, 7vw, 80px) var(--gutter) clamp(56px, 9vw, 100px);
   box-sizing: border-box;
 }
 
 .success-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 640px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 48px);
+  box-shadow: var(--ring);
+  text-align: center;
+}
+
+.check-big {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: var(--on-accent, #fff);
+  display: grid; place-items: center;
+  margin-bottom: 24px;
+  flex: 0 0 auto;
 }
 
 .success-title {
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 32px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  text-align: center;
-  color: var(--color-text);
-  padding: 0 16px;
+  font-family: var(--font-alt);
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  color: var(--text);
 }
 
 .step-block {
+  margin-top: 16px;
   width: 100%;
-  max-width: 940px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  color: var(--color-text);
-  margin-top: 4px;
+  gap: 8px;
 }
 
 .step-heading {
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: 0%;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-2);
 }
 
 .step-subtitle {
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: 0%;
-}
-
-.step-label {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-}
-
-.step-description {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-3);
 }
 
 .cta-button {
-  font-family: 'Montserrat Alternates', sans-serif;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 100%;
-  letter-spacing: 0%;
+  font-family: var(--font-alt);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
   color: #fff;
-  background-color: var(--accent-color);
+  background: var(--accent-color);
   border: none;
-  border-radius: 32px;
-  padding: 12px 18px;
+  border-radius: var(--r-pill);
+  padding: 16px 32px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-  /* width: 600px; */
-  width: clamp(480px, 55vw, 700px);
+  transition: filter var(--t-fast), transform 100ms ease;
+  margin-top: 28px;
+  width: 100%;
+  max-width: 420px;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,.3);
 }
-
-.cta-button:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
-}
-
-.cta-button:active {
-  transform: translateY(0);
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
-}
+.cta-button:hover  { filter: brightness(1.08); }
+.cta-button:active { transform: scale(.97); }
 
 .instructions {
+  margin-top: 20px;
   width: 100%;
-  max-width: 940px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--color-text);
+  padding: 16px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  text-align: left;
 }
 
 .instructions-heading {
   margin: 0;
-  font-family: Montserrat;
-  font-weight: 500;
-  font-style: Medium;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: 0%;
-}
-
-.instructions-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.instructions-body p {
-  margin: 0;
-  font-family: Montserrat;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 18px;
-  line-height: 120%;
-  letter-spacing: 0%;
-}
-
-
-.store-note {
-  margin: 4px 0 0;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: var(--color-text);
-  width: 100%;
-  max-width: 940px;
-}
-
-@media (max-width: 900px) {
-  .success-page {
-    padding: 40px 18px 64px;
-  }
-
-  .success-title {
-    font-size: 28px;
-  }
-
-  .step-block {
-    max-width: 100%;
-  }
-
-  .cta-button {
-    width: 100%;
-    max-width: 420px;
-  }
-}
-
-@media (max-width: 640px) {
-  .success-page {
-    padding: 32px 16px 54px;
-  }
-
-  .success-container {
-    gap: 22px;
-  }
-
-  .success-title {
-    font-size: 24px;
-  }
-
-  .step-block {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .step-number {
-    font-size: 32px;
-  }
-
-  .step-heading,
-  .step-subtitle,
-  .instructions-heading,
-  .instructions-body p,
-  .store-note {
-    font-size: 16px;
-    line-height: 100%;
-  }
-
-  .cta-button {
-    font-size: 18px;
-  }
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--text-2);
 }
 </style>

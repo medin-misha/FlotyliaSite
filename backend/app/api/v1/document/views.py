@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, Response, Request, UploadFile
 from fastapi.responses import StreamingResponse
 from services import CRUD
-from core.models import Document
+from core.models import Document, User, File
 from core.database import database
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
@@ -17,6 +17,9 @@ adminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_document_view(document: DocumentCreate, session: sessionDep) -> DocumentReturn:
+    # Валидация: проверяем, что пользователь и файл реально существуют в БД
+    await CRUD.get(model=User, session=session, id=document.user_id)
+    await CRUD.get(model=File, session=session, id=document.file_id)
     return await CRUD.create(data=document, model=Document, session=session)
 
 @router.patch("/{id}", response_model=DocumentReturn)

@@ -27,7 +27,7 @@ const revokePreviewUrl = () => {
 }
 
 const fetchFileBlob = async (fileId) => {
-  return await api.get(`/files/${fileId}`, { responseType: 'blob' })
+  return await api.get(`/files/${fileId}`, { responseType: 'blob', timeout: 0 })
 }
 
 const loadPreview = async (fileId) => {
@@ -53,9 +53,8 @@ const openFile = async () => {
 
   try {
     await openBlobInNewTab(async () => {
-      const response = await fetchFileBlob(value.value)
-      return response.data
-    }, field?.label || 'File')
+      return (await fetchFileBlob(value.value)).data
+    }, props.field?.label || 'File')
   } catch (error) {
     console.error('Failed to open file:', error)
   }
@@ -100,7 +99,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="details-field">
     <button type="button" class="file-link-button" @click="openFile" :disabled="!value">
-      <label class="details-input-label"> {{ field.label }}: {{ value || '' }} </label>
+      <label class="details-input-label"> {{ props.field.label }}: {{ value || '' }} </label>
     </button>
 
     <div class="details-file-wrapper" :class="{ uploading }" @click="selectFile">

@@ -1,12 +1,83 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Actor&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=Mulish:wght@400;500;700&display=swap');
+
+/* ============================================================
+   MFS Design System — CSS Tokens
+   ============================================================ */
 
 :root {
-  --brand-color: #C02A22;
-  --brand-text-color: #fff;
-  --color-text: #000;
-  --bolt-color: #34D086;
+  /* Brand */
+  --accent:        #C02A22;
+  --accent-2:      #9E1E18;
+  --accent-light:  #E0594F;
+  --accent-soft:   rgba(192,42,34,.16);
+  --accent-ring:   rgba(192,42,34,.32);
+  --on-accent:     #FFFFFF;
+  --accent-grad:   linear-gradient(105deg, #E0594F 0%, #C02A22 60%, #9E1E18 100%);
+
+  /* Platform colors */
+  --bolt-color:    #34D086;
   --foodora-color: #DF1068;
+
+  /* Typography */
+  --font-sans: 'Montserrat', system-ui, sans-serif;
+  --font-alt:  'Montserrat Alternates', 'Montserrat', sans-serif;
+
+  /* Radii */
+  --r-xs:   6px;
+  --r-sm:   10px;
+  --r-md:   18px;
+  --r-lg:   28px;
+  --r-pill: 9999px;
+
+  /* Transitions */
+  --t-fast: 140ms cubic-bezier(.2,.7,.3,1);
+  --t-base: 240ms cubic-bezier(.2,.7,.3,1);
+
+  /* Layout */
+  --content-max: 1180px;
+  --gutter: clamp(16px, 4vw, 32px);
+
+  /* Legacy compat */
+  --brand-color:      #C02A22;
+  --brand-text-color: #fff;
+}
+
+/* DARK (default) */
+:root, [data-theme="dark"] {
+  --bg:          #0E0F12;
+  --bg-2:        #0A0B0E;
+  --surface:     #16181D;
+  --surface-2:   #1C1F25;
+  --surface-3:   #232730;
+  --text:        #F2F3F5;
+  --text-2:      #A4A9B3;
+  --text-3:      #6B7080;
+  --border:      rgba(255,255,255,.07);
+  --border-2:    rgba(255,255,255,.13);
+  --field-bg:    #0B0C10;
+  --ring:        0 0 0 1px rgba(255,255,255,.04), 0 24px 60px -20px rgba(0,0,0,.6);
+  --card-glow:   radial-gradient(120% 120% at 50% 0%, var(--accent-soft), transparent 55%);
+
+  /* Legacy compat */
+  --color-text: #F2F3F5;
+}
+
+/* LIGHT */
+[data-theme="light"] {
+  --bg:          #FAFAF8;
+  --bg-2:        #F0EFEC;
+  --surface:     #FFFFFF;
+  --surface-2:   #F6F5F3;
+  --surface-3:   #EEEDEB;
+  --text:        #0E0F12;
+  --text-2:      #4A4D55;
+  --text-3:      #868990;
+  --border:      #E6E5E3;
+  --border-2:    #D9D9D9;
+  --field-bg:    #FFFFFF;
+  --ring:        0 1px 2px rgba(0,0,0,.04), 0 18px 40px -18px rgba(15,30,20,.18);
+  --card-glow:   radial-gradient(120% 120% at 50% 0%, var(--accent-soft), transparent 55%);
+
+  /* Legacy compat */
+  --color-text: #0E0F12;
 }

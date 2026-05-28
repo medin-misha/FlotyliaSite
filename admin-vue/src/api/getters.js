@@ -11,12 +11,12 @@ const APIGetters = {
       page,
       limit,
       ...(search != null && { search }),
-      // ...(field != null && { field }),
+      ...(field != null && field !== '' && { field }),
     }
     return api.get(withTrailingSlash(url), { params }).then((response) => response)
   },
   getDetail: async (url, id) => api.get(`${url}/${id}`),
-  getExport: async () => api.get(`/users/export`, { responseType: 'blob' }),
+  getExport: async () => api.get(`/users/export`, { responseType: 'blob', timeout: 0 }),
 }
 
 export default APIGetters

@@ -1,35 +1,31 @@
 <script setup>
+import { computed } from 'vue'
 import sideBarComp from './components/sideBarComp.vue'
 import headerComp from './components/headerComp.vue'
 import bodyComp from './components/bodyComp.vue'
 import loginComp from './components/loginComp.vue'
-import { useAuthStore } from './stores/auth'
 import { usePageStore } from './stores/page'
+import { useAuthStore } from './stores/auth'
 
-const isLogin = useAuthStore().isLogin()
 const pageStore = usePageStore()
+const authStore = useAuthStore()
+
+const isLoginPage = computed(() => !authStore.isLogin())
 </script>
 
 <template>
-  <loginComp v-if="!isLogin" />
-  <div v-else class="container">
+  <loginComp v-if="isLoginPage" />
+  <div
+    v-else
+    class="min-h-screen w-full bg-background text-on-surface transition-colors duration-300 dark:bg-on-background dark:text-white"
+  >
     <sideBarComp />
-    <main>
+
+    <div class="min-h-screen min-w-0 pl-sidebar-width">
       <headerComp :key="pageStore.pageData.adres" />
       <bodyComp />
-    </main>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.container {
-  height: 100dvh;
-  display: flex;
-  flex-direction: row;
-}
-main {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-</style>
+<style scoped></style>

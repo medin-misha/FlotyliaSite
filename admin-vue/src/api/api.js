@@ -25,14 +25,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.log(error.response)
-    if (error.response.status === 401 && !error.config.url.includes('/admin/login')) {
-      const store = useAuthStore()
-      store.logout()
-    } else if (error.response.status === 400) {
-      console.log(error.response)
+    if (error.response && error.response.status) {
+      if (error.response.status === 401 && !error.config.url.includes('/admin/login')) {
+        const store = useAuthStore()
+        store.logout()
+      } else if (error.response.status === 400) {
+        console.log(error.response)
+      } else {
+        alert('Ошибка, скорее всего вы чёто не правильно заполнили')
+        console.log(error.response)
+      }
     } else {
-      alert('Ошибка, скорее всего вы чёто не правильно заполнили')
-      console.log(error.response)
+      console.error('Сетевой сбой или запрос был отменен браузером:', error.message)
     }
     return Promise.reject(error)
   },

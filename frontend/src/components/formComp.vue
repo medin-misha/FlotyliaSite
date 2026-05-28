@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from "vue-i18n"
 import APIPosts from '../api/posts'
@@ -7,6 +7,24 @@ import APIPosts from '../api/posts'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n({ useScope: "global" })
+
+// Cookie Helpers
+function setCookie(name, value, maxAgeSeconds) {
+  document.cookie = `${name}=${value}; max-age=${maxAgeSeconds}; path=/; SameSite=Lax`
+}
+
+function getCookie(name) {
+  const matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ))
+  return matches ? decodeURIComponent(matches[1]) : undefined
+}
+
+onMounted(() => {
+  if (getCookie('is_regi') === 'true') {
+    router.replace(`/success/${route.params.company}`)
+  }
+})
 const supportTelegramUrl = 'https://t.me/MFS_support'
 const fieldLengthLimits = {
   name: { min: 2, max: 255 },
@@ -274,6 +292,10 @@ const submitErrorContent = computed(() => {
 
 // Submit
 async function submitForm() {
+  if (getCookie('is_send') === 'true') {
+    return
+  }
+
   const nextInvalidFields = getInvalidVisibleFields()
   applyInvalidFields(nextInvalidFields)
 
@@ -287,32 +309,33 @@ async function submitForm() {
     return
   }
 
-  const allFiles = isCzech.value
-    ? [...filesPassport.value, ...filesOP.value]
-    : [...filesPassport.value, ...filesResidence.value]
+  const file1 = filesPassport.value[0]
+  const file2 = isCzech.value ? filesOP.value[0] : filesResidence.value[0]
+
+  const file1_desc = isCzech.value ? t('form.documents.op_front') : t('form.documents.passport_front')
+  const file2_desc = isCzech.value ? t('form.documents.op_back') : t('form.documents.residence_permit_front')
 
   const payload = buildSubmitPayload()
-  let hasPartialSubmission = false
+  
+  // Set is_send cookie for 1 minute as we start form sending
+  setCookie('is_send', 'true', 60)
+
   submitError.value = null
   isSubmitting.value = true
 
   try {
-    const user = await APIPosts.createPost(payload, "/users")
-    hasPartialSubmission = true
-
-    for (const file of allFiles) {
-      const file_instance = await APIPosts.createFile(file)
-      const file_id = file_instance.data.id
-      const user_id = user.data.id
-      await APIPosts.createPost({ file_id, user_id, description: "Document" }, "/documents")
-    }
-
+    await APIPosts.registerUser(payload, file1, file2, file1_desc, file2_desc)
+    
+    // Set is_regi and extend cookies to 1 year on successful 2xx response
+    setCookie('is_send', 'true', 31536000)
+    setCookie('is_regi', 'true', 31536000)
+    
     router.push(`/success/${route.params.company}`)
   } catch (error) {
     console.error('Failed to submit form', error)
     submitError.value = {
       type: error?.type || 'unknown',
-      isPartial: hasPartialSubmission,
+      isPartial: false,
     }
   } finally {
     isSubmitting.value = false
@@ -595,10 +618,16 @@ async function submitForm() {
       <button
         type="submit"
         :disabled="isSubmitting || !formData.consent"
-        :class="(route.params.company === 'bolt' ? 'app-pill-button app-alt-button-text submit-btn bolt' : 'app-pill-button app-alt-button-text submit-btn foodora')"
-        
+        :class="[
+          route.params.company === 'bolt' ? 'app-pill-button app-alt-button-text submit-btn bolt' : 'app-pill-button app-alt-button-text submit-btn foodora',
+          { 'submitting': isSubmitting }
+        ]"
       >
-        {{ $t("form.submit") }}
+        <span v-if="!isSubmitting">{{ $t("form.submit") }}</span>
+        <span v-else class="loader-container">
+          <span class="spinner-icon"></span>
+          <span>{{ $t("form.submit") }}...</span>
+        </span>
       </button>
 
       <div v-if="submitErrorContent" class="form-error-banner" role="alert" aria-live="polite">
@@ -636,16 +665,20 @@ async function submitForm() {
 .form-page {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 40px 20px 60px;
+  padding: clamp(24px, 4vw, 48px) var(--gutter) clamp(48px, 7vw, 80px);
 }
 
 .form-container {
   width: 100%;
-  max-width: 660px;
+  max-width: 680px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: clamp(24px, 4vw, 40px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  box-shadow: var(--ring);
 }
 
 /* ---- Header ---- */
@@ -653,54 +686,45 @@ async function submitForm() {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
 }
 
 .form-header h2 {
-  font-weight: 700;
-  font-size: 25px;
-  line-height: 100%;
+  font-family: var(--font-alt);
+  font-weight: 800;
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.1;
   margin: 0;
-  color: var(--color-text);
+  color: var(--text);
+  letter-spacing: -.01em;
 }
 
 .bolt-logo {
-  height: 35px;
+  height: 32px;
   width: auto;
   object-fit: contain;
 }
 
+/* ---- Error banner ---- */
 .form-error-banner {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 16px 18px;
-  border: 1px solid #e53935;
-  border-radius: 18px;
-  background: rgba(229, 57, 53, 0.08);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
 }
-
 .form-error-title {
-  margin: 0;
-  font-weight: 700;
-  font-size: 16px;
-  color: #8c1d18;
+  margin: 0; font-weight: 700; font-size: 15px; color: var(--accent-light);
 }
-
 .form-error-text {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #8c1d18;
+  margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--text-2);
 }
-
 .form-error-link {
-  width: fit-content;
-  font-weight: 700;
-  font-size: 14px;
-  color: #8c1d18;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  width: fit-content; font-weight: 700; font-size: 13.5px;
+  color: var(--accent-light); text-decoration: underline; text-underline-offset: 3px;
 }
 
 /* ---- Section titles ---- */
@@ -708,271 +732,232 @@ async function submitForm() {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 16px;
-  margin-bottom: 4px;
+  margin-top: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }
 
 .section-number {
-  font-family: 'Mulish', sans-serif;
-  font-weight: 500;
-  font-size: 40px;
-  line-height: 100%;
-  color: var(--brand-color);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: grid; place-items: center;
+  font-family: var(--font-alt); font-weight: 700; font-size: 13px;
+  flex: 0 0 auto;
 }
 
 .section-text {
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 100%;
-  color: var(--color-text);
+  font-family: var(--font-alt);
+  font-weight: 700;
+  font-size: clamp(17px, 1.8vw, 20px);
+  line-height: 1.2;
+  color: var(--text);
+  letter-spacing: -.01em;
 }
 
 /* ---- Fields ---- */
 .field-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .field-group label {
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 100%;
-  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0;
 }
 
 .field-group input,
 .field-group select {
-  font-size: 15px;
-  padding: 12px 16px;
-  border: 1.5px solid #ccc;
-  border-radius: 50px;
-  outline: none;
-  transition: border-color 0.2s ease;
   width: 100%;
-  box-sizing: border-box;
+  padding: 14px 18px;
+  border-radius: var(--r-pill);
+  background: var(--field-bg);
+  border: 1px solid var(--border-2);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font-sans);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), background-color var(--t-fast);
+  outline: none;
+  -webkit-appearance: none;
   appearance: none;
-  background-color: #fff;
+  box-sizing: border-box;
 }
-
+.field-group input::placeholder { color: var(--text-3); }
 .field-group input:focus,
 .field-group select:focus {
-  border-color: var(--brand-color);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-ring);
 }
-
 .field-group input.field-invalid,
 .field-group select.field-invalid {
-  border-color: #e53935;
-  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
+  border-color: #c8423a;
+  box-shadow: 0 0 0 3px rgba(200,66,58,.18);
 }
-
-.field-group input::placeholder {
-  color: #aaa;
+.field-group select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-2) 50%),
+    linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+  background-position: calc(100% - 22px) center, calc(100% - 16px) center;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 44px;
 }
-
-.field-group select option[value=""] {
-  color: #aaa;
-}
+.field-group select option[value=""] { color: var(--text-3); }
 
 .input-disabled {
-  background-color: #f5f5f5;
+  opacity: 0.45;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 /* ---- Platform section ---- */
 .platform-section {
-  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+.platform-invalid .custom-checkbox { border-color: #c8423a; }
 
 .platform-label {
-  font-weight: 500;
-  font-size: 15px;
-  margin: 0;
-  color: var(--color-text);
+  font-size: 13px; font-weight: 600; margin: 0; color: var(--text);
 }
 
-.checkbox-group {
-  display: flex;
-  gap: 24px;
-}
+.checkbox-group { display: flex; gap: 12px; flex-wrap: wrap; }
 
 .checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 400;
-  font-size: 15px;
-  color: var(--color-text);
-  user-select: none;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--r-pill);
+  background: var(--field-bg);
+  border: 1px solid var(--border-2);
+  cursor: pointer; font-size: 14px; font-weight: 600;
+  color: var(--text-2); user-select: none;
+  transition: border-color var(--t-fast), background-color var(--t-fast);
 }
+.checkbox-item:hover { border-color: var(--text-3); }
 
 .custom-checkbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border-2);
+  border-radius: 5px;
+  display: grid; place-items: center;
+  transition: all var(--t-fast); flex-shrink: 0;
 }
-
 .custom-checkbox.field-invalid {
-  border-color: #e53935;
-  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
+  border-color: #c8423a;
+  box-shadow: 0 0 0 3px rgba(200,66,58,.18);
 }
-
 .custom-checkbox.checked {
-  background-color: var(--brand-color);
-  border-color: var(--brand-color);
+  background: var(--accent); border-color: var(--accent);
 }
-
 .custom-checkbox.checked::after {
-  content: '✓';
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
+  content: '';
+  display: block;
+  width: 10px; height: 10px;
+  background: url("data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M20 6 9 17l-5-5'/%3e%3c/svg%3e") center/contain no-repeat;
 }
 
 /* ---- WhatsApp hint ---- */
 .whatsapp-hint {
-  margin: 0;
-  font-size: 13px;
-  color: #888;
-  line-height: 1.4;
+  margin: 0; font-size: 12.5px; color: var(--text-3); line-height: 1.4;
 }
 
 /* ---- Drop zones ---- */
-.hidden-file-input {
-  display: none;
-}
+.hidden-file-input { display: none; }
 
 .drop-zone {
-  border: 1.5px dashed #ccc;
-  border-radius: 16px;
-  padding: 20px 16px 16px;
+  border: 1.5px dashed var(--border-2);
+  border-radius: var(--r-md);
+  padding: 24px 16px 20px;
   cursor: pointer;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  transition: border-color var(--t-fast), background-color var(--t-fast);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: var(--field-bg);
 }
-
 .drop-zone:hover,
 .drop-zone.dragging {
-  border-color: var(--brand-color);
-  background-color: rgba(0, 0, 0, 0.02);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
-
 .drop-zone.drop-zone-invalid {
-  border-color: #e53935;
-  background-color: rgba(229, 57, 53, 0.04);
-  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
+  border-color: #c8423a;
+  background: rgba(200,66,58,.06);
+  box-shadow: 0 0 0 3px rgba(200,66,58,.18);
 }
-
 .drop-zone-label {
-  font-weight: 500;
-  font-size: 15px;
-  color: var(--color-text);
-  margin: 0;
-  text-align: center;
+  font-weight: 600; font-size: 14.5px; color: var(--text); margin: 0; text-align: center;
 }
-
 .drop-zone-hint {
-  font-size: 13px;
-  color: #aaa;
-  margin: 0;
-  text-align: center;
+  font-size: 12.5px; color: var(--text-3); margin: 0; text-align: center;
 }
-
 .files-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-  margin-top: 12px;
+  display: flex; flex-direction: column; gap: 4px; width: 100%; margin-top: 12px;
 }
-
 .file-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  color: #555;
-  padding: 6px 12px;
-  background: #f9f9f9;
-  border-radius: 6px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13.5px; color: var(--text-2);
+  padding: 7px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
 }
-
 .remove-file {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  color: #aaa;
-  padding: 0 0 0 8px;
-  line-height: 1;
-  transition: color 0.15s ease;
+  background: none; border: none; cursor: pointer;
+  font-size: 13px; color: var(--text-3); padding: 0 0 0 8px; line-height: 1;
+  transition: color var(--t-fast);
 }
-
-.remove-file:hover {
-  color: #e53935;
-}
+.remove-file:hover { color: var(--accent); }
 
 /* ---- Submit button ---- */
 .submit-btn {
-  font-size: 20px;
+  font-family: var(--font-alt);
+  font-weight: 700; font-size: 17px; line-height: 1;
   text-align: center;
-  color: #fff;
-  padding: 18px;
-  width: 100%;
-  transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  padding: 18px; width: 100%;
+  border-radius: var(--r-pill);
+  border: none; cursor: pointer;
+  transition: filter var(--t-fast), transform 100ms ease, box-shadow var(--t-fast);
   margin-top: 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
 }
-
 .bolt {
-  background: var(--bolt-color);
+  background: #34D086; color: #07150E;
+  box-shadow: 0 8px 24px -8px rgba(52,208,134,.4), inset 0 1px 0 rgba(255,255,255,.3);
 }
-
 .foodora {
-  background: var(--foodora-color);
+  background: #DF1068; color: #fff;
+  box-shadow: 0 8px 24px -8px rgba(223,16,104,.4), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.submit-btn:hover  { filter: brightness(1.08); }
+.submit-btn:active { transform: scale(.97); }
+.submit-btn:disabled {
+  opacity: .45; cursor: not-allowed;
+  transform: none !important; filter: none !important; box-shadow: none !important;
 }
 
-.submit-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(52, 208, 134, 0.35);
+.loader-container {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
 }
+.spinner-icon {
+  width: 20px; height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%; border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---- Consent ---- */
 .consent-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+  display: flex; align-items: flex-start; gap: 10px; margin-top: 4px;
 }
-
 .consent-checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--brand-color);
-  cursor: pointer;
-  flex-shrink: 0;
+  width: 20px; height: 20px;
+  accent-color: var(--accent); cursor: pointer; flex-shrink: 0; margin-top: 2px;
 }
-
 .consent-label {
-  font-family: 'Actor', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 100%;
-  color: var(--color-text);
-  cursor: pointer;
+  font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--text-2); cursor: pointer;
 }
 </style>

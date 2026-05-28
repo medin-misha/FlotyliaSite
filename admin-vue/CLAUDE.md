@@ -1,11 +1,12 @@
 # admin-vue
 
-Административная панель для управления данными сайта. Vue 3 SPA без Vue Router — навигация через состояние Pinia.
+Административная панель для управления данными сайта. Vue 3 SPA с Vue Router — маршрутизатор управляет URL и guard-ами, Pinia хранит UI-состояние (какой раздел открыт, table/create/detail).
 
 ## Стек
 
 - **Vue 3** + Vite 7, JavaScript (не TypeScript)
-- **Pinia** — стейт-менеджмент
+- **Vue Router 4** — URL-навигация, auth guard, синхронизация query-параметров
+- **Pinia** — стейт-менеджмент (pageStore, statesStore, authStore, requestStates)
 - **Axios** — HTTP-клиент
 - **pnpm** — пакетный менеджер
 - **Nginx** — раздача статики в Docker
@@ -31,14 +32,23 @@ VITE_HTTPS_ONLY=false
 
 ## Архитектура
 
-### Навигация без роутера
+### Гибридная навигация: Router + Pinia
 
-Вместо Vue Router используется стейт-машина на Pinia:
+Vue Router обрабатывает URL и auth-guard, но рендеринг делегирован Pinia-стейту через `afterEach`:
+
+- **`beforeEach`** — редирект на `/login` если не авторизован, и обратно если авторизован
+- **`afterEach`** — синхронизирует URL → Pinia: путь и query (`search`, `page`, `filter`) записываются в `pageStore` и `statesStore`
+
+Все маршруты используют `PlaceholderComponent` (пустой `<div>`), реальный рендеринг — через `App.vue` + `bodyComp.vue` на основе состояния Pinia.
+
+Маршруты: `/login`, `/users`, `/users/create`, `/users/:id`, `/admins`, `/admins/create`, `/admins/:id`. Всё остальное → redirect на `/users`.
+
+### Управление UI-состоянием
 
 - `pageStore.setPage(endpoint, name, createSchema, schema)` — переключить раздел
 - `statesStore` — текущее представление: `table` | `create` | `detail`
 
-Клик по пункту меню меняет `pageStore`, клик по строке таблицы меняет `statesStore`.
+Клик по пункту меню → `router.push('/users')`, `afterEach` → `pageStore.setPage(...)` + `statesStore.setTableState()`.
 
 ### Schema-driven UI
 
@@ -76,6 +86,8 @@ src/
 │   ├── auth.js          # login, createAdmin, getAdmins, deleteAdmin
 │   ├── getters.js       # getUniversal, getDetail, getExport (xlsx)
 │   └── posts.js         # createPost, updatePost, deletePost, createFile
+├── router/
+│   └── index.js         # маршруты, beforeEach (auth guard), afterEach (URL → Pinia sync)
 ├── stores/
 │   ├── auth.js          # user/token в cookies (7 дней, sameSite strict)
 │   ├── page.js          # текущий раздел + пагинация/поиск/фильтр
@@ -83,7 +95,7 @@ src/
 │   └── requestStates.js # waiting/networkError/emptyList
 ├── forms/               # схемы разделов
 ├── components/
-│   ├── App.vue          # рут: login или admin-layout
+│   ├── App.vue          # рут: loginComp (route.name === 'Login') или admin-layout
 │   ├── sideBarComp.vue  # меню разделов + logout
 │   ├── headerComp.vue   # заголовок, поиск, фильтр, экспорт
 │   ├── bodyComp.vue     # Suspense + переключение table/create/detail
@@ -130,3 +142,4 @@ JWT-токен и username хранятся в cookies (`js-cookie`). При log
 ## Деплой
 
 Dockerfile: multi-stage — Node 22 alpine для сборки, nginx alpine для раздачи.
+`vite-plugin-vue-devtools` подключается только в dev-режиме (`mode !== 'production'`).

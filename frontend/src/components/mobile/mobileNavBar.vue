@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.96);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
   backdrop-filter: blur(2px);
   animation: shell-fade-in 0.22s ease;
 }
@@ -133,7 +133,7 @@ onBeforeUnmount(() => {
 .mobile-nav-panel {
   min-height: 100dvh;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--bg);
   padding: 28px 32px 36px;
   display: flex;
   flex-direction: column;

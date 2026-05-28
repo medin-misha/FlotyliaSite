@@ -5,11 +5,14 @@ import { createPinia } from 'pinia'
 import { createI18n, useI18n } from "vue-i18n"
 import { defaultLocale, locales } from "./i18n"
 import { useLocaleStore } from "./stores/localeStore"
+import { useThemeStore } from "./stores/themeStore"
 
 import App from './App.vue'
 import router from './router'
 const pinia = createPinia()
 const localeStore = useLocaleStore(pinia)
+const themeStore = useThemeStore(pinia)
+document.documentElement.setAttribute('data-theme', themeStore.theme)
 const i18n = createI18n({
     legacy: false, // для работы с компонентами на Vue 3 Composition API
     fallbackLocale: defaultLocale, // Если передали что то непонятное, то используем русский язык

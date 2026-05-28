@@ -3,6 +3,9 @@
         "connect-button": "Join us"
         
     },
+    "brand": {
+        "country": "Czechia"
+    },
     "nav-bar": {
         "about": "About us",
         "contacts": "Contacts",
@@ -97,6 +100,107 @@
         "text1-line1": "Contact us!",
         "text1-line2": "We will be happy to answer all your questions!",
         "text2": "Recruitment and support for couriers 24/7"
+    },
+    "footer": {
+        "description": "Transport fleet for Bolt Food and Foodora couriers in Czechia. Prague, Brno, and nearby areas.",
+        "contacts-title": "Contacts",
+        "service-title": "Service",
+        "links": {
+            "features": "Benefits",
+            "how": "How to start",
+            "transport": "Transport"
+        },
+        "copyright": "© 2026 May Fleet Solutions s.r.o. All rights reserved.",
+        "made-in": "Made in Prague"
+    },
+    "landing": {
+        "units": {
+            "minutes-short": "min",
+            "hour-short": "h",
+            "days": "days",
+            "per-week": "/week",
+            "per-month-times": "×/mo"
+        },
+        "hero": {
+            "eyebrow": "Bolt Food · Foodora",
+            "title-line1": "Become a courier",
+            "title-line2": "as soon as this week",
+            "lead": "We handle transport, registration, and support. You get behind the wheel, on a bike, or on a scooter and start earning.",
+            "vehicle-link": "View transport",
+            "open": "Recruitment open",
+            "meta": {
+                "payouts": "payouts per month",
+                "deposit": "deposit*",
+                "application": "to apply"
+            },
+            "stats": {
+                "first-order": "From application to first order",
+                "weekly-payouts": "Payouts every week",
+                "deposit": "Deposit for bikes and electric transport",
+                "support": "Support in Russian and Czech"
+            }
+        },
+        "partners": {
+            "label": "We work with platforms"
+        },
+        "features": {
+            "eyebrow": "Why MFS",
+            "title-prefix": "We make work",
+            "title-accent": "transparent",
+            "title-suffix": "and starting simple",
+            "lead": "No hidden fees and no long waits. Three reasons couriers choose us.",
+            "pills": {
+                "payouts": "4 times a month",
+                "paperwork": "No paperwork hassle",
+                "deposit": "0 Kč deposit"
+            }
+        },
+        "steps": {
+            "eyebrow": "How to start",
+            "title-prefix": "From application to first order in",
+            "title-accent": "2-3 days",
+            "lead": "Three simple steps. No bureaucracy on your side.",
+            "step-label": "Step",
+            "items": [
+                {
+                    "title": "Submit an application",
+                    "text": "Fill out the form in 5 minutes. We will contact you within an hour, explain the terms, and help choose transport."
+                },
+                {
+                    "title": "Pick up transport and a thermal bag",
+                    "text": "Come to our office in Prague, we handle the documents and provide transport with equipment right away. No deposits for bikes and electric transport."
+                },
+                {
+                    "title": "Go online and earn",
+                    "text": "Register with Bolt Food or Foodora and start taking orders. Payouts are 4 times a month, support is available 7 days a week."
+                }
+            ]
+        },
+        "vehicles": {
+            "title-prefix": "Choose what",
+            "title-accent": "fits you",
+            "lead": "Bike, e-bike, scooter, or car — all with maintenance and support.",
+            "no-deposit": "no deposit",
+            "ebike-price": "from 1,250 Kč",
+            "car-price": "from 2,000 Kč"
+        },
+        "cta": {
+            "eyebrow": "Application · 5 minutes",
+            "title": "Submit an application — we will contact you within an hour",
+            "lead": "We will help choose transport, handle documents, and explain how to start with Bolt Food or Foodora.",
+            "apply": "Apply now",
+            "telegram": "Write on Telegram",
+            "items": [
+                "No obligations — it is just an application form",
+                "Support in Russian and Czech",
+                "No random call lists — we write to the person who applied"
+            ],
+            "metrics": {
+                "response": "manager response time",
+                "form": "to complete the form",
+                "first-order": "until the first order"
+            }
+        }
     },
     "form": {
         "header": "Registration form with",

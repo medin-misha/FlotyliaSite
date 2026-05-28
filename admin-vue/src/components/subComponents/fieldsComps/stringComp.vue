@@ -1,23 +1,27 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, defineModel } from 'vue'
 
 const props = defineProps({
   field: Object,
-  value: String, // это значение от v-model
+  error: String,
+  create: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['update:value'])
+const value = defineModel('value', { type: String, default: '' })
 const copied = ref(false)
 
 const onInput = (e) => {
-  emit('update:value', e.target.value)
+  value.value = e.target.value
 }
 
 const copyValue = async () => {
-  if (!props.value) return
+  if (!value.value) return
 
   try {
-    await navigator.clipboard.writeText(props.value)
+    await navigator.clipboard.writeText(value.value)
     copied.value = true
     setTimeout(() => {
       copied.value = false
@@ -26,74 +30,119 @@ const copyValue = async () => {
     console.error('Не удалось скопировать значение', error)
   }
 }
+
+const getIcon = computed(() => {
+  const key = props.field?.key || ''
+  if (props.field?.inputType === 'password' || key.includes('password')) return 'lock'
+  switch (key) {
+    case 'name': return 'person'
+    case 'email': return 'mail'
+    case 'phone': return 'call'
+    case 'city': return 'location_city'
+    case 'address': return 'home_pin'
+    case 'telegram': return 'send'
+    case 'whatsapp': return 'forum'
+    case 'desired_transport': return 'local_shipping'
+    case 'invoice': return 'payments'
+    case 'citizenship': return 'public'
+    case 'work_in': return 'work'
+    case 'how_found_it': return 'search'
+    default: return 'edit_note'
+  }
+})
 </script>
 
 <template>
-  <div class="details-field">
-    <label class="details-input-label"> {{ field.label }}: {{ value }} </label>
-
-    <div class="details-actions">
-      <button
-        v-if="field.copyable"
-        class="copy-button"
-        type="button"
-        :disabled="!value"
-        @click="copyValue"
+  <!-- Create mode styling -->
+  <div v-if="create" class="flex flex-col w-full gap-1.5 group">
+    <label :for="field.key" class="font-label-sm text-label-sm font-semibold text-secondary dark:text-secondary-fixed-dim ml-1 flex items-center gap-1 select-none">
+      <span>{{ field.label }}</span>
+      <span v-if="field.required" class="text-primary dark:text-inverse-primary" title="Обязательное поле">*</span>
+    </label>
+    
+    <div class="relative flex items-center">
+      <!-- Icon prefix -->
+      <span class="material-symbols-outlined absolute left-3.5 text-[20px] transition-colors duration-200"
+        :class="[
+          error 
+            ? 'text-error' 
+            : 'text-secondary/50 group-focus-within:text-primary dark:group-focus-within:text-inverse-primary'
+        ]"
       >
-        {{ copied ? 'Скопировано' : 'Копировать' }}
-      </button>
-
-      <textarea
-        class="details-input"
-        :value="value"
-        v-if="!field.readonly"
-        :placeholder="field.label"
-        @input="onInput"
+        {{ getIcon }}
+      </span>
+      
+      <input 
+        :type="field.inputType || 'text'" 
+        v-model="value" 
+        :placeholder="field.label" 
+        :id="field.key"
+        class="w-full h-12 pl-11 pr-4 rounded-xl border bg-white dark:bg-[#1f2125] text-on-surface dark:text-white font-body-md text-body-md focus:outline-none transition-all duration-200"
+        :class="[
+          error 
+            ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10' 
+            : 'border-outline-variant/30 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary dark:focus:border-inverse-primary dark:focus:ring-inverse-primary hover:border-outline-variant/60 dark:hover:border-white/20'
+        ]"
       />
     </div>
+    
+    <!-- Error message text block -->
+    <transition
+      enter-active-class="transition duration-150 ease-out"
+      enter-from-class="transform -translate-y-1 opacity-0"
+      enter-to-class="transform translate-y-0 opacity-100"
+      leave-active-class="transition duration-100 ease-in"
+      leave-from-class="transform translate-y-0 opacity-100"
+      leave-to-class="transform -translate-y-1 opacity-0"
+    >
+      <p v-if="error" class="text-xs text-error font-semibold ml-1.5 flex items-center gap-1">
+        <span class="material-symbols-outlined text-[14px]">error</span>
+        <span>{{ error }}</span>
+      </p>
+    </transition>
+  </div>
+
+  <!-- Detail/Edit mode styling -->
+  <div v-else :class="['p-4 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group hover:scale-[1.01] hover:shadow-sm transition-all duration-200', error ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10' : 'border-outline-variant/30']">
+    <!-- Label -->
+    <label class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim block">
+      {{ field.label }}
+    </label>
+
+    <div class="flex items-center justify-between gap-2 mt-0.5">
+      <!-- Edit Mode / Input -->
+      <textarea
+        v-if="!field.readonly"
+        :value="value"
+        @input="onInput"
+        class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg font-semibold text-on-surface dark:text-white resize-none h-auto min-h-[24px]"
+        :placeholder="field.label"
+        rows="1"
+      />
+
+      <!-- Readonly View -->
+      <p v-else class="font-body-lg text-body-lg font-semibold text-on-surface dark:text-white">
+        {{ value || '—' }}
+      </p>
+
+      <!-- Copy Action -->
+      <button
+        v-if="field.copyable && value"
+        type="button"
+        @click="copyValue"
+        class="material-symbols-outlined text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors text-[20px]"
+      >
+        {{ copied ? 'check' : 'content_copy' }}
+      </button>
+    </div>
+
+    <!-- Error message text block for detail page -->
+    <p v-if="error" class="text-xs text-error font-semibold mt-1 flex items-center gap-1">
+      <span class="material-symbols-outlined text-[14px]">error</span>
+      <span>{{ error }}</span>
+    </p>
   </div>
 </template>
 
 <style scoped>
-.details-field {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--slidebar-item-hover-bg);
-  margin-bottom: 1rem;
-}
-.details-input-label {
-  font-weight: bold;
-}
-.details-actions {
-  width: 45%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.75rem;
-}
-.details-input {
-  width: 67%;
-  background-color: transparent;
-  color: var(--slidebar-item-text-color);
-  font-weight: bold;
-  border: none;
-  padding: 0.5rem;
-}
-.details-input:focus {
-  outline: none;
-  color: var(--button-bg);
-}
-.copy-button {
-  width: auto;
-  min-width: 110px;
-  height: 32px;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.85rem;
-}
-.copy-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
 </style>

@@ -25,6 +25,12 @@ mfs-fleet.info {
  handle /grafana/* {
   reverse_proxy grafana:3000
  }
+  redir /miniapp /miniapp/ 308
+  handle /miniapp/* {
+   header -X-Frame-Options
+   header Content-Security-Policy "frame-ancestors 'self' https://web.telegram.org https://*.web.telegram.org https://*.telegram.org https://telegram.org;"
+   reverse_proxy miniapp:80
+  }
  handle {
   reverse_proxy frontend:80
  }

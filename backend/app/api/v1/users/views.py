@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, File, status, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, status, Depends, UploadFile
 from fastapi.responses import StreamingResponse
 from services import CRUD
 from core.models import User
@@ -11,11 +11,34 @@ from contracts.admin.schemas import AdminReturn
 from services.export import export_to_exel
 from services.notifications import notify_new_application
 from services.users.import_users import import_users
+from services.users.register import register_user
 
 
 router = APIRouter(prefix="/users", tags=["users"])
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
 AdminDep = Annotated[AdminReturn, Depends(auth_utils.validate_auth_user_jwt)]
+
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
+async def register_user_view(
+    session: SessionDep,
+    background_tasks: BackgroundTasks,
+    user_data: str = Form(..., description="JSON-строка UserCreate"),
+    file1: UploadFile = File(...),
+    file2: UploadFile = File(...),
+    file1_description: str = Form(default="document"),
+    file2_description: str = Form(default="document"),
+) -> UserReturn:
+    user = await register_user(
+        session=session,
+        user_data=user_data,
+        file1=file1,
+        file2=file2,
+        file1_description=file1_description,
+        file2_description=file2_description,
+    )
+    background_tasks.add_task(notify_new_application, UserReturn.model_validate(user).model_dump(mode="json"))
+    return user
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

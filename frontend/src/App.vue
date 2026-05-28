@@ -1,33 +1,34 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+import { RouterView } from 'vue-router'
 import headerComp from './components/headerComp.vue'
 import footerComp from './components/footerComp.vue'
-import mHeaderComp from './components/mobile/mHeaderComp.vue'
-import mFooterComp from './components/mobile/mFooterComp.vue'
-import { useUiStore } from './stores/uiStore'
-const uiStore = useUiStore()
+import { useThemeStore } from './stores/themeStore'
+
+const themeStore = useThemeStore()
+onMounted(() => {
+  document.documentElement.setAttribute('data-theme', themeStore.theme)
+})
 </script>
 
 <template>
-  <div>
-    <headerComp v-if="!uiStore.isMobile" />
-    <mHeaderComp v-else />
-    <section>
+  <div class="app-shell">
+    <headerComp />
+    <main class="app-main">
       <RouterView />
-    </section>
-    <footerComp v-if="!uiStore.isMobile" />
-    <mFooterComp v-else />
+    </main>
+    <footerComp />
   </div>
 </template>
 
 <style scoped>
-div {
+.app-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-section {
+.app-main {
   flex: 1;
 }
 </style>

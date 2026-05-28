@@ -1,6 +1,5 @@
 import StringComp from '@/components/subComponents/fieldsComps/stringComp.vue'
 import NumberComp from '@/components/subComponents/fieldsComps/numberComp.vue'
-import stringCreateComp from '@/components/subComponents/createComps/stringCreateComp.vue'
 
 export const adminSchema = {
   endpoint: '/admin',
@@ -11,14 +10,16 @@ export const adminSchema = {
       type: 'number',
       component: NumberComp,
       readonly: true,
+      group: 'system',
     },
 
     {
       key: 'username',
-      label: 'Имя ',
+      label: 'Имя',
       type: 'string',
       readonly: true,
       component: StringComp,
+      group: 'personal',
     },
 
     {
@@ -28,14 +29,16 @@ export const adminSchema = {
       inputType: 'password',
       readonly: true,
       component: StringComp,
+      group: 'system',
     },
 
     {
       key: 'last_login_at',
-      label: 'Последнияя аутентификация',
+      label: 'Последняя аутентификация',
       type: 'datetime',
       readonly: true,
       component: StringComp,
+      group: 'system',
     },
 
     {
@@ -44,6 +47,7 @@ export const adminSchema = {
       type: 'datetime',
       readonly: true,
       component: StringComp,
+      group: 'system',
     },
   ],
 }
@@ -54,7 +58,7 @@ export const adminCreateSchema = {
       key: 'username',
       label: 'Имя',
       type: 'string',
-      component: stringCreateComp,
+      component: StringComp,
     },
 
     {
@@ -62,7 +66,7 @@ export const adminCreateSchema = {
       label: 'Пароль',
       type: 'string',
       inputType: 'password',
-      component: stringCreateComp,
+      component: StringComp,
     },
   ],
 }

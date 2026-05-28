@@ -97,10 +97,31 @@ const APIPosts = {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
+                timeout: 120000,
             })
         } catch (error) {
             console.error("Failed to upload file", error)
             throw createRequestError(error, "Failed to upload file", "upload")
+        }
+    },
+    registerUser: async (payload, file1, file2, file1_desc, file2_desc) => {
+        try {
+            const formData = new FormData()
+            formData.append("user_data", JSON.stringify(payload))
+            formData.append("file1", file1)
+            formData.append("file2", file2)
+            if (file1_desc) formData.append("file1_description", file1_desc)
+            if (file2_desc) formData.append("file2_description", file2_desc)
+
+            return await api.post("/users/register", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 120000,
+            })
+        } catch (error) {
+            console.error("Failed to register user atomically", error)
+            throw createRequestError(error, "Failed to register user", "upload")
         }
     }
 }

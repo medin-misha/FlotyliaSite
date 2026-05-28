@@ -31,4 +31,19 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.name === 'form') {
+    const isRegi = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('is_regi='))
+      ?.split('=')[1];
+      
+    if (isRegi === 'true') {
+      next({ name: 'success', params: { company: to.params.company } });
+      return;
+    }
+  }
+  next();
+});
+
 export default router
