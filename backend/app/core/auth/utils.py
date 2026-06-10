@@ -4,7 +4,7 @@ from contracts.admin import AdminAuth
 from core.security import verify_password
 from services.admin import get_admin_by_username
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from contracts.admin import JWToken, RawJWTPayload, JWTPayload, AdminReturn
 import jwt
@@ -14,7 +14,7 @@ from datetime import timedelta
 import time
 
 SessionDep = Annotated[AsyncSession, Depends(database.get_session)]
-http_bearer = HTTPBearer()
+http_bearer = HTTPBearer(auto_error=False)
 
 
 def encode_jwt(
@@ -86,10 +86,25 @@ def get_current_token_payload(token: HTTPAuthorizationCredentials) -> dict:
 
 
 async def validate_auth_user_jwt(
-    token: HTTPAuthorizationCredentials = Depends(http_bearer),
+    token: HTTPAuthorizationCredentials | None = Depends(http_bearer),
+    token_query: str | None = Query(None, alias="token"),
     session: AsyncSession = Depends(database.get_session),
 ) -> AdminReturn:
-    payload: dict = get_current_token_payload(token)
+    credentials = None
+    if token and token.credentials:
+        credentials = token.credentials
+    elif token_query:
+        credentials = token_query
+
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
+
+    payload: dict = get_current_token_payload(
+        HTTPAuthorizationCredentials(scheme="Bearer", credentials=credentials)
+    )
     username: str | None = payload.get("sub")
     admin_instance = await get_admin_by_username(username=username, session=session)
     if admin_instance is None:
