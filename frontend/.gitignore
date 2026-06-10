@@ -37,3 +37,8 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# PNPM store and lock
+.pnpm-store/
+package-lock.json
+

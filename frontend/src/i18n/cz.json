@@ -68,7 +68,7 @@
             "line2": "Ty jen sedneš za volant / na kolo / na koloběžku a začneš vydělávat!"
         },
         "item3": {
-            "title": "3. Elektrická doprava bez záloh a skrytých poplatků,",
+            "title": "3. Elektrické dopravní prostředky,",
             "line1": "s vybavením a servisem plně zahrnutým v ceně pronájmu.",
             "line2": "Vezmi a jeď — bez kaucí a bez starostí!"
         }
@@ -124,8 +124,8 @@
             "eyebrow": "Bolt Food · Foodora",
             "title-line1": "Staň se kurýrem",
             "title-line2": "už tento týden",
-            "lead": "Dopravu, vyřízení i podporu bereme na sebe. Ty sedneš za volant, na kolo nebo koloběžku a začneš vydělávat.",
-            "vehicle-link": "Zobrazit dopravu",
+            "lead": "My řešíme administrativu, ty jen jezdíš a vyděláváš.",
+            "vehicle-link": "Zobrazit vozový park",
             "open": "Nábor otevřen",
             "meta": {
                 "payouts": "výplaty měsíčně",
@@ -135,8 +135,8 @@
             "stats": {
                 "first-order": "Od žádosti k první objednávce",
                 "weekly-payouts": "Výplaty každý týden",
-                "deposit": "Kauce na kola a elektrickou dopravu",
-                "support": "Podpora v ruštině a češtině"
+                "deposit": "Kauce na elektricky  dopravni prostredky",
+                "support": "Podpora"
             }
         },
         "partners": {
@@ -166,8 +166,8 @@
                     "text": "Vyplň formulář za 5 minut. Ozveme se do hodiny, vysvětlíme podmínky a vybereme dopravu."
                 },
                 {
-                    "title": "Vyzvedneš dopravu a termobox",
-                    "text": "Přijedeš do kanceláře v Praze, vyřídíme dokumenty a hned předáme dopravu s vybavením. Bez kaucí na kola a elektrickou dopravu."
+                    "title": "Vyzvedneš si dopravní prostředek a termobox",
+                    "text": "Přijedeš do kanceláře v Praze, vyřídíme dokumenty a hned předáme dopravní prostředek s vybavením. Bez kaucí na kola a elektrickou dopravu."
                 },
                 {
                     "title": "Vyrazíš a vyděláváš",

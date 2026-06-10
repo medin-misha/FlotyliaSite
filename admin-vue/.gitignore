@@ -34,3 +34,8 @@ coverage
 
 # Vitest
 __screenshots__/
+
+# PNPM store and lock
+.pnpm-store/
+package-lock.json
+

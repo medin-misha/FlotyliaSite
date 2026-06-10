@@ -38,7 +38,7 @@
         <div>
           <h5>{{ $t('footer.contacts-title') }}</h5>
           <ul>
-            <li><a href="tel:+420733588688">+420 733 588 688</a></li>
+            <li><a href="tel:+420775995339">+420 775 995 339</a></li>
             <li><a href="https://t.me/MFS_support" target="_blank" rel="noopener">Telegram: @MFS_support</a></li>
             <li><a href="mailto:may.fleet.solutions@gmail.com">may.fleet.solutions@&#8203;gmail.com</a></li>
           </ul>
