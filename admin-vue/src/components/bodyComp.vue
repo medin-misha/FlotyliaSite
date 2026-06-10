@@ -20,7 +20,7 @@ const isDetailState = computed(() => statesStore.state === statesStore.states.de
   <section class="h-screen relative flex flex-col lg:flex-row overflow-y-auto custom-scrollbar">
     <div
       class="flex-grow min-w-0 transition-all duration-300 ease-in-out"
-      :class="isDetailState ? 'lg:mr-[400px] xl:mr-[460px] 2xl:mr-[500px]' : ''"
+      :class="isDetailState ? 'lg:mr-[50vw]' : ''"
     >
       <tableComp
         v-if="statesStore.state === statesStore.states.table || isDetailState"

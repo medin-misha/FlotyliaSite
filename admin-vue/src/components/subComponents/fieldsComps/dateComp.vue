@@ -15,6 +15,41 @@ const copied = ref(false)
 
 const inputType = computed(() => (props.field?.type === 'datetime' ? 'datetime-local' : 'date'))
 
+const formatDate = (val) => {
+  if (!val) return '—'
+  if (typeof val === 'string') {
+    const tIndex = val.indexOf('T')
+    if (tIndex !== -1) {
+      return val.substring(0, tIndex)
+    }
+    const spaceIndex = val.indexOf(' ')
+    if (spaceIndex !== -1 && val.includes('-')) {
+      return val.substring(0, spaceIndex)
+    }
+  }
+  return val
+}
+
+const displayValue = computed({
+  get() {
+    if (!value.value) return ''
+    if (typeof value.value === 'string') {
+      const tIndex = value.value.indexOf('T')
+      if (tIndex !== -1) {
+        return value.value.substring(0, tIndex)
+      }
+      const spaceIndex = value.value.indexOf(' ')
+      if (spaceIndex !== -1 && value.value.includes('-')) {
+        return value.value.substring(0, spaceIndex)
+      }
+    }
+    return value.value
+  },
+  set(val) {
+    value.value = val
+  }
+})
+
 const copyValue = async () => {
   if (!value.value) return
 
@@ -52,7 +87,7 @@ const copyValue = async () => {
       
       <input 
         :type="inputType" 
-        v-model="value" 
+        v-model="displayValue" 
         :id="field.key"
         class="w-full h-12 pl-11 pr-4 rounded-xl border bg-white dark:bg-[#1f2125] text-on-surface dark:text-white font-body-md text-body-md focus:outline-none transition-all duration-200"
         :class="[
@@ -91,14 +126,14 @@ const copyValue = async () => {
       <input
         v-if="!field.readonly"
         :type="inputType"
-        v-model="value"
+        v-model="displayValue"
         class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg font-semibold text-on-surface dark:text-white"
         :placeholder="field.label"
       />
 
       <!-- Readonly View -->
       <p v-else class="font-body-lg text-body-lg font-semibold text-on-surface dark:text-white">
-        {{ value || '—' }}
+        {{ formatDate(value) }}
       </p>
 
       <!-- Copy Action -->

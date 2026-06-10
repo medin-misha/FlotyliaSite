@@ -2,6 +2,7 @@
 import { onBeforeUnmount, ref, watch } from 'vue'
 import APIPosts from '@/api/posts'
 import api from '@/api/api'
+import { useAuthStore } from '@/stores/auth'
 import { openBlobInNewTab } from '@/utils/openBlobInNewTab'
 
 const props = defineProps({
@@ -63,46 +64,13 @@ const openFile = async () => {
   }
 }
 
-const downloadFile = async () => {
-  if (loading.value || !currentFileId.value) return
+const downloadFile = () => {
+  if (!currentFileId.value) return
 
-  loading.value = true
-  try {
-    const response = await fetchFileBlob(currentFileId.value)
-    const fileUrl = URL.createObjectURL(response.data)
-    const link = document.createElement('a')
-
-    link.href = fileUrl
-    
-    const mimeToExt = {
-      'application/pdf': '.pdf',
-      'image/jpeg': '.jpg',
-      'image/jpg': '.jpg',
-      'image/png': '.png',
-      'image/gif': '.gif',
-      'text/plain': '.txt',
-    }
-    const mimeType = response.data.type || ''
-    const ext = mimeToExt[mimeType] || ''
-    
-    let filename = description.value || `document-${props.document.id || currentFileId.value}`
-    if (ext && !filename.toLowerCase().endsWith(ext)) {
-      filename += ext
-    }
-    
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    
-    setTimeout(() => {
-      URL.revokeObjectURL(fileUrl)
-    }, 1000)
-  } catch (error) {
-    console.error('Failed to download file:', error)
-  } finally {
-    loading.value = false
-  }
+  const token = useAuthStore().getToken
+  const baseUrl = import.meta.env.VITE_API_URL
+  const downloadUrl = `${baseUrl}/files/${currentFileId.value}?token=${token}`
+  window.open(downloadUrl, '_blank')
 }
 
 const triggerFileInput = () => {

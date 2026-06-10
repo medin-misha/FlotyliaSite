@@ -71,6 +71,8 @@ const sections = computed(() => {
   ].filter((section) => section.fields.length > 0)
 })
 
+const getSection = (key) => sections.value.find((section) => section.key === key)
+
 const resetObjectData = (data) => {
   for (const key of Object.keys(objectData)) {
     delete objectData[key]
@@ -223,7 +225,7 @@ onUnmounted(() => {
         :class="[
           isMobileOrTablet
             ? 'absolute right-0 top-0 z-[70] h-full w-full sm:w-[480px]'
-            : 'fixed right-0 top-[70px] bottom-0 w-[400px] xl:w-[460px] 2xl:w-[500px] z-30',
+            : 'fixed right-0 top-[70px] bottom-0 w-[50vw] z-30',
           isVisible ? 'translate-x-0' : 'translate-x-full'
         ]"
         :style="isMobileOrTablet ? {} : { height: 'calc(100vh - 70px)' }"
@@ -285,26 +287,137 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <section v-for="section in sections" :key="section.key" class="space-y-stack-md">
-              <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ section.icon }}</span>
-                <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white">
-                  {{ section.title }}
-                </h4>
+            <!-- Users layout -->
+            <template v-if="adres === '/users'">
+              <!-- Row 1: Basic info & Contacts side by side -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <!-- Personal / Basic Info -->
+                <section v-if="getSection('personal')" class="space-y-stack-md">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('personal').icon }}</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                      {{ getSection('personal').title }}
+                    </h4>
+                  </div>
+                  <div class="grid grid-cols-1 gap-4">
+                    <component
+                      v-for="field in getSection('personal').fields"
+                      :is="field.component"
+                      :key="field.key"
+                      :field="field"
+                      v-model:value="objectData[field.key]"
+                      :error="errors[field.key]"
+                      :object="objectData"
+                    />
+                  </div>
+                </section>
+
+                <!-- Contacts -->
+                <section v-if="getSection('contacts')" class="space-y-stack-md">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('contacts').icon }}</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                      {{ getSection('contacts').title }}
+                    </h4>
+                  </div>
+                  <div class="grid grid-cols-1 gap-4">
+                    <component
+                      v-for="field in getSection('contacts').fields"
+                      :is="field.component"
+                      :key="field.key"
+                      :field="field"
+                      v-model:value="objectData[field.key]"
+                      :error="errors[field.key]"
+                      :object="objectData"
+                    />
+                  </div>
+                </section>
               </div>
 
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-2" :class="section.key === 'documents' ? 'md:grid-cols-1' : ''">
-                <component
-                  v-for="field in section.fields"
-                  :is="field.component"
-                  :key="field.key"
-                  :field="field"
-                  v-model:value="objectData[field.key]"
-                  :error="errors[field.key]"
-                  :object="objectData"
-                />
+              <!-- Row 2: Logistics & Documents side by side -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <!-- Logistics -->
+                <section v-if="getSection('logistics')" class="space-y-stack-md">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('logistics').icon }}</span>
+                    <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                      {{ getSection('logistics').title }}
+                    </h4>
+                  </div>
+                  <div class="grid grid-cols-1 gap-4">
+                    <component
+                      v-for="field in getSection('logistics').fields"
+                      :is="field.component"
+                      :key="field.key"
+                      :field="field"
+                      v-model:value="objectData[field.key]"
+                      :error="errors[field.key]"
+                      :object="objectData"
+                    />
+                  </div>
+                </section>
+
+                <!-- Documents -->
+                <section v-if="getSection('documents')" class="space-y-stack-md">
+                  <div class="grid grid-cols-1 gap-4">
+                    <component
+                      v-for="field in getSection('documents').fields"
+                      :is="field.component"
+                      :key="field.key"
+                      :field="field"
+                      v-model:value="objectData[field.key]"
+                      :error="errors[field.key]"
+                      :object="objectData"
+                    />
+                  </div>
+                </section>
               </div>
-            </section>
+
+              <!-- Row 3: Other -->
+              <section v-if="getSection('other')" class="space-y-stack-md">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('other').icon }}</span>
+                  <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                    {{ getSection('other').title }}
+                  </h4>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <component
+                    v-for="field in getSection('other').fields"
+                    :is="field.component"
+                    :key="field.key"
+                    :field="field"
+                    v-model:value="objectData[field.key]"
+                    :error="errors[field.key]"
+                    :object="objectData"
+                  />
+                </div>
+              </section>
+            </template>
+
+            <!-- Admins and other layout -->
+            <template v-else>
+              <section v-for="section in sections" :key="section.key" class="space-y-stack-md">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ section.icon }}</span>
+                  <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white">
+                    {{ section.title }}
+                  </h4>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2" :class="section.key === 'documents' ? 'md:grid-cols-1' : ''">
+                  <component
+                    v-for="field in section.fields"
+                    :is="field.component"
+                    :key="field.key"
+                    :field="field"
+                    v-model:value="objectData[field.key]"
+                    :error="errors[field.key]"
+                    :object="objectData"
+                  />
+                </div>
+              </section>
+            </template>
           </div>
         </div>
       </aside>

@@ -33,7 +33,7 @@ const onDocumentDeleted = (index) => {
     </div>
 
     <!-- Documents Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4 w-full">
       <documentComp
         v-for="(document, index) in value"
         :key="index"

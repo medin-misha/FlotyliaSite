@@ -2,12 +2,14 @@
 import { usePageStore } from '../../stores/page'
 import { useRequestStates } from '../../stores/requestStates'
 import { useStatesStore } from '../../stores/states'
+import { useAuthStore } from '../../stores/auth'
 import APIGetters from '../../api/getters'
 import { onUnmounted, ref, watch, computed } from 'vue'
 
 const pageStore = usePageStore()
 const requestStatesStore = useRequestStates()
 const statesStore = useStatesStore()
+const authStore = useAuthStore()
 
 const props = defineProps({
   adres: String,
@@ -56,20 +58,11 @@ watch(
 
 onUnmounted(() => clearTimeout(retryTimeout))
 
-const handleExport = async () => {
-  try {
-    const response = await APIGetters.getExport()
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'database_export.xlsx')
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
-  } catch (error) {
-    console.error('Export failed:', error)
-  }
+const handleExport = () => {
+  const token = authStore.getToken
+  const baseUrl = import.meta.env.VITE_API_URL
+  const downloadUrl = `${baseUrl}/users/export?token=${token}`
+  window.open(downloadUrl, '_blank')
 }
 
 const getStatusClasses = (status) => {
@@ -82,6 +75,8 @@ const getStatusClasses = (status) => {
     return 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
   } else if (norm === 'processing') {
     return 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+  } else if (norm === 'in activation') {
+    return 'bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800'
   } else {
     return 'bg-surface-container-high dark:bg-white/10 text-secondary dark:text-secondary-fixed-dim border border-outline-variant/40 dark:border-white/10'
   }
@@ -106,18 +101,66 @@ const changePage = (page) => {
   pageStore.paginationData.page = page
 }
 
-let searchDebounceTimeout = null
 const updateSearch = (val) => {
-  clearTimeout(searchDebounceTimeout)
-  searchDebounceTimeout = setTimeout(() => {
-    pageStore.paginationData.search = val
-    pageStore.paginationData.page = 1
-  }, 300)
+  pageStore.paginationData.search = val
+  pageStore.paginationData.page = 1
 }
 
 const updateFilter = (val) => {
   pageStore.filter = val
   pageStore.paginationData.page = 1
+}
+
+const formatDate = (val) => {
+  if (!val) return '—'
+  if (typeof val === 'string') {
+    const tIndex = val.indexOf('T')
+    if (tIndex !== -1) {
+      return val.substring(0, tIndex)
+    }
+    const spaceIndex = val.indexOf(' ')
+    if (spaceIndex !== -1 && val.includes('-')) {
+      return val.substring(0, spaceIndex)
+    }
+  }
+  return val
+}
+
+const selectChip = (val) => {
+  if (pageStore.paginationData.search === val) {
+    pageStore.paginationData.search = ''
+  } else {
+    pageStore.paginationData.search = val
+  }
+  pageStore.paginationData.page = 1
+}
+
+const getChipClasses = (chip) => {
+  const norm = String(chip).toLowerCase()
+  if (norm === 'pending') {
+    return 'bg-blue-50/50 dark:bg-blue-950/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-950/20'
+  } else if (norm === 'processing') {
+    return 'bg-amber-50/50 dark:bg-amber-950/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900/50 hover:bg-amber-50 dark:hover:bg-amber-950/20'
+  } else if (norm === 'in activation') {
+    return 'bg-purple-50/50 dark:bg-purple-950/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-900/50 hover:bg-purple-50 dark:hover:bg-purple-950/20'
+  } else if (norm === 'inoperative') {
+    return 'bg-red-50/50 dark:bg-red-950/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/20'
+  }
+  return 'bg-surface-container-high dark:bg-white/10 text-secondary dark:text-secondary-fixed-dim border border-outline-variant/40 dark:border-white/10 hover:bg-surface-container'
+}
+
+const getChipActiveClasses = (chip) => {
+  const norm = String(chip).toLowerCase()
+  if (norm === 'pending') {
+    return 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border-blue-400 dark:border-blue-700 shadow-sm ring-2 ring-blue-500/20'
+  } else if (norm === 'processing') {
+    return 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border-amber-400 dark:border-amber-700 shadow-sm ring-2 ring-amber-500/20'
+  } else if (norm === 'in activation') {
+    return 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 border-purple-400 dark:border-purple-700 shadow-sm ring-2 ring-purple-500/20'
+  } else if (norm === 'inoperative') {
+    return 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 border-red-400 dark:border-red-700 shadow-sm ring-2 ring-red-500/20'
+  }
+  return 'bg-primary text-on-primary border-primary shadow-sm ring-2 ring-primary/20'
 }
 </script>
 
@@ -186,6 +229,34 @@ const updateFilter = (val) => {
               </option>
             </select>
           </div>
+        </div>
+
+        <!-- Chips Section -->
+        <div class="flex flex-wrap gap-2.5 items-center pl-1">
+          <span class="text-xs text-secondary dark:text-secondary-fixed-dim font-medium mr-1 select-none">Быстрый поиск по статусу:</span>
+          
+          <button
+            v-for="chip in ['pending', 'processing', 'in activation', 'inoperative']"
+            :key="chip"
+            @click="selectChip(chip)"
+            :class="[
+              'px-3.5 py-1 rounded-full text-[12px] font-semibold tracking-wide border cursor-pointer select-none transition-all duration-200 active:scale-[0.96]',
+              pageStore.paginationData.search === chip
+                ? getChipActiveClasses(chip)
+                : getChipClasses(chip)
+            ]"
+          >
+            {{ chip }}
+          </button>
+          
+          <button
+            v-if="pageStore.paginationData.search"
+            @click="selectChip('')"
+            class="px-2.5 py-1 rounded-full text-[12px] font-medium text-secondary hover:text-primary dark:text-secondary-fixed-dim dark:hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+          >
+            <span class="material-symbols-outlined text-[14px]">close</span>
+            Сбросить
+          </button>
         </div>
       </section>
 
@@ -263,10 +334,10 @@ const updateFilter = (val) => {
                     </div>
                   </td>
                   <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
-                    {{ obj.last_login_at || '—' }}
+                    {{ formatDate(obj.last_login_at) }}
                   </td>
                   <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
-                    {{ obj.created_at || '—' }}
+                    {{ formatDate(obj.created_at) }}
                   </td>
                 </tr>
               </template>
