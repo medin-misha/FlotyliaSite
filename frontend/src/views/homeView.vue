@@ -35,7 +35,7 @@ onUnmounted(() => { if (io) io.disconnect() })
         {{ t('landing.hero.lead') }}
       </p>
       <div class="hero-actions reveal">
-        <RouterLink to="/select-platform" class="btn btn-primary btn-lg">
+        <RouterLink to="/form" class="btn btn-primary btn-lg">
           {{ t('landing.cta.apply') }}
           <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </RouterLink>
@@ -194,7 +194,7 @@ onUnmounted(() => { if (io) io.disconnect() })
         <div class="v-body">
           <h3>{{ t('transport.bike.title') }}</h3>
           <p>{{ t('transport.bike.line1') }} {{ t('transport.bike.line2') }}</p>
-          <RouterLink to="/select-platform" class="v-cta">
+          <RouterLink to="/form" class="v-cta">
             {{ t('landing.cta.apply') }}
             <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </RouterLink>
@@ -212,7 +212,7 @@ onUnmounted(() => { if (io) io.disconnect() })
         <div class="v-body">
           <h3>{{ t('transport.ebike.title') }}</h3>
           <p>{{ t('transport.ebike.line1') }} {{ t('transport.ebike.line2') }}</p>
-          <RouterLink to="/select-platform" class="v-cta">
+          <RouterLink to="/form" class="v-cta">
             {{ t('landing.cta.apply') }}
             <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </RouterLink>
@@ -229,7 +229,7 @@ onUnmounted(() => { if (io) io.disconnect() })
         <div class="v-body">
           <h3>{{ t('transport.escooter.title') }}</h3>
           <p>{{ t('transport.escooter.line1') }} {{ t('transport.escooter.line2') }}</p>
-          <RouterLink to="/select-platform" class="v-cta">
+          <RouterLink to="/form" class="v-cta">
             {{ t('landing.cta.apply') }}
             <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </RouterLink>
@@ -246,7 +246,7 @@ onUnmounted(() => { if (io) io.disconnect() })
         <div class="v-body">
           <h3>{{ t('transport.car.title') }}</h3>
           <p>{{ t('transport.car.line1') }} {{ t('transport.car.line2') }}</p>
-          <RouterLink to="/select-platform" class="v-cta">
+          <RouterLink to="/form" class="v-cta">
             {{ t('landing.cta.apply') }}
             <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </RouterLink>
@@ -284,7 +284,7 @@ onUnmounted(() => { if (io) io.disconnect() })
           </li>
         </ul>
         <div class="cta-actions">
-          <RouterLink to="/select-platform" class="btn btn-primary btn-lg">
+          <RouterLink to="/form" class="btn btn-primary btn-lg">
             {{ t('landing.cta.apply') }}
             <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </RouterLink>

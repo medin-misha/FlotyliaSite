@@ -147,3 +147,18 @@ class UserImportReport(BaseModel):
     imported: int
     skipped: int
     errors: list[UserImportError]
+
+
+class UserBulkStatusUpdate(BaseModel):
+    ids: list[int]
+    status: str
+
+    @field_validator("status")
+    def validate_status(cls, v):
+        if v not in user_status_values:
+            raise ValueError(user_status_error)
+        return v
+
+
+class UserBulkDelete(BaseModel):
+    ids: list[int]

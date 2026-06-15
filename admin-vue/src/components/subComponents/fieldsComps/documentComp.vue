@@ -55,10 +55,13 @@ const openFile = async () => {
   if (loading.value || !currentFileId.value) return
 
   try {
-    await openBlobInNewTab(async () => {
-      const response = await fetchFileBlob(currentFileId.value)
-      return response.data
-    }, description.value || props.field?.label || 'Document')
+    await openBlobInNewTab(
+      async () => {
+        const response = await fetchFileBlob(currentFileId.value)
+        return response.data
+      },
+      description.value || props.field?.label || 'Document',
+    )
   } catch (error) {
     console.error('Failed to open file:', error)
   }
@@ -139,20 +142,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div 
+  <div
     :class="[
       'group relative aspect-[3/4] rounded-2xl overflow-hidden border border-outline-variant/30 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-end bg-surface-container-low dark:bg-white/5',
-      loading ? 'opacity-60 pointer-events-none' : ''
+      loading ? 'opacity-60 pointer-events-none' : '',
     ]"
   >
     <!-- File Input Hidden -->
-    <input
-      ref="fileInput"
-      type="file"
-      class="hidden"
-      @change="onFileChange"
-      :disabled="loading"
-    />
+    <input ref="fileInput" type="file" class="hidden" @change="onFileChange" :disabled="loading" />
 
     <!-- Image Preview or Placeholder Background -->
     <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
@@ -162,22 +159,33 @@ onBeforeUnmount(() => {
         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
         alt="Document Preview"
       />
-      <div v-else class="flex flex-col items-center gap-2 text-secondary/40 dark:text-white/20 p-4 text-center">
-        <span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">description</span>
-        <span class="text-xs font-semibold select-none">{{ currentFileId ? 'Документ загружен' : 'Нет файла' }}</span>
+      <div
+        v-else
+        class="flex flex-col items-center gap-2 text-secondary/40 dark:text-white/20 p-4 text-center"
+      >
+        <span
+          class="material-symbols-outlined text-[48px]"
+          style="font-variation-settings: 'FILL' 1"
+          >description</span
+        >
+        <span class="text-xs font-semibold select-none">{{
+          currentFileId ? 'Документ загружен' : 'Нет файла'
+        }}</span>
       </div>
     </div>
 
     <!-- Details Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 z-10">
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 z-10"
+    >
       <!-- Document Label / Description -->
       <div class="space-y-1 mb-2">
         <p class="text-white font-label-md text-label-md font-bold truncate">
           {{ description || field?.label || 'Документ' }}
         </p>
-        <input 
+        <input
           v-if="!currentFileId"
-          type="text" 
+          type="text"
           :value="description"
           @input="updateDescription"
           placeholder="Название..."
@@ -232,5 +240,4 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

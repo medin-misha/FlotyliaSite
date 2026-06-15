@@ -17,7 +17,7 @@ watch(
   () => value.value,
   (newVal) => {
     inputValue.value = newVal ?? ''
-  }
+  },
 )
 
 const onInput = (e) => {
@@ -30,37 +30,46 @@ const onInput = (e) => {
 <template>
   <!-- Create mode styling -->
   <div v-if="create" class="flex flex-col w-full gap-1.5 group">
-    <label :for="field.key" class="font-label-sm text-label-sm font-semibold text-secondary dark:text-secondary-fixed-dim ml-1 flex items-center gap-1 select-none">
+    <label
+      :for="field.key"
+      class="font-label-sm text-label-sm font-semibold text-secondary dark:text-secondary-fixed-dim ml-1 flex items-center gap-1 select-none"
+    >
       <span>{{ field.label }}</span>
-      <span v-if="field.required" class="text-primary dark:text-inverse-primary" title="Обязательное поле">*</span>
+      <span
+        v-if="field.required"
+        class="text-primary dark:text-inverse-primary"
+        title="Обязательное поле"
+        >*</span
+      >
     </label>
-    
+
     <div class="relative flex items-center">
-      <span class="material-symbols-outlined absolute left-3.5 text-[20px] transition-colors duration-200"
+      <span
+        class="material-symbols-outlined absolute left-3.5 text-[20px] transition-colors duration-200"
         :class="[
-          error 
-            ? 'text-error' 
-            : 'text-secondary/50 group-focus-within:text-primary dark:group-focus-within:text-inverse-primary'
+          error
+            ? 'text-error'
+            : 'text-secondary/50 group-focus-within:text-primary dark:group-focus-within:text-inverse-primary',
         ]"
       >
         tag
       </span>
-      
-      <input 
-        type="number" 
-        :value="inputValue" 
+
+      <input
+        type="number"
+        :value="inputValue"
         @input="onInput"
-        :placeholder="field.label" 
+        :placeholder="field.label"
         :id="field.key"
         class="w-full h-12 pl-11 pr-4 rounded-xl border bg-white dark:bg-[#1f2125] text-on-surface dark:text-white font-body-md text-body-md focus:outline-none transition-all duration-200"
         :class="[
-          error 
-            ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10' 
-            : 'border-outline-variant/30 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary dark:focus:border-inverse-primary dark:focus:ring-inverse-primary hover:border-outline-variant/60 dark:hover:border-white/20'
+          error
+            ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10'
+            : 'border-outline-variant/30 dark:border-white/10 focus:border-primary focus:ring-1 focus:ring-primary dark:focus:border-inverse-primary dark:focus:ring-inverse-primary hover:border-outline-variant/60 dark:hover:border-white/20',
         ]"
       />
     </div>
-    
+
     <!-- Error message text block -->
     <transition
       enter-active-class="transition duration-150 ease-out"
@@ -78,7 +87,15 @@ const onInput = (e) => {
   </div>
 
   <!-- Detail/Edit mode styling -->
-  <div v-else :class="['p-4 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group hover:scale-[1.01] hover:shadow-sm transition-all duration-200', error ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10' : 'border-outline-variant/30']">
+  <div
+    v-else
+    :class="[
+      'p-4 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group hover:scale-[1.01] hover:shadow-sm transition-all duration-200',
+      error
+        ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10'
+        : 'border-outline-variant/30',
+    ]"
+  >
     <!-- Label -->
     <label class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim block">
       {{ field.label }}
@@ -109,5 +126,4 @@ const onInput = (e) => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

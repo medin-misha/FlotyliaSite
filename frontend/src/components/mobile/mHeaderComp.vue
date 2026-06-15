@@ -47,7 +47,7 @@ const isDark = computed(() => themeStore.theme === 'dark')
     <button
       type="button"
       class="mobile-connect-button app-pill-button app-fade-transition app-alt-button-text"
-      @click="$router.push('/select-platform')"
+      @click="$router.push('/form')"
     >
       {{ $t('buttons.connect-button') }}
     </button>

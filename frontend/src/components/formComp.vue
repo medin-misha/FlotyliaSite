@@ -1,10 +1,9 @@
 <script setup>
-import { reactive, ref, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { reactive, ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from "vue-i18n"
 import APIPosts from '../api/posts'
 
-const route = useRoute()
 const router = useRouter()
 const { t } = useI18n({ useScope: "global" })
 
@@ -20,10 +19,33 @@ function getCookie(name) {
   return matches ? decodeURIComponent(matches[1]) : undefined
 }
 
+function applyPlatform(val) {
+  if (val === 'bolt' || val === 'foodora') {
+    document.documentElement.setAttribute('data-platform', val)
+    try { localStorage.setItem('mfs_platform', val) } catch (_) {}
+  } else {
+    document.documentElement.removeAttribute('data-platform')
+  }
+}
+
 onMounted(() => {
   if (getCookie('is_regi') === 'true') {
-    router.replace(`/success/${route.params.company}`)
+    const company = localStorage.getItem('mfs_platform') || 'bolt'
+    router.replace(`/success/${company}`)
+    return
   }
+  // Restore previously selected platform
+  try {
+    const stored = localStorage.getItem('mfs_platform')
+    if (stored === 'bolt' || stored === 'foodora') {
+      formData.work_in = stored
+      applyPlatform(stored)
+    }
+  } catch (_) {}
+})
+
+onUnmounted(() => {
+  document.documentElement.removeAttribute('data-platform')
 })
 const supportTelegramUrl = 'https://t.me/MFS_support'
 const fieldLengthLimits = {
@@ -54,7 +76,7 @@ const formData = reactive({
   invoice: '',
   contactPlatform: '',
   contactValue: '',
-  work_in: route.params.company + "?",
+  work_in: '',
   consent: false,
 })
 
@@ -96,6 +118,7 @@ const contactPlaceholder = computed(() => {
 
 const isContactDisabled = computed(() => !formData.contactPlatform)
 const invalidFields = reactive({
+  work_in: false,
   name: false,
   city: false,
   phone: false,
@@ -147,6 +170,7 @@ function getInvalidVisibleFields() {
     : isTextWithinLimits(formData.contactValue, fieldLengthLimits.telegram)
 
   return {
+    work_in: !hasTextValue(formData.work_in),
     name: !isTextWithinLimits(formData.name, fieldLengthLimits.name),
     city: !isTextWithinLimits(formData.city, fieldLengthLimits.city),
     phone: !isTextWithinLimits(formData.phone, fieldLengthLimits.phone, '+420'),
@@ -178,6 +202,12 @@ function syncFieldValidity(field) {
 function normalizeNameField() {
   formData.name = sanitizeNameValue(formData.name)
   syncFieldValidity('name')
+}
+
+function selectWorkPlatform(platform) {
+  formData.work_in = platform
+  applyPlatform(platform)
+  syncFieldValidity('work_in')
 }
 
 function selectPlatform(platform) {
@@ -330,7 +360,7 @@ async function submitForm() {
     setCookie('is_send', 'true', 31536000)
     setCookie('is_regi', 'true', 31536000)
     
-    router.push(`/success/${route.params.company}`)
+    router.push(`/success/${formData.work_in}`)
   } catch (error) {
     console.error('Failed to submit form', error)
     submitError.value = {
@@ -349,7 +379,47 @@ async function submitForm() {
       <!-- Header -->
       <div class="form-header">
         <h2>{{ $t("form.header") }}</h2>
-        <img :src="route.params.company === 'bolt' ? '/bolt.png' : '/foodora.png'" :alt="$t('form.logo-alt')" class="bolt-logo" />
+        <img
+          v-if="formData.work_in"
+          :src="formData.work_in === 'bolt' ? '/bolt.png' : '/foodora.png'"
+          :alt="$t('form.logo-alt')"
+          class="bolt-logo"
+        />
+      </div>
+
+      <!-- Platform picker -->
+      <div class="field-group" :class="{ 'field-group--invalid': invalidFields.work_in }">
+        <label>{{ $t("form.work_in.label") }}</label>
+        <p class="field-hint">{{ $t("form.work_in.hint") }}</p>
+        <div class="platform-picker">
+          <div
+            class="platform-card bolt"
+            :class="{ selected: formData.work_in === 'bolt' }"
+            @click="selectWorkPlatform('bolt')"
+          >
+            <span class="platform-swatch bolt-swatch">B</span>
+            <span class="platform-info">
+              <span class="platform-name">Bolt Food</span>
+              <span class="platform-tag">{{ $t("form.work_in.bolt_tag") }}</span>
+            </span>
+            <span class="platform-check">
+              <svg v-if="formData.work_in === 'bolt'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+          </div>
+          <!-- <div
+            class="platform-card foodora"
+            :class="{ selected: formData.work_in === 'foodora' }"
+            @click="selectWorkPlatform('foodora')"
+          >
+            <span class="platform-swatch foodora-swatch">F</span>
+            <span class="platform-info">
+              <span class="platform-name">Foodora</span>
+              <span class="platform-tag">foodora_tag</span>
+            </span>
+            <span class="platform-check"></span>
+          </div> -->
+        </div>
+        <span v-if="invalidFields.work_in" class="field-error-msg">{{ $t("form.work_in.error") }}</span>
       </div>
 
       <!-- Section 1: General info -->
@@ -619,7 +689,8 @@ async function submitForm() {
         type="submit"
         :disabled="isSubmitting || !formData.consent"
         :class="[
-          route.params.company === 'bolt' ? 'app-pill-button app-alt-button-text submit-btn bolt' : 'app-pill-button app-alt-button-text submit-btn foodora',
+          'submit-btn',
+          formData.work_in === 'bolt' ? 'bolt' : formData.work_in === 'foodora' ? 'foodora' : 'default',
           { 'submitting': isSubmitting }
         ]"
       >
@@ -911,6 +982,102 @@ async function submitForm() {
 }
 .remove-file:hover { color: var(--accent); }
 
+/* ---- Platform picker ---- */
+.field-hint {
+  font-size: 12.5px;
+  color: var(--text-3);
+  margin: -2px 0 0;
+  line-height: 1.4;
+}
+
+.field-group--invalid > label {
+  color: #c8423a;
+}
+
+.field-error-msg {
+  font-size: 12.5px;
+  color: #ff7a6f;
+  margin-top: 2px;
+}
+
+.platform-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 460px) { .platform-picker { grid-template-columns: 1fr; } }
+
+.platform-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border-radius: var(--r-md);
+  background: var(--field-bg);
+  border: 1.5px solid var(--border-2);
+  cursor: pointer;
+  transition: border-color var(--t-fast), background-color var(--t-fast), transform 100ms ease;
+  user-select: none;
+  overflow: hidden;
+}
+.platform-card:hover { border-color: var(--text-3); }
+.platform-card:active { transform: scale(.99); }
+.platform-card.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.platform-swatch {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-family: var(--font-alt);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -.04em;
+  flex: 0 0 auto;
+}
+.bolt-swatch    { background: #34D086; color: #07150E; }
+.foodora-swatch { background: #DF1068; color: #fff; }
+
+.platform-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.platform-name {
+  font-family: var(--font-alt);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text);
+  letter-spacing: -.01em;
+  line-height: 1.1;
+}
+.platform-tag {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.platform-check {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border-2);
+  display: grid; place-items: center;
+  flex: 0 0 auto;
+  transition: background-color var(--t-fast), border-color var(--t-fast);
+  color: var(--on-accent);
+}
+.platform-card.selected .platform-check {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---- Submit button ---- */
 .submit-btn {
   font-family: var(--font-alt);
@@ -923,11 +1090,15 @@ async function submitForm() {
   margin-top: 8px;
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
 }
-.bolt {
+.submit-btn.default {
+  background: var(--accent); color: var(--on-accent);
+  box-shadow: 0 8px 24px -8px var(--accent-ring), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.submit-btn.bolt {
   background: #34D086; color: #07150E;
   box-shadow: 0 8px 24px -8px rgba(52,208,134,.4), inset 0 1px 0 rgba(255,255,255,.3);
 }
-.foodora {
+.submit-btn.foodora {
   background: #DF1068; color: #fff;
   box-shadow: 0 8px 24px -8px rgba(223,16,104,.4), inset 0 1px 0 rgba(255,255,255,.2);
 }

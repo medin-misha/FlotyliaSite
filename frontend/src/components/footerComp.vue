@@ -51,7 +51,7 @@
             <li><a href="/#features">{{ $t('footer.links.features') }}</a></li>
             <li><a href="/#how">{{ $t('footer.links.how') }}</a></li>
             <li><a href="/#vehicles">{{ $t('footer.links.transport') }}</a></li>
-            <li><a href="/select-platform">{{ $t('landing.cta.apply') }}</a></li>
+            <li><a href="/form">{{ $t('landing.cta.apply') }}</a></li>
           </ul>
         </div>
 

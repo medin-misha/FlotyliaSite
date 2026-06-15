@@ -38,4 +38,6 @@ class User(Base):
     status: Mapped[str] = mapped_column(String(20), nullable=False, default=UserStatus.PENDING)
     consent: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="0")
 
-    documents: Mapped[list["Document"]] = relationship("Document", lazy="selectin")
+    documents: Mapped[list["Document"]] = relationship("Document", lazy="selectin", cascade="all, delete-orphan")
+    contracts: Mapped[list["Contract"]] = relationship("Contract", lazy="selectin", cascade="all, delete-orphan", back_populates="user")
+

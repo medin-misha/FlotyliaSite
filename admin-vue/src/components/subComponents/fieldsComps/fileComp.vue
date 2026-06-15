@@ -103,7 +103,13 @@ onBeforeUnmount(() => {
     </button>
 
     <div class="details-file-wrapper" :class="{ uploading }" @click="selectFile">
-      <input ref="fileInput" type="file" class="hidden-input" @change="onFileChange" :disabled="uploading" />
+      <input
+        ref="fileInput"
+        type="file"
+        class="hidden-input"
+        @change="onFileChange"
+        :disabled="uploading"
+      />
 
       <img
         v-if="isImagePreview && previewUrl"

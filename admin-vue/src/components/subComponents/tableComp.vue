@@ -4,6 +4,7 @@ import { useRequestStates } from '../../stores/requestStates'
 import { useStatesStore } from '../../stores/states'
 import { useAuthStore } from '../../stores/auth'
 import APIGetters from '../../api/getters'
+import APIPosts from '../../api/posts'
 import { onUnmounted, ref, watch, computed } from 'vue'
 
 const pageStore = usePageStore()
@@ -40,6 +41,67 @@ const fetchWithRetry = async () => {
 
 const objectsList = ref([])
 
+const selectedIds = ref(new Set())
+const pendingBulkStatus = ref('')
+const showDeleteConfirm = ref(false)
+const bulkLoading = ref(false)
+
+const USER_STATUSES = ['pending', 'processing', 'in activation', 'active', 'inoperative']
+
+const isAllSelected = computed(
+  () =>
+    objectsList.value.length > 0 &&
+    objectsList.value.every((o) => selectedIds.value.has(o.id)),
+)
+
+const toggleRow = (id) => {
+  const next = new Set(selectedIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  selectedIds.value = next
+}
+
+const toggleAll = () => {
+  if (isAllSelected.value) {
+    selectedIds.value = new Set()
+  } else {
+    selectedIds.value = new Set(objectsList.value.map((o) => o.id))
+  }
+}
+
+const clearSelection = () => {
+  selectedIds.value = new Set()
+  pendingBulkStatus.value = ''
+}
+
+const applyBulkStatus = async () => {
+  if (!pendingBulkStatus.value || selectedIds.value.size === 0) return
+  bulkLoading.value = true
+  try {
+    await APIPosts.bulkUpdateStatus(props.adres, [...selectedIds.value], pendingBulkStatus.value)
+    clearSelection()
+    await fetchAndSet()
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
+const confirmBulkDelete = () => {
+  showDeleteConfirm.value = true
+}
+
+const executeBulkDelete = async () => {
+  bulkLoading.value = true
+  showDeleteConfirm.value = false
+  try {
+    await APIPosts.bulkDelete(props.adres, [...selectedIds.value])
+    clearSelection()
+    await fetchAndSet()
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
 const fetchAndSet = async () => {
   const res = await fetchWithRetry()
   if (res?.data) {
@@ -52,8 +114,18 @@ fetchAndSet()
 watch(
   () => [props.page, props.limit, props.search, props.filter],
   () => {
+    clearSelection()
     fetchAndSet()
-  }
+  },
+)
+
+watch(
+  () => statesStore.state,
+  (newState) => {
+    if (newState === 'table') {
+      fetchAndSet()
+    }
+  },
 )
 
 onUnmounted(() => clearTimeout(retryTimeout))
@@ -84,7 +156,12 @@ const getStatusClasses = (status) => {
 
 const getInitials = (name) => {
   if (!name) return 'U'
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 }
 
 const isLastPage = computed(() => objectsList.value.length < props.limit)
@@ -171,15 +248,23 @@ const getChipActiveClasses = (chip) => {
       <section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div class="flex items-center gap-3 mb-2">
-            <h2 class="font-headline-md text-headline-md font-bold text-on-background dark:text-white">
+            <h2
+              class="font-headline-md text-headline-md font-bold text-on-background dark:text-white"
+            >
               {{ adres === '/users' ? 'Пользователи' : 'Администраторы' }}
             </h2>
-            <span class="px-2.5 py-0.5 bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary rounded-full font-label-md text-label-md">
+            <span
+              class="px-2.5 py-0.5 bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary rounded-full font-label-md text-label-md"
+            >
               {{ objectsList.length }}
             </span>
           </div>
           <p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim">
-            {{ adres === '/users' ? 'Управление доступом и статусами сотрудников организации.' : 'Системные администраторы панели управления.' }}
+            {{
+              adres === '/users'
+                ? 'Управление доступом и статусами сотрудников организации.'
+                : 'Системные администраторы панели управления.'
+            }}
           </p>
         </div>
 
@@ -206,7 +291,10 @@ const getChipActiveClasses = (chip) => {
         <div class="flex flex-col md:flex-row gap-4">
           <!-- Search Input -->
           <div class="relative flex-grow max-w-2xl group">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-secondary group-focus-within:text-primary transition-colors">search</span>
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-secondary group-focus-within:text-primary transition-colors"
+              >search</span
+            >
             <input
               :value="pageStore.paginationData.search"
               @input="updateSearch($event.target.value)"
@@ -223,8 +311,18 @@ const getChipActiveClasses = (chip) => {
               @change="updateFilter($event.target.value)"
               class="w-full h-[52px] px-4 bg-surface-container-lowest dark:bg-white/5 border border-outline-variant/30 dark:border-white/10 rounded-full text-body-md text-secondary dark:text-secondary-fixed-dim focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary-fixed-dim transition-all appearance-none"
             >
-              <option value="" class="bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-white">По всем полям</option>
-              <option :value="field.key" v-for="field in form?.fields" :key="field.key" class="bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-white">
+              <option
+                value=""
+                class="bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-white"
+              >
+                По всем полям
+              </option>
+              <option
+                :value="field.key"
+                v-for="field in form?.fields"
+                :key="field.key"
+                class="bg-surface-container-lowest dark:bg-inverse-surface text-on-surface dark:text-white"
+              >
                 {{ field.label }}
               </option>
             </select>
@@ -233,8 +331,11 @@ const getChipActiveClasses = (chip) => {
 
         <!-- Chips Section -->
         <div class="flex flex-wrap gap-2.5 items-center pl-1">
-          <span class="text-xs text-secondary dark:text-secondary-fixed-dim font-medium mr-1 select-none">Быстрый поиск по статусу:</span>
-          
+          <span
+            class="text-xs text-secondary dark:text-secondary-fixed-dim font-medium mr-1 select-none"
+            >Быстрый поиск по статусу:</span
+          >
+
           <button
             v-for="chip in ['pending', 'processing', 'in activation', 'inoperative']"
             :key="chip"
@@ -243,12 +344,12 @@ const getChipActiveClasses = (chip) => {
               'px-3.5 py-1 rounded-full text-[12px] font-semibold tracking-wide border cursor-pointer select-none transition-all duration-200 active:scale-[0.96]',
               pageStore.paginationData.search === chip
                 ? getChipActiveClasses(chip)
-                : getChipClasses(chip)
+                : getChipClasses(chip),
             ]"
           >
             {{ chip }}
           </button>
-          
+
           <button
             v-if="pageStore.paginationData.search"
             @click="selectChip('')"
@@ -260,13 +361,102 @@ const getChipActiveClasses = (chip) => {
         </div>
       </section>
 
+      <!-- Bulk Action Bar -->
+      <section
+        v-if="adres === '/users' && selectedIds.size > 0"
+        class="flex flex-wrap items-center gap-3 px-5 py-3 bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 rounded-xl"
+      >
+        <span class="font-label-md text-label-md font-semibold text-primary dark:text-inverse-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">check_box</span>
+          {{ selectedIds.size }} выбрано
+        </span>
+
+        <div class="flex items-center gap-2 ml-auto flex-wrap">
+          <select
+            v-model="pendingBulkStatus"
+            class="h-9 px-3 bg-surface-container-lowest dark:bg-white/5 border border-outline-variant/30 dark:border-white/10 rounded-lg text-body-sm text-on-surface dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="" disabled>Status</option>
+            <option v-for="s in USER_STATUSES" :key="s" :value="s">{{ s }}</option>
+          </select>
+          <button
+            @click="applyBulkStatus"
+            :disabled="!pendingBulkStatus || bulkLoading"
+            class="h-9 px-4 bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Применить
+          </button>
+          <button
+            @click="confirmBulkDelete"
+            :disabled="bulkLoading"
+            class="h-9 px-4 bg-error/10 dark:bg-error/20 text-error dark:text-red-400 border border-error/30 rounded-lg font-label-sm text-label-sm hover:bg-error/20 dark:hover:bg-error/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
+          >
+            <span class="material-symbols-outlined text-[16px]">delete</span>
+            Удалить ({{ selectedIds.size }})
+          </button>
+          <button
+            @click="clearSelection"
+            class="h-9 px-3 text-secondary dark:text-secondary-fixed-dim hover:text-primary rounded-lg font-label-sm text-label-sm transition-colors"
+          >
+            Сбросить
+          </button>
+        </div>
+      </section>
+
+      <!-- Delete Confirmation Modal -->
+      <Teleport to="body">
+        <div
+          v-if="showDeleteConfirm"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+          @click.self="showDeleteConfirm = false"
+        >
+          <div class="bg-surface dark:bg-surface-container-high rounded-2xl shadow-xl border border-outline-variant/30 dark:border-white/10 p-6 max-w-sm w-full mx-4">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="material-symbols-outlined text-error text-[28px]">warning</span>
+              <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-white">
+                Подтвердите удаление
+              </h3>
+            </div>
+            <p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim mb-6">
+              Будет удалено <strong class="text-error">{{ selectedIds.size }}</strong> пользователей вместе с их документами и договорами. Это действие необратимо.
+            </p>
+            <div class="flex gap-3 justify-end">
+              <button
+                @click="showDeleteConfirm = false"
+                class="px-5 py-2 rounded-xl border border-outline-variant/40 dark:border-white/10 text-secondary dark:text-secondary-fixed-dim font-label-md text-label-md hover:bg-surface-container dark:hover:bg-white/5 transition-all"
+              >
+                Отмена
+              </button>
+              <button
+                @click="executeBulkDelete"
+                class="px-5 py-2 rounded-xl bg-error text-on-error font-label-md text-label-md hover:brightness-110 active:scale-[0.98] transition-all"
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+      </Teleport>
+
       <!-- Data Table Wrapper -->
-      <section class="bg-surface-container-lowest dark:bg-white/5 rounded-xl border border-outline-variant/30 dark:border-white/10 shadow-[0_8px_24px_rgba(175,16,26,0.02)] overflow-hidden">
+      <section
+        class="bg-surface-container-lowest dark:bg-white/5 rounded-xl border border-outline-variant/30 dark:border-white/10 shadow-[0_8px_24px_rgba(175,16,26,0.02)] overflow-hidden"
+      >
         <div class="overflow-x-auto custom-scrollbar">
           <table class="w-full text-left border-collapse">
             <!-- Table Header -->
-            <thead class="bg-surface-container-high/30 dark:bg-white/5 border-b border-outline-variant/20 dark:border-white/10 text-secondary dark:text-secondary-fixed-dim font-label-sm text-label-sm uppercase tracking-wider">
+            <thead
+              class="bg-surface-container-high/30 dark:bg-white/5 border-b border-outline-variant/20 dark:border-white/10 text-secondary dark:text-secondary-fixed-dim font-label-sm text-label-sm uppercase tracking-wider"
+            >
               <tr v-if="adres === '/users'">
+                <th class="px-4 py-4 w-10">
+                  <input
+                    type="checkbox"
+                    :checked="isAllSelected"
+                    @change="toggleAll"
+                    class="w-4 h-4 rounded border-outline-variant/50 text-primary focus:ring-primary/20 cursor-pointer"
+                  />
+                </th>
                 <th class="px-6 py-4">Пользователь</th>
                 <th class="px-6 py-4">Телефон</th>
                 <th class="px-6 py-4">Город</th>
@@ -288,28 +478,57 @@ const getChipActiveClasses = (chip) => {
                   v-for="obj in objectsList"
                   :key="obj.id"
                   @click="openDetails(obj.id)"
-                  class="hover:bg-surface-container-low dark:hover:bg-white/5 transition-colors cursor-pointer"
+                  :class="[
+                    'hover:bg-surface-container-low dark:hover:bg-white/5 transition-colors cursor-pointer',
+                    selectedIds.has(obj.id) ? 'bg-primary/5 dark:bg-primary/10' : '',
+                  ]"
                 >
+                  <td class="px-4 py-4 w-10" @click.stop>
+                    <input
+                      type="checkbox"
+                      :checked="selectedIds.has(obj.id)"
+                      @change="toggleRow(obj.id)"
+                      class="w-4 h-4 rounded border-outline-variant/50 text-primary focus:ring-primary/20 cursor-pointer"
+                    />
+                  </td>
                   <td class="px-6 py-4 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-primary/10 text-primary dark:text-inverse-primary flex items-center justify-center font-bold text-sm">
+                    <div
+                      class="w-10 h-10 rounded-full bg-primary/10 text-primary dark:text-inverse-primary flex items-center justify-center font-bold text-sm"
+                    >
                       {{ getInitials(obj.name) }}
                     </div>
                     <div class="flex flex-col">
-                      <span class="font-label-md text-label-md font-bold text-on-surface dark:text-white">{{ obj.name || 'Без имени' }}</span>
-                      <span class="text-xs text-secondary dark:text-secondary-fixed-dim">{{ obj.email || '—' }}</span>
+                      <span
+                        class="font-label-md text-label-md font-bold text-on-surface dark:text-white"
+                        >{{ obj.name || 'Без имени' }}</span
+                      >
+                      <span class="text-xs text-secondary dark:text-secondary-fixed-dim">{{
+                        obj.email || '—'
+                      }}</span>
                     </div>
                   </td>
-                  <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim"
+                  >
                     {{ obj.phone || '—' }}
                   </td>
-                  <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim"
+                  >
                     {{ obj.city || '—' }}
                   </td>
-                  <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim"
+                  >
                     {{ obj.work_in || '—' }}
                   </td>
                   <td class="px-6 py-4">
-                    <span :class="['px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider', getStatusClasses(obj.status)]">
+                    <span
+                      :class="[
+                        'px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider',
+                        getStatusClasses(obj.status),
+                      ]"
+                    >
                       {{ obj.status || '—' }}
                     </span>
                   </td>
@@ -325,18 +544,29 @@ const getChipActiveClasses = (chip) => {
                   class="hover:bg-surface-container-low dark:hover:bg-white/5 transition-colors cursor-pointer"
                 >
                   <td class="px-6 py-4 flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-primary-container/10 dark:bg-primary-container/20 text-primary dark:text-inverse-primary flex items-center justify-center font-bold text-sm">
+                    <div
+                      class="w-10 h-10 rounded-full bg-primary-container/10 dark:bg-primary-container/20 text-primary dark:text-inverse-primary flex items-center justify-center font-bold text-sm"
+                    >
                       <span class="material-symbols-outlined text-[20px]">shield_person</span>
                     </div>
                     <div class="flex flex-col">
-                      <span class="font-label-md text-label-md font-bold text-on-surface dark:text-white">{{ obj.username || 'Админ' }}</span>
-                      <span class="text-xs text-secondary dark:text-secondary-fixed-dim">ID: {{ obj.id }}</span>
+                      <span
+                        class="font-label-md text-label-md font-bold text-on-surface dark:text-white"
+                        >{{ obj.username || 'Админ' }}</span
+                      >
+                      <span class="text-xs text-secondary dark:text-secondary-fixed-dim"
+                        >ID: {{ obj.id }}</span
+                      >
                     </div>
                   </td>
-                  <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim"
+                  >
                     {{ formatDate(obj.last_login_at) }}
                   </td>
-                  <td class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim">
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-secondary-fixed-dim"
+                  >
                     {{ formatDate(obj.created_at) }}
                   </td>
                 </tr>

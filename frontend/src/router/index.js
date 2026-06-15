@@ -12,15 +12,9 @@ const router = createRouter({
       component: homeView
     },
     {
-      path: "/select-platform",
-      name: "select-platform",
-      component: () => import("../views/selectPlatformView.vue")
-    },
-    {
-      path: "/form/:company",
+      path: "/form",
       name: "form",
       component: () => import("../views/formView.vue"),
-      props: true
     },
     {
       path: "/success/:company",
@@ -37,9 +31,10 @@ router.beforeEach((to, from, next) => {
       .split('; ')
       .find(row => row.startsWith('is_regi='))
       ?.split('=')[1];
-      
+
     if (isRegi === 'true') {
-      next({ name: 'success', params: { company: to.params.company } });
+      const company = localStorage.getItem('mfs_platform') || 'bolt';
+      next({ name: 'success', params: { company } });
       return;
     }
   }

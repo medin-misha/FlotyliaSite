@@ -35,7 +35,8 @@ const APIAuth = {
   createAdmin: async (name, password) =>
     request('post', withTrailingSlash('/admin'), { username: name, password: password }),
   login,
-  getAdmins: async (page, limit) => request('get', withTrailingSlash('/admin'), null, { page: page, limit: limit }),
+  getAdmins: async (page, limit) =>
+    request('get', withTrailingSlash('/admin'), null, { page: page, limit: limit }),
   getMeInfo: async () => request('get', '/admin/me'),
   deleteAdmin: async (id) => request('delete', `/admin/${id}`),
   getAdminById: async (id) => request('get', `/admin/${id}`),

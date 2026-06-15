@@ -13,7 +13,9 @@ const detailId = computed(() => {
   const id = Number(statesStore.instance_id)
   return Number.isFinite(id) ? id : null
 })
-const isDetailState = computed(() => statesStore.state === statesStore.states.detail && detailId.value !== null)
+const isDetailState = computed(
+  () => statesStore.state === statesStore.states.detail && detailId.value !== null,
+)
 </script>
 
 <template>

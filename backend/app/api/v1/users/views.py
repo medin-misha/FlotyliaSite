@@ -1,11 +1,12 @@
-from fastapi import APIRouter, BackgroundTasks, File, Form, status, Depends, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, status, Depends, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 from services import CRUD
 from core.models import User
 from core.database import database
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import update, select
 from typing import Annotated
-from contracts.user.schemas import UserCreate, UserImportReport, UserReturn, UserUpdate
+from contracts.user.schemas import UserCreate, UserImportReport, UserReturn, UserUpdate, UserBulkStatusUpdate, UserBulkDelete
 from core.auth import utils as auth_utils
 from contracts.admin.schemas import AdminReturn
 from services.export import export_to_exel
@@ -68,6 +69,38 @@ async def import_users_view(
     session: SessionDep, admin: AdminDep, file: UploadFile = File(...)
 ) -> UserImportReport:
     return await import_users(file=file, session=session)
+
+
+@router.patch("/bulk-status", status_code=status.HTTP_200_OK)
+async def bulk_update_status_view(
+    data: UserBulkStatusUpdate, session: SessionDep, admin: AdminDep
+) -> dict:
+    if not data.ids:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="ids list is empty")
+    stmt = (
+        update(User)
+        .where(User.id.in_(data.ids))
+        .values(status=data.status)
+        .execution_options(synchronize_session=False)
+    )
+    result = await session.execute(stmt)
+    await session.commit()
+    return {"updated": result.rowcount}
+
+
+@router.delete("/bulk", status_code=status.HTTP_200_OK)
+async def bulk_delete_view(
+    data: UserBulkDelete, session: SessionDep, admin: AdminDep
+) -> dict:
+    if not data.ids:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="ids list is empty")
+    stmt = select(User).where(User.id.in_(data.ids))
+    result = await session.execute(stmt)
+    instances = result.scalars().all()
+    for inst in instances:
+        await session.delete(inst)
+    await session.commit()
+    return {"deleted": len(instances)}
 
 
 @router.get("/{id}", status_code=status.HTTP_200_OK)

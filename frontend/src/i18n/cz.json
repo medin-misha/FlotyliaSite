@@ -238,6 +238,13 @@
         "citizenship": {
             "other": "Jiná"
         },
+        "work_in": {
+            "label": "Na které platformě budete pracovat?",
+            "hint": "Výběr ovlivní manažera, který vás bude kontaktovat, a požadované dokumenty.",
+            "bolt_tag": "Nejoblíbenější volba",
+            "foodora_tag": "Více restaurací v Praze",
+            "error": "Vyberte platformu"
+        },
         "platform": {
             "label": "Vyberte platformu pro kontakt:"
         },

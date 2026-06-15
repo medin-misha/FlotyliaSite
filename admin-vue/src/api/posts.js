@@ -23,6 +23,12 @@ const APIPosts = {
   deletePost: async (URL, id) => {
     return await api.delete(`${URL}/${id}`)
   },
+  bulkUpdateStatus: async (url, ids, newStatus) => {
+    return await api.patch(`${url}/bulk-status`, { ids, status: newStatus })
+  },
+  bulkDelete: async (url, ids) => {
+    return await api.delete(`${url}/bulk`, { data: { ids } })
+  },
 }
 
 export default APIPosts

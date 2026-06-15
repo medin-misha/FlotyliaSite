@@ -17,13 +17,21 @@ const onDocumentDeleted = (index) => {
 </script>
 
 <template>
-  <div class="col-span-1 md:col-span-2 pt-6 border-t border-outline-variant/20 dark:border-white/10 w-full">
+  <div
+    class="col-span-1 md:col-span-2 pt-6 border-t border-outline-variant/20 dark:border-white/10 w-full"
+  >
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
-        <h4 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-white">Документы</h4>
+        <span
+          class="material-symbols-outlined text-primary"
+          style="font-variation-settings: 'FILL' 1"
+          >folder_shared</span
+        >
+        <h4 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-white">
+          Документы
+        </h4>
       </div>
-      <button 
+      <button
         @click="addDocument"
         class="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary dark:text-inverse-primary rounded-xl font-label-md text-label-md transition-all active:scale-[0.98]"
       >
@@ -46,5 +54,4 @@ const onDocumentDeleted = (index) => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

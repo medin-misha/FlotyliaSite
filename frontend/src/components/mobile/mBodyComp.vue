@@ -68,7 +68,7 @@ const transportTypes = [
         <button
           type="button"
           class="mobile-start-button app-pill-button app-fade-transition app-alt-button-text"
-          @click="$router.push('/select-platform')"
+          @click="$router.push('/form')"
         >
           {{ $t('how-to-start.button') }}
         </button>
@@ -79,7 +79,7 @@ const transportTypes = [
           <span class="mobile-step-index">1.</span>
           <span class="mobile-step-text">
             {{ $t('how-to-start.steps.0') }}
-            <a class="app-fade-transition" @click="$router.push('/select-platform')">
+            <a class="app-fade-transition" @click="$router.push('/form')">
               {{ $t('how-to-start.steps.1') }}
             </a>
           </span>

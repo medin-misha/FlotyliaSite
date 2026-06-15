@@ -9,5 +9,6 @@ class Contract(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     date_of_signing: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=func.now())
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    user: Mapped["User"] = relationship("User")
+    user: Mapped["User"] = relationship("User", back_populates="contracts")
     transport: Mapped["Transport"] = relationship("Transport")
+    products: Mapped[list["Product"]] = relationship("Product", lazy="selectin", cascade="all, delete-orphan")

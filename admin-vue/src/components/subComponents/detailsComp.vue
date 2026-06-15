@@ -31,10 +31,14 @@ const isSaving = ref(false)
 const saveDone = ref(false)
 const loadError = ref(null)
 const saveError = ref(null)
+const isDeleting = ref(false)
+const showDeleteConfirm = ref(false)
+const deleteError = ref(null)
 
 const fields = computed(() => props.form?.fields || [])
-const detailTitle = computed(() => (props.adres === '/users' ? 'Карточка пользователя' : 'Карточка администратора'))
-const closePath = computed(() => (props.adres === '/users' ? '/users' : '/admins'))
+const detailTitle = computed(() =>
+  props.adres === '/users' ? 'Карточка пользователя' : 'Карточка администратора',
+)
 const groupedFields = computed(() => {
   const groups = {
     personal: [],
@@ -56,17 +60,47 @@ const groupedFields = computed(() => {
 const sections = computed(() => {
   if (props.adres === '/users') {
     return [
-      { key: 'personal', title: 'Основная информация', icon: 'person', fields: groupedFields.value.personal },
-      { key: 'contacts', title: 'Контактная информация', icon: 'contact_support', fields: groupedFields.value.contacts },
-      { key: 'logistics', title: 'Логистика и бухгалтерия', icon: 'inventory_2', fields: groupedFields.value.logistics },
-      { key: 'documents', title: 'Документы', icon: 'folder_open', fields: groupedFields.value.documents },
-      { key: 'other', title: 'Дополнительно', icon: 'more_horiz', fields: groupedFields.value.other },
+      {
+        key: 'personal',
+        title: 'Основная информация',
+        icon: 'person',
+        fields: groupedFields.value.personal,
+      },
+      {
+        key: 'contacts',
+        title: 'Контактная информация',
+        icon: 'contact_support',
+        fields: groupedFields.value.contacts,
+      },
+      {
+        key: 'logistics',
+        title: 'Логистика и бухгалтерия',
+        icon: 'inventory_2',
+        fields: groupedFields.value.logistics,
+      },
+      {
+        key: 'documents',
+        title: 'Документы',
+        icon: 'folder_open',
+        fields: groupedFields.value.documents,
+      },
+      {
+        key: 'other',
+        title: 'Дополнительно',
+        icon: 'more_horiz',
+        fields: groupedFields.value.other,
+      },
     ].filter((section) => section.fields.length > 0)
   }
 
   return [
     { key: 'personal', title: 'Профиль', icon: 'person', fields: groupedFields.value.personal },
-    { key: 'system', title: 'Системные настройки', icon: 'shield_person', fields: groupedFields.value.system },
+    {
+      key: 'system',
+      title: 'Системные настройки',
+      icon: 'shield_person',
+      fields: groupedFields.value.system,
+    },
     { key: 'other', title: 'Дополнительно', icon: 'more_horiz', fields: groupedFields.value.other },
   ].filter((section) => section.fields.length > 0)
 })
@@ -102,7 +136,8 @@ const loadDetails = async () => {
     resetObjectData(response.data)
   } catch (err) {
     console.error('Failed to load details:', err)
-    loadError.value = 'Не удалось загрузить карточку. Проверьте соединение или попробуйте открыть ее еще раз.'
+    loadError.value =
+      'Не удалось загрузить карточку. Проверьте соединение или попробуйте открыть ее еще раз.'
   } finally {
     isLoading.value = false
   }
@@ -133,7 +168,10 @@ const syncDocuments = async () => {
     }
 
     const originalDoc = originalDocuments.find((item) => item.id === doc.id)
-    if (originalDoc && (originalDoc.file_id !== doc.file_id || originalDoc.description !== doc.description)) {
+    if (
+      originalDoc &&
+      (originalDoc.file_id !== doc.file_id || originalDoc.description !== doc.description)
+    ) {
       await APIPosts.updatePost('/documents', doc.id, {
         file_id: doc.file_id,
         description: doc.description,
@@ -178,6 +216,29 @@ const updatePost = async () => {
     }
   } finally {
     isSaving.value = false
+  }
+}
+
+const deletePost = async () => {
+  if (isLoading.value || isSaving.value || isDeleting.value || loadError.value) return
+
+  isDeleting.value = true
+  deleteError.value = null
+
+  try {
+    await APIPosts.deletePost(props.adres, props.id)
+    showDeleteConfirm.value = false
+    closeDrawer()
+  } catch (err) {
+    console.error('Delete failed:', err)
+    const detail = err.response?.data?.detail
+    if (typeof detail === 'string') {
+      deleteError.value = detail
+    } else {
+      deleteError.value = 'Не удалось удалить запись. Возможно, она связана с другими объектами.'
+    }
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -226,21 +287,27 @@ onUnmounted(() => {
           isMobileOrTablet
             ? 'absolute right-0 top-0 z-[70] h-full w-full sm:w-[480px]'
             : 'fixed right-0 top-[70px] bottom-0 w-[50vw] z-30',
-          isVisible ? 'translate-x-0' : 'translate-x-full'
+          isVisible ? 'translate-x-0' : 'translate-x-full',
         ]"
         :style="isMobileOrTablet ? {} : { height: 'calc(100vh - 70px)' }"
       >
-        <header class="sticky top-0 z-10 flex items-center justify-between border-b border-outline-variant/20 bg-surface-container-lowest/90 px-stack-lg py-5 backdrop-blur-md dark:border-white/10 dark:bg-inverse-surface/90">
+        <header
+          class="sticky top-0 z-10 flex items-center justify-between border-b border-outline-variant/20 bg-surface-container-lowest/90 px-stack-lg py-5 backdrop-blur-md dark:border-white/10 dark:bg-inverse-surface/90"
+        >
           <div class="flex min-w-0 items-center gap-4">
             <button
               type="button"
               class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-surface-container-high dark:hover:bg-white/5"
               @click="closeDrawer"
             >
-              <span class="material-symbols-outlined text-primary dark:text-inverse-primary">arrow_back</span>
+              <span class="material-symbols-outlined text-primary dark:text-inverse-primary"
+                >arrow_back</span
+              >
             </button>
             <div class="min-w-0">
-              <h3 class="truncate font-headline-sm text-headline-sm font-bold text-on-surface dark:text-white">
+              <h3
+                class="truncate font-headline-sm text-headline-sm font-bold text-on-surface dark:text-white"
+              >
                 {{ detailTitle }}
               </h3>
               <p class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim">
@@ -249,24 +316,49 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <button
-            type="button"
-            class="flex items-center gap-2 rounded-full px-4 py-2 font-label-sm text-label-sm shadow-md transition-all disabled:cursor-not-allowed disabled:opacity-60"
-            :class="saveDone ? 'bg-green-600 text-white shadow-green-600/20' : 'bg-primary text-on-primary shadow-primary/20 hover:brightness-110 active:scale-95'"
-            :disabled="isLoading || isSaving || Boolean(loadError)"
-            @click="updatePost"
-          >
-            <span class="material-symbols-outlined text-sm">{{ saveDone ? 'done' : 'save' }}</span>
-            <span>{{ isSaving ? 'Сохранение...' : saveDone ? 'Готово' : 'Сохранить' }}</span>
-          </button>
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              v-if="!loadError"
+              type="button"
+              class="flex items-center gap-2 rounded-full px-4 py-2 font-label-sm text-label-sm bg-error/15 text-error hover:bg-error/25 hover:text-error transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+              :disabled="isLoading || isSaving || isDeleting"
+              @click="showDeleteConfirm = true"
+            >
+              <span class="material-symbols-outlined text-sm">delete</span>
+              <span class="hidden sm:inline">Удалить</span>
+            </button>
+
+            <button
+              type="button"
+              class="flex items-center gap-2 rounded-full px-4 py-2 font-label-sm text-label-sm shadow-md transition-all disabled:cursor-not-allowed disabled:opacity-60"
+              :class="
+                saveDone
+                  ? 'bg-green-600 text-white shadow-green-600/20'
+                  : 'bg-primary text-on-primary shadow-primary/20 hover:brightness-110 active:scale-95'
+              "
+              :disabled="isLoading || isSaving || Boolean(loadError) || isDeleting"
+              @click="updatePost"
+            >
+              <span class="material-symbols-outlined text-sm">{{
+                saveDone ? 'done' : 'save'
+              }}</span>
+              <span>{{ isSaving ? 'Сохранение...' : saveDone ? 'Готово' : 'Сохранить' }}</span>
+            </button>
+          </div>
         </header>
 
         <div class="flex-1 overflow-y-auto p-stack-lg custom-scrollbar">
-          <div v-if="isLoading" class="flex min-h-[280px] items-center justify-center rounded-xl border border-outline-variant/20 bg-surface-container-low text-secondary dark:border-white/10 dark:bg-white/5 dark:text-secondary-fixed-dim">
+          <div
+            v-if="isLoading"
+            class="flex min-h-[280px] items-center justify-center rounded-xl border border-outline-variant/20 bg-surface-container-low text-secondary dark:border-white/10 dark:bg-white/5 dark:text-secondary-fixed-dim"
+          >
             Загрузка карточки...
           </div>
 
-          <div v-else-if="loadError" class="rounded-xl border border-error/20 bg-error/5 p-5 text-error">
+          <div
+            v-else-if="loadError"
+            class="rounded-xl border border-error/20 bg-error/5 p-5 text-error"
+          >
             <div class="flex items-start gap-3">
               <span class="material-symbols-outlined mt-0.5 text-[22px]">warning</span>
               <div>
@@ -277,7 +369,10 @@ onUnmounted(() => {
           </div>
 
           <div v-else class="space-y-gutter pb-10">
-            <div v-if="saveError" class="rounded-xl border border-error/20 bg-error/5 p-4 text-error">
+            <div
+              v-if="saveError"
+              class="rounded-xl border border-error/20 bg-error/5 p-4 text-error"
+            >
               <div class="flex items-start gap-3">
                 <span class="material-symbols-outlined mt-0.5 text-[22px]">warning</span>
                 <div>
@@ -294,8 +389,13 @@ onUnmounted(() => {
                 <!-- Personal / Basic Info -->
                 <section v-if="getSection('personal')" class="space-y-stack-md">
                   <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('personal').icon }}</span>
-                    <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                    <span
+                      class="material-symbols-outlined text-primary dark:text-inverse-primary"
+                      >{{ getSection('personal').icon }}</span
+                    >
+                    <h4
+                      class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
+                    >
                       {{ getSection('personal').title }}
                     </h4>
                   </div>
@@ -315,8 +415,13 @@ onUnmounted(() => {
                 <!-- Contacts -->
                 <section v-if="getSection('contacts')" class="space-y-stack-md">
                   <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('contacts').icon }}</span>
-                    <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                    <span
+                      class="material-symbols-outlined text-primary dark:text-inverse-primary"
+                      >{{ getSection('contacts').icon }}</span
+                    >
+                    <h4
+                      class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
+                    >
                       {{ getSection('contacts').title }}
                     </h4>
                   </div>
@@ -339,8 +444,13 @@ onUnmounted(() => {
                 <!-- Logistics -->
                 <section v-if="getSection('logistics')" class="space-y-stack-md">
                   <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('logistics').icon }}</span>
-                    <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                    <span
+                      class="material-symbols-outlined text-primary dark:text-inverse-primary"
+                      >{{ getSection('logistics').icon }}</span
+                    >
+                    <h4
+                      class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
+                    >
                       {{ getSection('logistics').title }}
                     </h4>
                   </div>
@@ -376,8 +486,12 @@ onUnmounted(() => {
               <!-- Row 3: Other -->
               <section v-if="getSection('other')" class="space-y-stack-md">
                 <div class="flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ getSection('other').icon }}</span>
-                  <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold">
+                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{
+                    getSection('other').icon
+                  }}</span>
+                  <h4
+                    class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
+                  >
                     {{ getSection('other').title }}
                   </h4>
                 </div>
@@ -399,13 +513,18 @@ onUnmounted(() => {
             <template v-else>
               <section v-for="section in sections" :key="section.key" class="space-y-stack-md">
                 <div class="flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{ section.icon }}</span>
+                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{
+                    section.icon
+                  }}</span>
                   <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white">
                     {{ section.title }}
                   </h4>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2" :class="section.key === 'documents' ? 'md:grid-cols-1' : ''">
+                <div
+                  class="grid grid-cols-1 gap-4 md:grid-cols-2"
+                  :class="section.key === 'documents' ? 'md:grid-cols-1' : ''"
+                >
                   <component
                     v-for="field in section.fields"
                     :is="field.component"
@@ -421,6 +540,69 @@ onUnmounted(() => {
           </div>
         </div>
       </aside>
+    </div>
+  </teleport>
+
+  <!-- Delete Confirmation Modal -->
+  <teleport to="body" v-if="showDeleteConfirm">
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        @click="showDeleteConfirm = false"
+      ></div>
+
+      <!-- Modal Card -->
+      <div
+        class="relative bg-surface-container-lowest dark:bg-[#1e2025] border border-outline-variant/30 dark:border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl transition-all scale-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200"
+      >
+        <div class="flex items-start gap-4">
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-error/10 text-error"
+          >
+            <span class="material-symbols-outlined text-2xl">warning</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-white">
+              Подтвердите удаление
+            </h3>
+            <p class="mt-2 text-body-md text-secondary dark:text-secondary-fixed-dim">
+              Вы действительно хотите удалить эту запись (ID: {{ id }})? Это действие нельзя
+              отменить.
+            </p>
+          </div>
+        </div>
+
+        <div
+          v-if="deleteError"
+          class="rounded-xl border border-error/20 bg-error/5 p-3 text-error text-body-sm font-medium"
+        >
+          {{ deleteError }}
+        </div>
+
+        <div class="flex items-center justify-end gap-3 mt-2">
+          <button
+            type="button"
+            class="px-5 py-2.5 rounded-xl font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container dark:hover:bg-white/5 transition-all"
+            @click="showDeleteConfirm = false"
+            :disabled="isDeleting"
+          >
+            Отмена
+          </button>
+          <button
+            type="button"
+            class="px-6 py-2.5 bg-error text-white font-bold rounded-xl flex items-center gap-2 hover:brightness-110 active:scale-[0.98] disabled:opacity-50 transition-all shadow-md shadow-error/20"
+            @click="deletePost"
+            :disabled="isDeleting"
+          >
+            <span
+              v-if="isDeleting"
+              class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            ></span>
+            <span>{{ isDeleting ? 'Удаление...' : 'Да, удалить' }}</span>
+          </button>
+        </div>
+      </div>
     </div>
   </teleport>
 </template>

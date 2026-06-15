@@ -62,6 +62,26 @@
   --color-text: #F2F3F5;
 }
 
+/* Platform rebrand — changes accent palette when a platform is selected */
+[data-platform="bolt"] {
+  --accent:        #34D086;
+  --accent-2:      #1FA967;
+  --accent-light:  #7EE6AE;
+  --accent-soft:   rgba(52,208,134,.16);
+  --accent-ring:   rgba(52,208,134,.32);
+  --on-accent:     #07150E;
+  --accent-grad:   linear-gradient(105deg, #7EE6AE 0%, #34D086 60%, #1FA967 100%);
+}
+[data-platform="foodora"] {
+  --accent:        #DF1068;
+  --accent-2:      #B40C53;
+  --accent-light:  #F26AA0;
+  --accent-soft:   rgba(223,16,104,.16);
+  --accent-ring:   rgba(223,16,104,.32);
+  --on-accent:     #FFFFFF;
+  --accent-grad:   linear-gradient(105deg, #F26AA0 0%, #DF1068 60%, #B40C53 100%);
+}
+
 /* LIGHT */
 [data-theme="light"] {
   --bg:          #FAFAF8;

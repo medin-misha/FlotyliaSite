@@ -14,13 +14,13 @@ const { tm } = useI18n({ useScope: "global" })
     <div class="how-to-start">
       <div class="how-to-start-header">
         <h2 class="app-section-heading">{{ $t("how-to-start.title") }}</h2>
-        <button class="app-pill-button app-fade-transition app-alt-button-text" @click="$router.push('/select-platform')">{{ $t("how-to-start.button") }}</button>
+        <button class="app-pill-button app-fade-transition app-alt-button-text" @click="$router.push('/form')">{{ $t("how-to-start.button") }}</button>
       </div>
 
       <ol class="steps-list">
         <li>
           <span class="step-number">1.</span>
-          <span class="step-text">{{ $t("how-to-start.steps.0") }}<a @click="$router.push('/select-platform')">{{ $t("how-to-start.steps.1") }}</a></span>
+          <span class="step-text">{{ $t("how-to-start.steps.0") }}<a @click="$router.push('/form')">{{ $t("how-to-start.steps.1") }}</a></span>
         </li>
         <li>
           <span class="step-number">2.</span>
