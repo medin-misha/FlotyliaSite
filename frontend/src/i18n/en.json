@@ -241,7 +241,7 @@
         },
         "work_in": {
             "label": "Which platform will you work on?",
-            "hint": "Your choice determines the manager who will contact you and the required documents.",
+            "hint": "• Weekly payouts\n• Fleet commission 10%\n• Maximum fleet commission 1000 Kč per week",
             "bolt_tag": "Most popular choice",
             "foodora_tag": "More restaurants in Prague",
             "error": "Please select a platform"

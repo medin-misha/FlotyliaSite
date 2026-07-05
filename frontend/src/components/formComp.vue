@@ -3,9 +3,12 @@ import { reactive, ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from "vue-i18n"
 import APIPosts from '../api/posts'
+import { COOKIES, PLATFORMS } from '../constants.js'
+import { useFileUpload } from '../composables/useFileUpload.js'
+import { useFormValidation, sanitizeNameValue } from '../composables/useFormValidation.js'
 
 const router = useRouter()
-const { t } = useI18n({ useScope: "global" })
+const { t, locale } = useI18n({ useScope: "global" })
 
 // Cookie Helpers
 function setCookie(name, value, maxAgeSeconds) {
@@ -20,24 +23,24 @@ function getCookie(name) {
 }
 
 function applyPlatform(val) {
-  if (val === 'bolt' || val === 'foodora') {
+  if (val === PLATFORMS.BOLT || val === PLATFORMS.FOODORA) {
     document.documentElement.setAttribute('data-platform', val)
-    try { localStorage.setItem('mfs_platform', val) } catch (_) {}
+    try { localStorage.setItem(COOKIES.PLATFORM, val) } catch (_) {}
   } else {
     document.documentElement.removeAttribute('data-platform')
   }
 }
 
 onMounted(() => {
-  if (getCookie('is_regi') === 'true') {
-    const company = localStorage.getItem('mfs_platform') || 'bolt'
+  if (getCookie(COOKIES.IS_REGI) === 'true') {
+    const company = localStorage.getItem(COOKIES.PLATFORM) || PLATFORMS.BOLT
     router.replace(`/success/${company}`)
     return
   }
   // Restore previously selected platform
   try {
-    const stored = localStorage.getItem('mfs_platform')
-    if (stored === 'bolt' || stored === 'foodora') {
+    const stored = localStorage.getItem(COOKIES.PLATFORM)
+    if (stored === PLATFORMS.BOLT || stored === PLATFORMS.FOODORA) {
       formData.work_in = stored
       applyPlatform(stored)
     }
@@ -47,30 +50,18 @@ onMounted(() => {
 onUnmounted(() => {
   document.documentElement.removeAttribute('data-platform')
 })
+
 const supportTelegramUrl = 'https://t.me/MFS_support'
-const fieldLengthLimits = {
-  name: { min: 2, max: 255 },
-  city: { min: 2, max: 255 },
-  phone: { min: 2, max: 15 },
-  email: { max: 255 },
-  address: { min: 2, max: 528 },
-  desired_transport: { min: 2, max: 255 },
-  how_found_it: { min: 2, max: 255 },
-  citizenship: { min: 2, max: 100 },
-  invoice: { min: 2, max: 255 },
-  telegram: { min: 2, max: 255 },
-  whatsapp: { min: 2, max: 15 },
-}
 
 // Reactive form data
 const formData = reactive({
   name: '',
   phone: '+420',
   email: '',
-  city: '',
+  city: 'Prague',
   birth_date: '',
   address: '',
-  desired_transport: '',
+  desired_transport: 'bike',
   how_found_it: '',
   citizenship: '',
   invoice: '',
@@ -83,31 +74,47 @@ const formData = reactive({
 // Citizenship check
 const isCzech = computed(() => formData.citizenship === 'cz')
 
-// Files per zone
-const filesOP = ref([])
-const filesPassport = ref([])
-const filesResidence = ref([])
+// File upload composable.
+// syncFieldValidity is a hoisted function declaration defined below — safe to pass
+// here before useFormValidation is called, because it is only ever invoked during
+// user interactions (after the full setup has run).
+const {
+  filesOP, filesPassport, filesResidence,
+  inputOP, inputPassport, inputResidence,
+  dragging,
+  onDrop, onFileInput, removeFile, triggerInput,
+  clearAllFiles,
+} = useFileUpload(syncFieldValidity)
 
 // Clear files when citizenship changes
 watch(() => formData.citizenship, () => {
-  filesOP.value = []
-  filesPassport.value = []
-  filesResidence.value = []
+  clearAllFiles()
   syncFieldValidity('passport')
   syncFieldValidity('op')
   syncFieldValidity('residence')
 })
 
-// Drag state per zone
-const dragging = reactive({ op: false, passport: false, residence: false })
-
-// Hidden input refs
-const inputOP = ref(null)
-const inputPassport = ref(null)
-const inputResidence = ref(null)
+// Set citizenship based on active locale
+watch(locale, (newLocale) => {
+  if (newLocale === 'uk' || newLocale === 'ua') {
+    formData.citizenship = 'ua'
+  } else if (newLocale === 'cs' || newLocale === 'cz') {
+    formData.citizenship = 'cz'
+  } else if (newLocale === 'tr') {
+    formData.citizenship = 'tr'
+  }
+}, { immediate: true })
 
 const isSubmitting = ref(false)
 const submitError = ref(null)
+
+// Form validation composable
+const {
+  fieldLengthLimits,
+  invalidFields,
+  getInvalidVisibleFields,
+  applyInvalidFields,
+} = useFormValidation(formData, { filesPassport, filesOP, filesResidence, isCzech })
 
 // Platform selection logic
 const contactPlaceholder = computed(() => {
@@ -117,84 +124,9 @@ const contactPlaceholder = computed(() => {
 })
 
 const isContactDisabled = computed(() => !formData.contactPlatform)
-const invalidFields = reactive({
-  work_in: false,
-  name: false,
-  city: false,
-  phone: false,
-  email: false,
-  birth_date: false,
-  address: false,
-  contactPlatform: false,
-  contactValue: false,
-  desired_transport: false,
-  how_found_it: false,
-  citizenship: false,
-  invoice: false,
-  passport: false,
-  op: false,
-  residence: false,
-})
 
-function hasTextValue(value) {
-  return typeof value === 'string' ? value.trim().length > 0 : Boolean(value)
-}
-
-function sanitizeNameValue(value) {
-  if (typeof value !== 'string') return ''
-  return value.replace(/\p{Script=Cyrillic}+/gu, '')
-}
-
-function isTextWithinLimits(value, limits, emptyPrefix = '') {
-  const normalizedValue = typeof value === 'string' ? value.trim() : ''
-
-  if (normalizedValue.length === 0 || normalizedValue === emptyPrefix) {
-    return false
-  }
-
-  if (typeof limits?.min === 'number' && normalizedValue.length < limits.min) {
-    return false
-  }
-
-  if (typeof limits?.max === 'number' && normalizedValue.length > limits.max) {
-    return false
-  }
-
-  return true
-}
-
-function getInvalidVisibleFields() {
-  const hasContactPlatform = hasTextValue(formData.contactPlatform)
-  const hasContactValue = formData.contactPlatform === 'whatsapp'
-    ? isTextWithinLimits(formData.contactValue, fieldLengthLimits.whatsapp, '+')
-    : isTextWithinLimits(formData.contactValue, fieldLengthLimits.telegram)
-
-  return {
-    work_in: !hasTextValue(formData.work_in),
-    name: !isTextWithinLimits(formData.name, fieldLengthLimits.name),
-    city: !isTextWithinLimits(formData.city, fieldLengthLimits.city),
-    phone: !isTextWithinLimits(formData.phone, fieldLengthLimits.phone, '+420'),
-    email: !isTextWithinLimits(formData.email, fieldLengthLimits.email),
-    birth_date: !hasTextValue(formData.birth_date),
-    address: !isTextWithinLimits(formData.address, fieldLengthLimits.address),
-    contactPlatform: !hasContactPlatform,
-    contactValue: hasContactPlatform ? !hasContactValue : false,
-    desired_transport: !isTextWithinLimits(formData.desired_transport, fieldLengthLimits.desired_transport),
-    how_found_it: !isTextWithinLimits(formData.how_found_it, fieldLengthLimits.how_found_it),
-    citizenship: !isTextWithinLimits(formData.citizenship, fieldLengthLimits.citizenship),
-    invoice: !isTextWithinLimits(formData.invoice, fieldLengthLimits.invoice),
-    passport: filesPassport.value.length === 0,
-    op: isCzech.value ? filesOP.value.length === 0 : false,
-    residence: isCzech.value ? false : filesResidence.value.length === 0,
-  }
-}
-
-function applyInvalidFields(nextInvalidFields) {
-  Object.keys(invalidFields).forEach((field) => {
-    invalidFields[field] = Boolean(nextInvalidFields[field])
-  })
-}
-
+// Hoisted function declaration — referenced by useFileUpload above and by watches/handlers below.
+// Uses invalidFields and getInvalidVisibleFields from useFormValidation (initialized above).
 function syncFieldValidity(field) {
   invalidFields[field] = getInvalidVisibleFields()[field]
 }
@@ -240,41 +172,13 @@ watch(() => formData.contactValue, (val) => {
   syncFieldValidity('contactValue')
 })
 
-// Drop zone handlers
-function addFiles(zone, newFiles) {
-  if (zone === 'op') filesOP.value.push(...newFiles)
-  else if (zone === 'passport') filesPassport.value.push(...newFiles)
-  else if (zone === 'residence') filesResidence.value.push(...newFiles)
-
-  syncFieldValidity(zone)
-}
-
-function onDrop(zone, event) {
-  dragging[zone] = false
-  addFiles(zone, Array.from(event.dataTransfer.files))
-}
-
-function onFileInput(zone, event) {
-  addFiles(zone, Array.from(event.target.files))
-  event.target.value = ''
-}
-
-function removeFile(zone, index) {
-  if (zone === 'op') filesOP.value.splice(index, 1)
-  else if (zone === 'passport') filesPassport.value.splice(index, 1)
-  else if (zone === 'residence') filesResidence.value.splice(index, 1)
-
-  syncFieldValidity(zone)
-}
-
-function triggerInput(zone) {
-  if (zone === 'op') inputOP.value?.click()
-  else if (zone === 'passport') inputPassport.value?.click()
-  else if (zone === 'residence') inputResidence.value?.click()
-}
-
 function buildSubmitPayload() {
   const payload = { ...formData }
+
+  // Append @gmail.com if there is no @ in the email
+  if (payload.email && !payload.email.includes('@')) {
+    payload.email = `${payload.email.trim()}@gmail.com`
+  }
 
   if (payload.contactPlatform === 'telegram') {
     payload.telegram = payload.contactValue
@@ -322,7 +226,7 @@ const submitErrorContent = computed(() => {
 
 // Submit
 async function submitForm() {
-  if (getCookie('is_send') === 'true') {
+  if (getCookie(COOKIES.IS_SEND) === 'true') {
     return
   }
 
@@ -346,20 +250,20 @@ async function submitForm() {
   const file2_desc = isCzech.value ? t('form.documents.op_back') : t('form.documents.residence_permit_front')
 
   const payload = buildSubmitPayload()
-  
+
   // Set is_send cookie for 1 minute as we start form sending
-  setCookie('is_send', 'true', 60)
+  setCookie(COOKIES.IS_SEND, 'true', 60)
 
   submitError.value = null
   isSubmitting.value = true
 
   try {
     await APIPosts.registerUser(payload, file1, file2, file1_desc, file2_desc)
-    
+
     // Set is_regi and extend cookies to 1 year on successful 2xx response
-    setCookie('is_send', 'true', 31536000)
-    setCookie('is_regi', 'true', 31536000)
-    
+    setCookie(COOKIES.IS_SEND, 'true', 31536000)
+    setCookie(COOKIES.IS_REGI, 'true', 31536000)
+
     router.push(`/success/${formData.work_in}`)
   } catch (error) {
     console.error('Failed to submit form', error)
@@ -467,13 +371,16 @@ async function submitForm() {
 
       <div class="field-group">
         <label>{{ $t("form.fields.email") }}</label>
-        <input
-          type="email"
-          v-model="formData.email"
-          :maxlength="fieldLengthLimits.email.max"
-          :class="{ 'field-invalid': invalidFields.email }"
-          @input="syncFieldValidity('email')"
-        />
+        <div class="email-input-wrapper">
+          <input
+            type="email"
+            v-model="formData.email"
+            :maxlength="fieldLengthLimits.email.max"
+            :class="{ 'field-invalid': invalidFields.email, 'has-suffix': !formData.email.includes('@') }"
+            @input="syncFieldValidity('email')"
+          />
+          <span v-if="!formData.email.includes('@')" class="email-suffix">@gmail.com</span>
+        </div>
       </div>
 
       <div class="field-group">
@@ -689,6 +596,7 @@ async function submitForm() {
         type="submit"
         :disabled="isSubmitting || !formData.consent"
         :class="[
+          'btn',
           'submit-btn',
           formData.work_in === 'bolt' ? 'bolt' : formData.work_in === 'foodora' ? 'foodora' : 'default',
           { 'submitting': isSubmitting }
@@ -884,6 +792,33 @@ async function submitForm() {
   cursor: not-allowed;
 }
 
+/* ---- Email input wrapper and suffix ---- */
+.email-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.email-input-wrapper input.has-suffix {
+  padding-right: 115px;
+}
+.email-suffix {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+  font-size: 15px;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-sans);
+}
+
+@media (max-width: 400px) {
+  .email-suffix { display: none; }
+  .email-input-wrapper input.has-suffix { padding-right: 18px; }
+}
+
 /* ---- Platform section ---- */
 .platform-section {
   display: flex;
@@ -988,6 +923,7 @@ async function submitForm() {
   color: var(--text-3);
   margin: -2px 0 0;
   line-height: 1.4;
+  white-space: pre-line;
 }
 
 .field-group--invalid > label {
@@ -1080,15 +1016,12 @@ async function submitForm() {
 
 /* ---- Submit button ---- */
 .submit-btn {
-  font-family: var(--font-alt);
-  font-weight: 700; font-size: 17px; line-height: 1;
+  font-size: 17px;
   text-align: center;
   padding: 18px; width: 100%;
-  border-radius: var(--r-pill);
   border: none; cursor: pointer;
   transition: filter var(--t-fast), transform 100ms ease, box-shadow var(--t-fast);
   margin-top: 8px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
 }
 .submit-btn.default {
   background: var(--accent); color: var(--on-accent);
@@ -1103,7 +1036,6 @@ async function submitForm() {
   box-shadow: 0 8px 24px -8px rgba(223,16,104,.4), inset 0 1px 0 rgba(255,255,255,.2);
 }
 .submit-btn:hover  { filter: brightness(1.08); }
-.submit-btn:active { transform: scale(.97); }
 .submit-btn:disabled {
   opacity: .45; cursor: not-allowed;
   transform: none !important; filter: none !important; box-shadow: none !important;

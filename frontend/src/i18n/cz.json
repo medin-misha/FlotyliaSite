@@ -240,7 +240,7 @@
         },
         "work_in": {
             "label": "Na které platformě budete pracovat?",
-            "hint": "Výběr ovlivní manažera, který vás bude kontaktovat, a požadované dokumenty.",
+            "hint": "• Týdenní výplaty\n• Provize flotily 10%\n• Maximální provize flotily 1000 Kč za týden",
             "bolt_tag": "Nejoblíbenější volba",
             "foodora_tag": "Více restaurací v Praze",
             "error": "Vyberte platformu"
