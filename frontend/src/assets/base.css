@@ -37,6 +37,12 @@
   --content-max: 1180px;
   --gutter: clamp(16px, 4vw, 32px);
 
+  /* Breakpoints — for developer reference only (cannot be used inside @media queries) */
+  --bp-sm: 480px;   /* header mobile: .sub hidden, compact lang-btn */
+  --bp-md: 768px;   /* isMobile store threshold */
+  --bp-lg: 860px;   /* hero/features/steps/cta stack; footer 2-col */
+  --bp-xl: 1080px;  /* vehicles grid 4→2 col */
+
   /* Legacy compat */
   --brand-color:      #C02A22;
   --brand-text-color: #fff;

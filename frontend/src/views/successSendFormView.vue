@@ -2,19 +2,20 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from "vue-i18n"
+import { PLATFORMS, GUIDE_FILES } from '../constants.js'
 
 const route = useRoute()
 const { t } = useI18n({ useScope: "global" })
 
 const company = computed(() => String(route.params.company || '').toLowerCase())
-const isBolt = computed(() => company.value === 'bolt')
-const isFoodora = computed(() => company.value === 'foodora')
+const isBolt = computed(() => company.value === PLATFORMS.BOLT)
+const isFoodora = computed(() => company.value === PLATFORMS.FOODORA)
 const files = computed(() => isBolt.value
   ? [
-      '/BoltGuide.zip',
+      GUIDE_FILES.BOLT,
     ]
   : [
-      '/FoodoraGuide.zip'
+      GUIDE_FILES.FOODORA
     ])
 
 const accentColor = computed(() => {

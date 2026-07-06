@@ -1,10 +1,6 @@
 import axios from "axios";
 import api from "./api";
 
-function withTrailingSlash(url) {
-    return url.endsWith("/") ? url : `${url}/`
-}
-
 function getErrorMessage(error, fallbackMessage) {
     if (axios.isAxiosError(error)) {
         const responseData = error.response?.data;
@@ -80,30 +76,6 @@ function createRequestError(error, fallbackMessage, action = "request") {
 }
 
 const APIPosts = {
-    createPost: async (data, url) => {
-        try {
-            return await api.post(withTrailingSlash(url), data)
-        } catch (error) {
-            console.error(`Failed to create resource at ${url}`, error)
-            throw createRequestError(error, "Failed to create resource", "request")
-        }
-    },
-    createFile: async (file) => {
-        try {
-            const formData = new FormData()
-            formData.append("file", file)
-
-            return await api.post(withTrailingSlash("/files"), formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                timeout: 120000,
-            })
-        } catch (error) {
-            console.error("Failed to upload file", error)
-            throw createRequestError(error, "Failed to upload file", "upload")
-        }
-    },
     registerUser: async (payload, file1, file2, file1_desc, file2_desc) => {
         try {
             const formData = new FormData()

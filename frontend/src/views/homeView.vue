@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import LogoComp from '@/components/LogoComp.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 
@@ -53,16 +54,7 @@ onUnmounted(() => { if (io) io.disconnect() })
       <div class="hv-blob"></div>
       <div class="hv-mark">
         <span class="glyph-lg">
-          <svg fill="currentColor" aria-hidden="true" viewBox="0 19 78 31" style="width:115px;height:auto">
-            <path d="M36.917 35.4791L37.782 30.2397H49.535L48.67 35.4791H36.917Z"/>
-            <path d="M53.8181 29.4093H53.6709L53.6919 29.2729L53.8181 29.4093Z"/>
-            <path d="M70.7841 39.9395L70.7809 39.9679L70.7554 39.9395H70.7841Z"/>
-            <path d="M70.8437 40.0365H70.7673L70.7795 39.9668L70.8437 40.0365Z"/>
-            <path d="M54.5569 19.3517H38.8032L38.8092 19.3184H34.9646L29.438 24.5426L25.23 50.0002H33.7391L37.9381 24.5911H53.6919L54.5569 19.3517Z"/>
-            <path d="M60.9367 29.2728L61.7476 24.3637H69.2686L70.0976 19.3516H55.332L53.692 29.2728L53.8182 29.4091L63.6189 39.9394H63.5378L62.7028 44.9879H54.7072L55.5392 39.9394H48.2946L46.6306 50H69.1184L70.7794 39.9667L70.7554 39.9394L60.9367 29.2728Z"/>
-            <path d="M70.9145 19.3516L69.2505 29.4091H76.3389L77.9999 19.3516H70.9145Z"/>
-            <path d="M19.319 34.1184L9.15792 19.3184H5.07004L0 50.0002H8.6413L11.4316 33.0487L16.772 40.0881H20.3372L27.2245 33.0002L28.4709 25.4608L19.319 34.1184Z"/>
-          </svg>
+          <LogoComp style="width:115px;height:auto" />
         </span>
         <div class="hero-tag">
           <span class="pulse"></span>

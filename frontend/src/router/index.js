@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import homeView from '../views/homeView.vue'
+import { COOKIES, PLATFORMS } from '../constants.js'
 
 const router = createRouter({
   history: createWebHistory(), // createWebHistory (отображает путь в адресной строке, без #) 
@@ -29,11 +30,11 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'form') {
     const isRegi = document.cookie
       .split('; ')
-      .find(row => row.startsWith('is_regi='))
+      .find(row => row.startsWith(COOKIES.IS_REGI + '='))
       ?.split('=')[1];
 
     if (isRegi === 'true') {
-      const company = localStorage.getItem('mfs_platform') || 'bolt';
+      const company = localStorage.getItem(COOKIES.PLATFORM) || PLATFORMS.BOLT;
       next({ name: 'success', params: { company } });
       return;
     }
