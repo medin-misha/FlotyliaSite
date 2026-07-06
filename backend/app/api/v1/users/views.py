@@ -1,6 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks, File, Form, status, Depends, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
-from services import CRUD
+from services import CRUD, send_activation_email
 from core.models import User
 from core.database import database
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -50,6 +50,8 @@ async def create_user_view(
 ) -> UserReturn:
     created = await CRUD.create(data=user, model=User, session=session)
     background_tasks.add_task(notify_new_application, user.model_dump(mode="json"))
+    if created.status == "active":
+        background_tasks.add_task(send_activation_email, created.email, created.name)
     return created
 
 
@@ -73,10 +75,20 @@ async def import_users_view(
 
 @router.patch("/bulk-status", status_code=status.HTTP_200_OK)
 async def bulk_update_status_view(
-    data: UserBulkStatusUpdate, session: SessionDep, admin: AdminDep
+    data: UserBulkStatusUpdate, session: SessionDep, admin: AdminDep, background_tasks: BackgroundTasks
 ) -> dict:
     if not data.ids:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="ids list is empty")
+    
+    users_to_notify = []
+    if data.status == "active":
+        stmt_users = select(User.email, User.name).where(
+            User.id.in_(data.ids),
+            User.status != "active"
+        )
+        res_users = await session.execute(stmt_users)
+        users_to_notify = res_users.all()
+
     stmt = (
         update(User)
         .where(User.id.in_(data.ids))
@@ -85,6 +97,10 @@ async def bulk_update_status_view(
     )
     result = await session.execute(stmt)
     await session.commit()
+
+    for u in users_to_notify:
+        background_tasks.add_task(send_activation_email, u.email, u.name)
+
     return {"updated": result.rowcount}
 
 
@@ -110,9 +126,18 @@ async def get_user_view(session: SessionDep, id: int, admin: AdminDep) -> UserRe
 
 @router.patch("/{id}", status_code=status.HTTP_200_OK)
 async def patch_user_view(
-    session: SessionDep, id: int, user: UserUpdate, admin: AdminDep
+    session: SessionDep, id: int, user: UserUpdate, admin: AdminDep, background_tasks: BackgroundTasks
 ) -> UserReturn:
-    return await CRUD.patch(new_data=user, model=User, session=session, id=id)
+    stmt = select(User.status, User.email, User.name).where(User.id == id)
+    res = await session.execute(stmt)
+    current = res.first()
+
+    updated_user = await CRUD.patch(new_data=user, model=User, session=session, id=id)
+
+    if current and current.status != "active" and updated_user.status == "active":
+        background_tasks.add_task(send_activation_email, updated_user.email, updated_user.name)
+
+    return updated_user
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)

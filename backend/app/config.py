@@ -28,6 +28,15 @@ class CORSConfig(BaseModel):
     allow_headers: str = "*"
 
 
+class SMTPSettings(BaseModel):
+    host: str = ""
+    port: int = 465
+    user: str = ""
+    password: str = ""
+    sender: str = ""
+    use_ssl: bool = True
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",  # файл который читаем
@@ -44,6 +53,7 @@ class Settings(BaseSettings):
     cors_config: CORSConfig = CORSConfig()
     notify_bot_url: str | None = None
     notify_secret: str | None = None
+    smtp: SMTPSettings = SMTPSettings()
 
 
 settings = Settings()

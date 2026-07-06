@@ -103,6 +103,12 @@ cors_config__allow_credentials=true
 cors_config__allow_methods="*"
 cors_config__allow_headers="*"
 debug=false
+smtp__host="smtp.gmail.com"
+smtp__port=465
+smtp__user="your-email@gmail.com"
+smtp__password="your-app-password"
+smtp__sender="your-email@gmail.com"
+smtp__use_ssl=true
 ```
 
 ## Database Models

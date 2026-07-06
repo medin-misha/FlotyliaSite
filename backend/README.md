@@ -30,6 +30,14 @@ bucket_config__bucket_name="paper4print-images"
 cors_config__allow_origins="http://localhost:5174,http://localhost:5173"
 
 debug=False
+
+# Настройки SMTP для отправки писем при активации пользователей
+smtp__host="smtp.gmail.com"
+smtp__port=465
+smtp__user="your-email@gmail.com"
+smtp__password="your-app-password"
+smtp__sender="your-email@gmail.com"
+smtp__use_ssl=True
 ```
 
 Дополнительно можно задать:
@@ -39,6 +47,10 @@ cors_config__allow_credentials=True
 cors_config__allow_methods="*"
 cors_config__allow_headers="*"
 ```
+
+### Примечания к настройкам SMTP:
+- **Gmail**: хост `smtp.gmail.com`, порт `465` (SSL=True) или `587` (SSL=False, автоматически используется STARTTLS). Вместо основного пароля необходимо использовать **Пароль приложения** (App Password), предварительно включив двухэтапную аутентификацию в настройках Google-аккаунта.
+- **Yandex**: хост `smtp.yandex.ru`, порт `465` (SSL=True). В настройках почты Яндекс (в веб-интерфейсе) нужно разрешить доступ по протоколу SMTP, а затем в личном кабинете сгенерировать **Пароль приложения**.
 
 Примечания:
 
