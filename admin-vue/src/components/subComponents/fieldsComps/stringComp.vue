@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, defineModel } from 'vue'
+import { ref, computed, defineModel, nextTick } from 'vue'
 
 const props = defineProps({
   field: Object,
@@ -12,6 +12,10 @@ const props = defineProps({
 
 const value = defineModel('value', { type: String, default: '' })
 const copied = ref(false)
+const editing = ref(false)
+const textareaRef = ref(null)
+let clickTimer = null
+let justStoppedEditing = false
 
 const onInput = (e) => {
   value.value = e.target.value
@@ -19,7 +23,6 @@ const onInput = (e) => {
 
 const copyValue = async () => {
   if (!value.value) return
-
   try {
     await navigator.clipboard.writeText(value.value)
     copied.value = true
@@ -29,6 +32,27 @@ const copyValue = async () => {
   } catch (error) {
     console.error('Не удалось скопировать значение', error)
   }
+}
+
+const handleClick = () => {
+  if (editing.value || justStoppedEditing || !props.field?.copyable) return
+  clearTimeout(clickTimer)
+  clickTimer = setTimeout(copyValue, 220)
+}
+
+const handleDblClick = () => {
+  if (props.field?.readonly) return
+  clearTimeout(clickTimer)
+  editing.value = true
+  nextTick(() => textareaRef.value?.focus())
+}
+
+const stopEditing = () => {
+  editing.value = false
+  justStoppedEditing = true
+  setTimeout(() => {
+    justStoppedEditing = false
+  }, 300)
 }
 
 const getIcon = computed(() => {
@@ -127,43 +151,53 @@ const getIcon = computed(() => {
   <!-- Detail/Edit mode styling -->
   <div
     v-else
+    @click="handleClick"
+    @dblclick="handleDblClick"
     :class="[
-      'p-4 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group hover:scale-[1.01] hover:shadow-sm transition-all duration-200',
-      error
-        ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10'
-        : 'border-outline-variant/30',
+      'p-3 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group transition-all duration-200',
+      copied
+        ? 'border-primary dark:border-inverse-primary ring-1 ring-primary/30'
+        : error
+          ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10'
+          : 'border-outline-variant/30',
+      editing ? 'cursor-text' : field.copyable && value ? 'cursor-pointer' : '',
     ]"
   >
     <!-- Label -->
-    <label class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim block">
-      {{ field.label }}
-    </label>
+    <div class="flex items-center gap-1.5">
+      <label class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim block select-none">
+        {{ field.label }}
+      </label>
+      <span
+        v-if="copied"
+        class="material-symbols-outlined text-[14px] text-primary dark:text-inverse-primary"
+      >
+        check
+      </span>
+    </div>
 
-    <div class="flex items-center justify-between gap-2 mt-0.5">
+    <div class="flex items-center gap-2 mt-0.5">
       <!-- Edit Mode / Input -->
       <textarea
-        v-if="!field.readonly"
+        v-if="!field.readonly && editing"
+        ref="textareaRef"
         :value="value"
         @input="onInput"
+        @blur="stopEditing"
+        @click.stop
+        @dblclick.stop
         class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg font-semibold text-on-surface dark:text-white resize-none h-auto min-h-[24px]"
         :placeholder="field.label"
         rows="1"
       />
 
-      <!-- Readonly View -->
-      <p v-else class="font-body-lg text-body-lg font-semibold text-on-surface dark:text-white">
+      <!-- View Mode (readonly or not editing) -->
+      <p
+        v-else
+        class="font-body-lg text-body-lg font-semibold text-on-surface dark:text-white select-none"
+      >
         {{ value || '—' }}
       </p>
-
-      <!-- Copy Action -->
-      <button
-        v-if="field.copyable && value"
-        type="button"
-        @click="copyValue"
-        class="material-symbols-outlined text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors text-[20px]"
-      >
-        {{ copied ? 'check' : 'content_copy' }}
-      </button>
     </div>
 
     <!-- Error message text block for detail page -->

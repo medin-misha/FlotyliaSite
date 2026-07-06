@@ -1,10 +1,12 @@
 <script setup>
 import documentComp from './documentComp.vue'
+
 const props = defineProps({
   field: Object,
   object: Object,
 })
 const value = defineModel('value', { default: [] })
+
 const addDocument = () => {
   value.value.push({ file_id: '', description: '', user_id: props.object.id })
 }
@@ -40,11 +42,10 @@ const onDocumentDeleted = (index) => {
       </button>
     </div>
 
-    <!-- Documents Bento Grid -->
     <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4 w-full">
       <documentComp
         v-for="(document, index) in value"
-        :key="index"
+        :key="document.file_id || index"
         :document="document"
         :field="field"
         @updated="(newDoc) => onDocumentUpdated(index, newDoc)"

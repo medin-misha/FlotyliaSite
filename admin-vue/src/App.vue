@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, provide, watch } from 'vue'
 import sideBarComp from './components/sideBarComp.vue'
 import headerComp from './components/headerComp.vue'
 import bodyComp from './components/bodyComp.vue'
@@ -11,6 +11,10 @@ const pageStore = usePageStore()
 const authStore = useAuthStore()
 
 const isLoginPage = computed(() => !authStore.isLogin())
+
+const sidebarCollapsed = ref(localStorage.getItem('sidebar-collapsed') === '1')
+watch(sidebarCollapsed, (v) => localStorage.setItem('sidebar-collapsed', v ? '1' : '0'))
+provide('sidebarCollapsed', sidebarCollapsed)
 </script>
 
 <template>
@@ -21,7 +25,10 @@ const isLoginPage = computed(() => !authStore.isLogin())
   >
     <sideBarComp />
 
-    <div class="min-h-screen min-w-0 pl-sidebar-width">
+    <div
+      class="min-h-screen min-w-0 transition-all duration-300"
+      :class="sidebarCollapsed ? 'pl-16' : 'pl-[260px]'"
+    >
       <headerComp :key="pageStore.pageData.adres" />
       <bodyComp />
     </div>

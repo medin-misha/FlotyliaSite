@@ -347,7 +347,7 @@ onUnmounted(() => {
           </div>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-stack-lg custom-scrollbar">
+        <div class="flex-1 overflow-y-auto p-3 custom-scrollbar">
           <div
             v-if="isLoading"
             class="flex min-h-[280px] items-center justify-center rounded-xl border border-outline-variant/20 bg-surface-container-low text-secondary dark:border-white/10 dark:bg-white/5 dark:text-secondary-fixed-dim"
@@ -368,7 +368,7 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <div v-else class="space-y-gutter pb-10">
+          <div v-else class="space-y-3 pb-4">
             <div
               v-if="saveError"
               class="rounded-xl border border-error/20 bg-error/5 p-4 text-error"
@@ -384,22 +384,22 @@ onUnmounted(() => {
 
             <!-- Users layout -->
             <template v-if="adres === '/users'">
-              <!-- Row 1: Basic info & Contacts side by side -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              <!-- Row 1: Basic info & Documents side by side -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
                 <!-- Personal / Basic Info -->
-                <section v-if="getSection('personal')" class="space-y-stack-md">
-                  <div class="flex items-center gap-3">
+                <section v-if="getSection('personal')" class="space-y-2">
+                  <div class="flex items-center gap-2">
                     <span
-                      class="material-symbols-outlined text-primary dark:text-inverse-primary"
+                      class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary"
                       >{{ getSection('personal').icon }}</span
                     >
                     <h4
-                      class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
+                      class="font-label-md text-label-md text-on-surface dark:text-white font-bold"
                     >
                       {{ getSection('personal').title }}
                     </h4>
                   </div>
-                  <div class="grid grid-cols-1 gap-4">
+                  <div class="grid grid-cols-1 gap-2">
                     <component
                       v-for="field in getSection('personal').fields"
                       :is="field.component"
@@ -412,64 +412,9 @@ onUnmounted(() => {
                   </div>
                 </section>
 
-                <!-- Contacts -->
-                <section v-if="getSection('contacts')" class="space-y-stack-md">
-                  <div class="flex items-center gap-3">
-                    <span
-                      class="material-symbols-outlined text-primary dark:text-inverse-primary"
-                      >{{ getSection('contacts').icon }}</span
-                    >
-                    <h4
-                      class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
-                    >
-                      {{ getSection('contacts').title }}
-                    </h4>
-                  </div>
-                  <div class="grid grid-cols-1 gap-4">
-                    <component
-                      v-for="field in getSection('contacts').fields"
-                      :is="field.component"
-                      :key="field.key"
-                      :field="field"
-                      v-model:value="objectData[field.key]"
-                      :error="errors[field.key]"
-                      :object="objectData"
-                    />
-                  </div>
-                </section>
-              </div>
-
-              <!-- Row 2: Logistics & Documents side by side -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                <!-- Logistics -->
-                <section v-if="getSection('logistics')" class="space-y-stack-md">
-                  <div class="flex items-center gap-3">
-                    <span
-                      class="material-symbols-outlined text-primary dark:text-inverse-primary"
-                      >{{ getSection('logistics').icon }}</span
-                    >
-                    <h4
-                      class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
-                    >
-                      {{ getSection('logistics').title }}
-                    </h4>
-                  </div>
-                  <div class="grid grid-cols-1 gap-4">
-                    <component
-                      v-for="field in getSection('logistics').fields"
-                      :is="field.component"
-                      :key="field.key"
-                      :field="field"
-                      v-model:value="objectData[field.key]"
-                      :error="errors[field.key]"
-                      :object="objectData"
-                    />
-                  </div>
-                </section>
-
                 <!-- Documents -->
-                <section v-if="getSection('documents')" class="space-y-stack-md">
-                  <div class="grid grid-cols-1 gap-4">
+                <section v-if="getSection('documents')" class="space-y-2">
+                  <div class="grid grid-cols-1 gap-2">
                     <component
                       v-for="field in getSection('documents').fields"
                       :is="field.component"
@@ -483,19 +428,74 @@ onUnmounted(() => {
                 </section>
               </div>
 
+              <!-- Row 2: Contacts & Logistics side by side -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
+                <!-- Contacts -->
+                <section v-if="getSection('contacts')" class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary"
+                      >{{ getSection('contacts').icon }}</span
+                    >
+                    <h4
+                      class="font-label-md text-label-md text-on-surface dark:text-white font-bold"
+                    >
+                      {{ getSection('contacts').title }}
+                    </h4>
+                  </div>
+                  <div class="grid grid-cols-1 gap-2">
+                    <component
+                      v-for="field in getSection('contacts').fields"
+                      :is="field.component"
+                      :key="field.key"
+                      :field="field"
+                      v-model:value="objectData[field.key]"
+                      :error="errors[field.key]"
+                      :object="objectData"
+                    />
+                  </div>
+                </section>
+
+                <!-- Logistics -->
+                <section v-if="getSection('logistics')" class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary"
+                      >{{ getSection('logistics').icon }}</span
+                    >
+                    <h4
+                      class="font-label-md text-label-md text-on-surface dark:text-white font-bold"
+                    >
+                      {{ getSection('logistics').title }}
+                    </h4>
+                  </div>
+                  <div class="grid grid-cols-1 gap-2">
+                    <component
+                      v-for="field in getSection('logistics').fields"
+                      :is="field.component"
+                      :key="field.key"
+                      :field="field"
+                      v-model:value="objectData[field.key]"
+                      :error="errors[field.key]"
+                      :object="objectData"
+                    />
+                  </div>
+                </section>
+              </div>
+
               <!-- Row 3: Other -->
-              <section v-if="getSection('other')" class="space-y-stack-md">
-                <div class="flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{
+              <section v-if="getSection('other')" class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary">{{
                     getSection('other').icon
                   }}</span>
                   <h4
-                    class="font-headline-sm text-headline-sm text-on-surface dark:text-white font-bold"
+                    class="font-label-md text-label-md text-on-surface dark:text-white font-bold"
                   >
                     {{ getSection('other').title }}
                   </h4>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <component
                     v-for="field in getSection('other').fields"
                     :is="field.component"
@@ -511,18 +511,18 @@ onUnmounted(() => {
 
             <!-- Admins and other layout -->
             <template v-else>
-              <section v-for="section in sections" :key="section.key" class="space-y-stack-md">
-                <div class="flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary dark:text-inverse-primary">{{
+              <section v-for="section in sections" :key="section.key" class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-primary dark:text-inverse-primary">{{
                     section.icon
                   }}</span>
-                  <h4 class="font-headline-sm text-headline-sm text-on-surface dark:text-white">
+                  <h4 class="font-label-md text-label-md text-on-surface dark:text-white font-bold">
                     {{ section.title }}
                   </h4>
                 </div>
 
                 <div
-                  class="grid grid-cols-1 gap-4 md:grid-cols-2"
+                  class="grid grid-cols-1 gap-2 md:grid-cols-2"
                   :class="section.key === 'documents' ? 'md:grid-cols-1' : ''"
                 >
                   <component

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, defineModel } from 'vue'
+import { computed, ref, defineModel, nextTick } from 'vue'
 
 const props = defineProps({
   field: Object,
@@ -12,6 +12,10 @@ const props = defineProps({
 
 const value = defineModel('value', { type: [String, null], default: '' })
 const copied = ref(false)
+const editing = ref(false)
+const inputRef = ref(null)
+let clickTimer = null
+let justStoppedEditing = false
 
 const inputType = computed(() => (props.field?.type === 'datetime' ? 'datetime-local' : 'date'))
 
@@ -50,11 +54,30 @@ const displayValue = computed({
   },
 })
 
-const copyValue = async () => {
-  if (!value.value) return
+const age = computed(() => {
+  if (props.field?.key !== 'birth_date' || !value.value) return null
+  const birth = new Date(displayValue.value || value.value)
+  if (isNaN(birth)) return null
+  const today = new Date()
+  let years = today.getFullYear() - birth.getFullYear()
+  const m = today.getMonth() - birth.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) years--
+  return years >= 0 ? years : null
+})
 
+const ageLabel = (n) => {
+  if (n % 100 >= 11 && n % 100 <= 19) return 'лет'
+  const r = n % 10
+  if (r === 1) return 'год'
+  if (r >= 2 && r <= 4) return 'года'
+  return 'лет'
+}
+
+const copyValue = async () => {
+  const toCopy = displayValue.value || formatDate(value.value)
+  if (!toCopy || toCopy === '—') return
   try {
-    await navigator.clipboard.writeText(value.value)
+    await navigator.clipboard.writeText(toCopy)
     copied.value = true
     setTimeout(() => {
       copied.value = false
@@ -62,6 +85,27 @@ const copyValue = async () => {
   } catch (error) {
     console.error('Не удалось скопировать значение', error)
   }
+}
+
+const handleClick = () => {
+  if (editing.value || justStoppedEditing || !props.field?.copyable) return
+  clearTimeout(clickTimer)
+  clickTimer = setTimeout(copyValue, 220)
+}
+
+const handleDblClick = () => {
+  if (props.field?.readonly) return
+  clearTimeout(clickTimer)
+  editing.value = true
+  nextTick(() => inputRef.value?.focus())
+}
+
+const stopEditing = () => {
+  editing.value = false
+  justStoppedEditing = true
+  setTimeout(() => {
+    justStoppedEditing = false
+  }, 300)
 }
 </script>
 
@@ -126,42 +170,56 @@ const copyValue = async () => {
   <!-- Detail/Edit mode styling -->
   <div
     v-else
+    @click="handleClick"
+    @dblclick="handleDblClick"
     :class="[
-      'p-4 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group hover:scale-[1.01] hover:shadow-sm transition-all duration-200',
-      error
-        ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10'
-        : 'border-outline-variant/30',
+      'p-3 rounded-xl border bg-surface-container-low dark:bg-white/5 flex flex-col gap-1 relative group transition-all duration-200',
+      copied
+        ? 'border-primary dark:border-inverse-primary ring-1 ring-primary/30'
+        : error
+          ? 'border-error ring-1 ring-error/50 bg-error/5 dark:bg-error/10'
+          : 'border-outline-variant/30',
+      editing ? 'cursor-text' : field.copyable && value ? 'cursor-pointer' : '',
     ]"
   >
     <!-- Label -->
-    <label class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim block">
-      {{ field.label }}
-    </label>
+    <div class="flex items-center gap-1.5">
+      <label class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim block select-none">
+        {{ field.label }}
+      </label>
+      <span
+        v-if="copied"
+        class="material-symbols-outlined text-[14px] text-primary dark:text-inverse-primary"
+      >
+        check
+      </span>
+    </div>
 
-    <div class="flex items-center justify-between gap-2 mt-0.5">
+    <div class="flex items-center gap-2 mt-0.5">
       <!-- Edit Mode / Input -->
       <input
-        v-if="!field.readonly"
+        v-if="!field.readonly && editing"
+        ref="inputRef"
         :type="inputType"
         v-model="displayValue"
+        @blur="stopEditing"
+        @click.stop
+        @dblclick.stop
         class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg font-semibold text-on-surface dark:text-white"
         :placeholder="field.label"
       />
 
-      <!-- Readonly View -->
-      <p v-else class="font-body-lg text-body-lg font-semibold text-on-surface dark:text-white">
-        {{ formatDate(value) }}
-      </p>
-
-      <!-- Copy Action -->
-      <button
-        v-if="field.copyable && value"
-        type="button"
-        @click="copyValue"
-        class="material-symbols-outlined text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors text-[20px]"
+      <!-- View Mode (readonly or not editing) -->
+      <p
+        v-else
+        class="font-body-lg text-body-lg font-semibold text-on-surface dark:text-white select-none flex items-baseline gap-2"
       >
-        {{ copied ? 'check' : 'content_copy' }}
-      </button>
+        {{ formatDate(value) }}
+        <span
+          v-if="age !== null"
+          class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim font-normal"
+        >{{ age }} {{ ageLabel(age) }}</span>
+      </p>
     </div>
 
     <!-- Error message text block for detail page -->

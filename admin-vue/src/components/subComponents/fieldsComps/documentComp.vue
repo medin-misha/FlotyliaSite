@@ -17,6 +17,9 @@ const loading = ref(false)
 const currentFileId = ref(props.document.file_id || null)
 const previewUrl = ref(null)
 const isImagePreview = ref(false)
+const isDragOver = ref(false)
+const fileMimeType = ref('')
+let dragCounter = 0
 
 const revokePreviewUrl = () => {
   if (previewUrl.value) {
@@ -41,6 +44,7 @@ const loadPreview = async (fileId = currentFileId.value) => {
   try {
     const response = await fetchFileBlob(fileId)
     const mimeType = response.data.type || ''
+    fileMimeType.value = mimeType
 
     if (!mimeType.startsWith('image/')) return
 
@@ -81,29 +85,66 @@ const triggerFileInput = () => {
   fileInput.value?.click()
 }
 
-const onFileChange = async (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-
+const uploadFile = async (file) => {
+  if (!file || loading.value) return
   loading.value = true
   try {
     const createFile = await APIPosts.createFile(file)
     const fileId = createFile.data.id
-
-    const newDoc = {
-      ...props.document,
-      file_id: fileId,
-      description: description.value,
-    }
-
     currentFileId.value = fileId
     await loadPreview(fileId)
-    emit('updated', newDoc)
+    emit('updated', { ...props.document, file_id: fileId, description: description.value })
   } catch (error) {
     console.error('Failed to upload file:', error)
   } finally {
     loading.value = false
   }
+}
+
+const onFileChange = (event) => {
+  const file = event.target.files[0]
+  if (file) uploadFile(file)
+}
+
+const onFileDragStart = (e) => {
+  if (!currentFileId.value) {
+    e.preventDefault()
+    return
+  }
+  const token = useAuthStore().getToken
+  const baseUrl = import.meta.env.VITE_API_URL
+  const url = `${baseUrl}/files/${currentFileId.value}?token=${token}`
+  const mime = fileMimeType.value || 'application/octet-stream'
+  const filename = (description.value || 'document').replace(/\s+/g, '_')
+
+  e.dataTransfer.effectAllowed = 'copy'
+  e.dataTransfer.setData('DownloadURL', `${mime}:${filename}:${url}`)
+  e.dataTransfer.setData('text/uri-list', url)
+  e.dataTransfer.setData('text/plain', url)
+}
+
+const onDragEnter = (e) => {
+  e.preventDefault()
+  dragCounter++
+  isDragOver.value = true
+}
+
+const onDragOver = (e) => {
+  e.preventDefault()
+  e.dataTransfer.dropEffect = 'copy'
+}
+
+const onDragLeave = () => {
+  dragCounter--
+  if (dragCounter === 0) isDragOver.value = false
+}
+
+const onDrop = (e) => {
+  e.preventDefault()
+  dragCounter = 0
+  isDragOver.value = false
+  const file = e.dataTransfer.files[0]
+  if (file) uploadFile(file)
 }
 
 const updateDescription = (event) => {
@@ -143,13 +184,50 @@ onBeforeUnmount(() => {
 
 <template>
   <div
+    :draggable="!!currentFileId"
+    @dragstart="onFileDragStart"
+    @dragenter="onDragEnter"
+    @dragover="onDragOver"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
     :class="[
-      'group relative aspect-[3/4] rounded-2xl overflow-hidden border border-outline-variant/30 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-end bg-surface-container-low dark:bg-white/5',
+      'group relative aspect-[3/4] rounded-2xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-end bg-surface-container-low dark:bg-white/5',
+      currentFileId ? 'cursor-grab active:cursor-grabbing' : '',
+      isDragOver
+        ? 'border-primary dark:border-inverse-primary ring-2 ring-primary/40 scale-[1.02]'
+        : 'border-outline-variant/30 dark:border-white/10',
       loading ? 'opacity-60 pointer-events-none' : '',
     ]"
   >
     <!-- File Input Hidden -->
     <input ref="fileInput" type="file" class="hidden" @change="onFileChange" :disabled="loading" />
+
+    <!-- Drag-out hint (shown on hover when file exists) -->
+    <div
+      v-if="currentFileId"
+      class="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+    >
+      <span
+        class="material-symbols-outlined text-[18px] text-white/80 drop-shadow"
+        title="Перетащите в поле загрузки"
+      >drag_pan</span>
+    </div>
+
+    <!-- Drag-over overlay -->
+    <transition
+      enter-active-class="transition duration-150"
+      enter-from-class="opacity-0"
+      leave-active-class="transition duration-150"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="isDragOver"
+        class="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 bg-primary/80 dark:bg-inverse-primary/80 backdrop-blur-sm"
+      >
+        <span class="material-symbols-outlined text-[40px] text-white">upload_file</span>
+        <span class="text-white font-label-md text-label-md font-bold select-none">Отпустите файл</span>
+      </div>
+    </transition>
 
     <!-- Image Preview or Placeholder Background -->
     <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
