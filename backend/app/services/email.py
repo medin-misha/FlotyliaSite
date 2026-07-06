@@ -48,7 +48,7 @@ async def send_activation_email(to_email: str, name: str) -> None:
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f9f9f9; padding: 20px;">
         <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eef2f5;">
           <div style="text-align: center; margin-bottom: 25px;">
-            <h2 style="color: #2b7a78; margin: 0; font-size: 24px; font-weight: 700;">Статус заявки: Принята</h2>
+            <h2 style="color: #d32f2f; margin: 0; font-size: 24px; font-weight: 700;">Статус заявки: Принята</h2>
           </div>
           
           <p style="font-size: 16px; margin-top: 0;">Здравствуйте, <strong>{name}</strong>!</p>
@@ -56,7 +56,7 @@ async def send_activation_email(to_email: str, name: str) -> None:
           <p style="font-size: 15px;">Команда MFS приняла вашу заявку.</p>
           
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://t.me/MFS_support" target="_blank" style="background-color: #3aafa9; color: #ffffff; padding: 12px 28px; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 15px; display: inline-block; transition: background-color 0.2s;">
+            <a href="https://t.me/MFS_support" target="_blank" style="background-color: #e53935; color: #ffffff; padding: 12px 28px; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 15px; display: inline-block; transition: background-color 0.2s;">
               Связаться с поддержкой @MFS_support
             </a>
           </div>
