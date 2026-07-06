@@ -7,6 +7,8 @@ class Database:
         self.engine = create_async_engine(
             url=url,
             echo=settings.debug,
+            pool_pre_ping=True,
+            pool_recycle=1800,
             # connect_args={"ssl": "require"}
         )
         self.sessionmaker = async_sessionmaker(
