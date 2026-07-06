@@ -32,6 +32,7 @@ cors_config__allow_origins="http://localhost:5174,http://localhost:5173"
 debug=False
 
 # Настройки SMTP для отправки писем при активации пользователей
+smtp__enabled=False
 smtp__host="smtp.gmail.com"
 smtp__port=465
 smtp__user="your-email@gmail.com"

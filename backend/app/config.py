@@ -29,6 +29,7 @@ class CORSConfig(BaseModel):
 
 
 class SMTPSettings(BaseModel):
+    enabled: bool = True
     host: str = ""
     port: int = 465
     user: str = ""

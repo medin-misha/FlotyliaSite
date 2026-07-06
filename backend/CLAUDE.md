@@ -103,6 +103,7 @@ cors_config__allow_credentials=true
 cors_config__allow_methods="*"
 cors_config__allow_headers="*"
 debug=false
+smtp__enabled=false
 smtp__host="smtp.gmail.com"
 smtp__port=465
 smtp__user="your-email@gmail.com"

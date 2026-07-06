@@ -12,6 +12,10 @@ logger = logging.getLogger(__name__)
 def _send_email_sync(to_email: str, subject: str, html_content: str) -> None:
     """Синхронная отправка почты через SMTP сервер."""
     smtp_config = settings.smtp
+    if not smtp_config.enabled:
+        logger.info("Отправка email-уведомлений отключена в настройках.")
+        return
+
     if not smtp_config.host or not smtp_config.user:
         logger.warning("SMTP-сервер не настроен в конфигурации. Отправка письма отменена.")
         return
