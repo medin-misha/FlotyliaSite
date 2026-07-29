@@ -5,6 +5,8 @@ import { useStatesStore } from '../../stores/states'
 import { useAuthStore } from '../../stores/auth'
 import APIGetters from '../../api/getters'
 import APIPosts from '../../api/posts'
+import api from '../../api/api'
+import { openBlobInNewTab } from '../../utils/openBlobInNewTab'
 import { onUnmounted, ref, watch, computed } from 'vue'
 
 const pageStore = usePageStore()
@@ -203,6 +205,25 @@ const formatDate = (val) => {
   return val
 }
 
+const formatAmount = (val) => {
+  if (val === null || val === undefined || val === '') return '—'
+  const num = Number(val)
+  if (Number.isNaN(num)) return val
+  return num.toLocaleString('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const openReceiptFile = async (fileId) => {
+  if (!fileId) return
+  try {
+    await openBlobInNewTab(
+      async () => (await api.get(`/files/${fileId}`, { responseType: 'blob', timeout: 0 })).data,
+      'Чек',
+    )
+  } catch (error) {
+    console.error('Failed to open receipt file:', error)
+  }
+}
+
 const selectChip = (val) => {
   if (pageStore.paginationData.search === val) {
     pageStore.paginationData.search = ''
@@ -251,7 +272,13 @@ const getChipActiveClasses = (chip) => {
             <h2
               class="font-headline-md text-headline-md font-bold text-on-background dark:text-white"
             >
-              {{ adres === '/users' ? 'Пользователи' : 'Администраторы' }}
+              {{
+                adres === '/users'
+                  ? 'Пользователи'
+                  : adres === '/receipts'
+                    ? 'Чеки'
+                    : 'Администраторы'
+              }}
             </h2>
             <span
               class="px-2.5 py-0.5 bg-primary/10 dark:bg-primary/20 text-primary dark:text-inverse-primary rounded-full font-label-md text-label-md"
@@ -263,13 +290,16 @@ const getChipActiveClasses = (chip) => {
             {{
               adres === '/users'
                 ? 'Управление доступом и статусами сотрудников организации.'
-                : 'Системные администраторы панели управления.'
+                : adres === '/receipts'
+                  ? 'Учёт расходов и хранение чеков.'
+                  : 'Системные администраторы панели управления.'
             }}
           </p>
         </div>
 
         <div class="flex items-center gap-3">
           <button
+            v-if="adres === '/users'"
             @click="handleExport"
             class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest dark:bg-white/5 border border-outline-variant/50 dark:border-white/10 text-on-surface dark:text-secondary-fixed-dim rounded-xl font-label-md text-label-md hover:bg-surface-container dark:hover:bg-white/10 active:scale-[0.98] transition-all"
           >
@@ -330,7 +360,7 @@ const getChipActiveClasses = (chip) => {
         </div>
 
         <!-- Chips Section -->
-        <div class="flex flex-wrap gap-2.5 items-center pl-1">
+        <div v-if="adres === '/users'" class="flex flex-wrap gap-2.5 items-center pl-1">
           <span
             class="text-xs text-secondary dark:text-secondary-fixed-dim font-medium mr-1 select-none"
             >Быстрый поиск по статусу:</span
@@ -463,6 +493,13 @@ const getChipActiveClasses = (chip) => {
                 <th class="px-6 py-4">Работает в</th>
                 <th class="px-6 py-4">Статус</th>
               </tr>
+              <tr v-else-if="adres === '/receipts'">
+                <th class="px-6 py-4">Дата чека</th>
+                <th class="px-6 py-4">Сумма</th>
+                <th class="px-6 py-4">Описание</th>
+                <th class="px-6 py-4">Файл</th>
+                <th class="px-6 py-4">Дата создания</th>
+              </tr>
               <tr v-else>
                 <th class="px-6 py-4">Администратор</th>
                 <th class="px-6 py-4">Последняя сессия</th>
@@ -531,6 +568,48 @@ const getChipActiveClasses = (chip) => {
                     >
                       {{ obj.status || '—' }}
                     </span>
+                  </td>
+                </tr>
+              </template>
+
+              <!-- Receipts view custom row styling -->
+              <template v-else-if="adres === '/receipts'">
+                <tr
+                  v-for="obj in objectsList"
+                  :key="obj.id"
+                  @click="openDetails(obj.id)"
+                  class="hover:bg-surface-container-low dark:hover:bg-white/5 transition-colors cursor-pointer"
+                >
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-white font-semibold"
+                  >
+                    {{ formatDate(obj.receipt_date) }}
+                  </td>
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-on-surface dark:text-white font-bold whitespace-nowrap"
+                  >
+                    {{ formatAmount(obj.amount) }} CZK
+                  </td>
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim max-w-xs truncate"
+                  >
+                    {{ obj.description || '—' }}
+                  </td>
+                  <td class="px-6 py-4" @click.stop>
+                    <button
+                      v-if="obj.file_id"
+                      @click="openReceiptFile(obj.file_id)"
+                      class="inline-flex items-center gap-1.5 text-primary dark:text-inverse-primary hover:underline font-label-md text-label-md"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">attach_file</span>
+                      Открыть
+                    </button>
+                    <span v-else class="text-secondary dark:text-secondary-fixed-dim">—</span>
+                  </td>
+                  <td
+                    class="px-6 py-4 font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim"
+                  >
+                    {{ formatDate(obj.created_date) }}
                   </td>
                 </tr>
               </template>

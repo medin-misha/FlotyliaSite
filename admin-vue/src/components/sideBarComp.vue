@@ -6,6 +6,8 @@ import { useStatesStore } from '../stores/states.js'
 
 import { userSchema, userCreateSchema } from '../forms/userFrom.js'
 import { adminSchema, adminCreateSchema } from '../forms/adminForm.js'
+import { receiptSchema, receiptCreateSchema } from '../forms/receiptForm.js'
+import { receiptStatsSchema } from '../forms/receiptStatsForm.js'
 
 const authStore = useAuthStore()
 const pageStore = usePageStore()
@@ -28,6 +30,21 @@ const menu = [
     schema: markRaw(adminSchema),
     createSchema: markRaw(adminCreateSchema),
   },
+  {
+    url: receiptSchema.endpoint,
+    name: 'Чеки',
+    icon: 'receipt_long',
+    schema: markRaw(receiptSchema),
+    createSchema: markRaw(receiptCreateSchema),
+  },
+  {
+    url: receiptStatsSchema.endpoint,
+    name: 'Статистика',
+    icon: 'bar_chart',
+    schema: markRaw(receiptStatsSchema),
+    createSchema: null,
+    view: 'stats',
+  },
 ]
 
 const activeIndex = ref(pageStore.pageData.name === 'Admins' ? 1 : 0)
@@ -35,7 +52,7 @@ const activeIndex = ref(pageStore.pageData.name === 'Admins' ? 1 : 0)
 const setPage = (index) => {
   activeIndex.value = index
   const item = menu[index]
-  pageStore.setPage(item.url, item.name, item.createSchema, item.schema)
+  pageStore.setPage(item.url, item.name, item.createSchema, item.schema, item.view || 'crud')
   statesStore.setTableState()
 }
 

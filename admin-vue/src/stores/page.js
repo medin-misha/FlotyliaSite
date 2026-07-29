@@ -8,6 +8,7 @@ export const usePageStore = defineStore('page', {
       name: 'Users',
       createSchema: userCreateSchema,
       schema: userSchema,
+      view: 'crud',
     },
     paginationData: {
       page: 1,
@@ -18,11 +19,12 @@ export const usePageStore = defineStore('page', {
   }),
   actions: {
     // pageStore.setPage(menu[index].url, menu[index].name, menu[index].createSchema, menu[index].schema)
-    setPage(adres, name, createSchema, schema) {
+    setPage(adres, name, createSchema, schema, view = 'crud') {
       this.pageData.adres = adres
       this.pageData.name = name
       this.pageData.schema = schema
       this.pageData.createSchema = createSchema
+      this.pageData.view = view
       console.log(this.pageData)
     },
     setSearchParams(search) {

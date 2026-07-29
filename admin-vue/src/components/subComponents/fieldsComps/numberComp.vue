@@ -57,6 +57,7 @@ const onInput = (e) => {
 
       <input
         type="number"
+        :step="field.step || 1"
         :value="inputValue"
         @input="onInput"
         :placeholder="field.label"
@@ -106,6 +107,7 @@ const onInput = (e) => {
       <input
         v-if="!field.readonly"
         type="number"
+        :step="field.step || 1"
         :value="inputValue"
         @input="onInput"
         class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg font-semibold text-on-surface dark:text-white"

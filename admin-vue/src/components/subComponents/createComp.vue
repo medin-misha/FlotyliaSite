@@ -203,7 +203,14 @@ const create = async () => {
           <p
             class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim mt-0.5 select-none"
           >
-            Раздел: {{ pageStore.pageData.name === 'Users' ? 'Пользователи' : 'Администраторы' }}
+            Раздел:
+            {{
+              pageStore.pageData.name === 'Users'
+                ? 'Пользователи'
+                : pageStore.pageData.name === 'Admins'
+                  ? 'Администраторы'
+                  : pageStore.pageData.name
+            }}
           </p>
         </div>
         <div

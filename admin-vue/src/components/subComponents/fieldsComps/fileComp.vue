@@ -6,6 +6,11 @@ import { openBlobInNewTab } from '@/utils/openBlobInNewTab'
 
 const props = defineProps({
   field: Object,
+  error: String,
+  create: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const value = defineModel('value', { type: [Number, String, Object] })
@@ -97,7 +102,52 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="details-field">
+  <!-- Create mode styling (в сетке формы создания) -->
+  <div v-if="create" class="flex flex-col w-full gap-1.5 group">
+    <label
+      class="font-label-sm text-label-sm font-semibold text-secondary dark:text-secondary-fixed-dim ml-1 flex items-center gap-1 select-none"
+    >
+      <span>{{ props.field.label }}</span>
+      <span
+        v-if="props.field.required"
+        class="text-primary dark:text-inverse-primary"
+        title="Обязательное поле"
+        >*</span
+      >
+    </label>
+
+    <div
+      class="create-file-wrapper"
+      :class="{ uploading, 'has-error': error }"
+      @click="selectFile"
+    >
+      <input
+        ref="fileInput"
+        type="file"
+        class="hidden-input"
+        @change="onFileChange"
+        :disabled="uploading"
+      />
+      <img
+        v-if="isImagePreview && previewUrl"
+        :src="previewUrl"
+        class="details-file-preview"
+        alt="Preview"
+      />
+      <span v-else-if="value" class="details-file-placeholder">Файл загружен · заменить</span>
+      <span v-else class="details-file-placeholder">
+        {{ uploading ? 'Загрузка...' : 'Выбрать файл' }}
+      </span>
+    </div>
+
+    <p v-if="error" class="text-xs text-error font-semibold ml-1.5 flex items-center gap-1">
+      <span class="material-symbols-outlined text-[14px]">error</span>
+      <span>{{ error }}</span>
+    </p>
+  </div>
+
+  <!-- Detail/Edit mode styling -->
+  <div v-else class="details-field">
     <button type="button" class="file-link-button" @click="openFile" :disabled="!value">
       <label class="details-input-label"> {{ props.field.label }}: {{ value || '' }} </label>
     </button>
@@ -152,6 +202,34 @@ onBeforeUnmount(() => {
   transition: 0.2s ease;
   overflow: hidden;
   position: relative;
+}
+
+.create-file-wrapper {
+  width: 100%;
+  min-height: 48px;
+  height: 48px;
+  border-radius: 0.75rem;
+  border: 1px dashed var(--slidebar-item-hover-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.create-file-wrapper:hover {
+  border-color: var(--button-bg);
+}
+
+.create-file-wrapper.uploading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.create-file-wrapper.has-error {
+  border-color: #dc2626;
 }
 
 .details-file-wrapper:hover {

@@ -36,9 +36,11 @@ const showDeleteConfirm = ref(false)
 const deleteError = ref(null)
 
 const fields = computed(() => props.form?.fields || [])
-const detailTitle = computed(() =>
-  props.adres === '/users' ? 'Карточка пользователя' : 'Карточка администратора',
-)
+const detailTitle = computed(() => {
+  if (props.adres === '/users') return 'Карточка пользователя'
+  if (props.adres === '/receipts') return 'Карточка чека'
+  return 'Карточка администратора'
+})
 const groupedFields = computed(() => {
   const groups = {
     personal: [],
