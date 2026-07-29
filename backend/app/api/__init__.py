@@ -9,6 +9,7 @@ from .v1.admin import router as admin_router
 from .v1.files.views import router as files_router
 from .v1.document import router as document_router
 from .v1.product import router as product_router
+from .v1.receipt import router as receipt_router
 
 main_router.include_router(users_router)
 main_router.include_router(contract_router)
@@ -17,3 +18,4 @@ main_router.include_router(admin_router)
 main_router.include_router(files_router)
 main_router.include_router(document_router)
 main_router.include_router(product_router)
+main_router.include_router(receipt_router)

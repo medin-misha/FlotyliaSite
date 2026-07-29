@@ -1,4 +1,4 @@
-__all__ = ["Base", "User", "Admin", "Transport", "Contract", "File"]
+__all__ = ["Base", "User", "Admin", "Transport", "Contract", "File", "Receipt"]
 
 from .base import Base
 from .user import User
@@ -8,3 +8,4 @@ from .contract import Contract
 from .file import File
 from .document import Document
 from .product import Product
+from .receipt import Receipt

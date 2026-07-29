@@ -1,12 +1,13 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, Result, String, or_, and_, Boolean, Integer, DateTime, Date, Float
+from sqlalchemy import insert, select, Result, String, or_, and_, Boolean, Integer, DateTime, Date, Float, Numeric
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.mapper import Mapper
 from sqlalchemy.exc import IntegrityError, DataError, OperationalError
 from pydantic import BaseModel
 from datetime import datetime
+from decimal import Decimal
 
 from typing import TypeVar, Type, Union
 import logging
@@ -249,9 +250,13 @@ class CRUD:
             elif isinstance(column_type, Integer):
                 return int(raw_value)
 
-            # FLOAT
+            # FLOAT (проверяем до Numeric: Float — подкласс Numeric)
             elif isinstance(column_type, Float):
                 return float(raw_value)
+
+            # NUMERIC / DECIMAL
+            elif isinstance(column_type, Numeric):
+                return Decimal(raw_value)
 
             # BOOLEAN
             elif isinstance(column_type, Boolean):
